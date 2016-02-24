@@ -1,0 +1,22 @@
+{
+  "port": 8080,
+  "mongoose": {
+    "uri": "mongodb://localhost/cuname",
+    "options": {
+      "server": {
+        "socketOptions": {
+          "keepAlive": 1
+        }
+      }
+    }
+  },
+  "session": {
+    "secret": "secretWord",
+    "key": "mySid",
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "maxAge": null
+    }
+  }
+}

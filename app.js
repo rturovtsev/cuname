@@ -8,7 +8,9 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const mongoose = require('lib/mongoose');
+const mongoose = require('./lib/mongoose');
+const config = require('./config');
+//const session = require('express-session');
 
 
 //подключаем роуты
@@ -34,6 +36,16 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+//сессии
+/*const sessionStore = require('./lib/sessionStore');
+app.use(session({
+    secret: config.get('session:secret'),
+    key: config.get('session:key'),
+    cookie: config.get('session:cookie'),
+    store: sessionStore
+}));*/
 
 
 //определяем роуты

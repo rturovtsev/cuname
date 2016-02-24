@@ -16,7 +16,11 @@
     "stylus": "0.42.3"
   },
   "devDependencies": {
+    "connect-mongo": "^1.1.0",
+    "cookie-session": "^2.0.0-alpha.1",
+    "express-session": "^1.13.0",
     "mongodb": "^2.1.7",
-    "mongoose": "^4.4.4"
+    "mongoose": "^4.4.4",
+    "nconf": "^0.8.4"
   }
 }
