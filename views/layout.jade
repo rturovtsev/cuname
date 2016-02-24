@@ -1,13 +1,18 @@
 doctype html
 html
-    head
-        title= title
-        block slyles
-            link(rel='stylesheet', href='/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css')
-            link(rel='stylesheet', href='/css/main.css')
+    block head
+        head
+            title= title
+            block slyles
+                link(rel='stylesheet', href='/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css')
+                link(rel='stylesheet', href='/css/main.css')
     body
-        block content
+        .container
+            block header
+                include ./blocks/header
+            block content
+            block footer
 
-        block scripts
-            script(src="/vendor/bower_components/jquery/dist/jquery.min.js")
-            script(src="/vendor/bower_components/bootstrap/dist/js/bootstrap.min.js")
+    block scripts
+        script(src="/vendor/bower_components/jquery/dist/jquery.min.js")
+        script(src="/vendor/bower_components/bootstrap/dist/js/bootstrap.min.js")
