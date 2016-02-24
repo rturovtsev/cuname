@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('./lib/mongoose');
 const config = require('./config');
-//const session = require('express-session');
+const session = require('express-session');
 
 
 //подключаем роуты
