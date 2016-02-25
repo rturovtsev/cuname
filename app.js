@@ -39,14 +39,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //сессии
-//const sessionStore = require('./lib/sessionStore');
+const sessionStore = require('./lib/sessionStore');
 app.use(session({
     secret: config.get('session:secret'),
     key: config.get('session:key'),
     resave: true,
     saveUninitialized: true,
-    cookie: config.get('session:cookie')
-    //store: sessionStore
+    cookie: config.get('session:cookie'),
+    store: sessionStore
 }));
 
 
