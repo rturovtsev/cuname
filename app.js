@@ -8,19 +8,17 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const mongoose = require('./lib/mongoose');
 const config = require('./config');
 const session = require('express-session');
 
 
-//подключаем роуты
-const router = require('./routes/index');
-const login = require('./routes/login');
-const register = require('./routes/register');
-
-
 //инициализируем приложение
 const app = express();
+
+
+//подключаем роуты
+const site = require('./routes/index');
+const auth = require('./routes/auth');
 
 
 // view engine setup
@@ -51,9 +49,9 @@ app.use(session({
 
 
 //определяем роуты
-app.use('/', router);
-app.use('/login', login);
-app.use('/register', register);
+app.get('/', site.index); //главная
+app.get('/login', auth.login); //логин
+app.get('/register', auth.register); //регистрация
 
 
 
@@ -66,8 +64,7 @@ app.use(function (req, res, next) {
 
 // error handlers
 
-// development error handler
-// will print stacktrace
+// development error handler will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
@@ -79,8 +76,7 @@ if (app.get('env') === 'development') {
 }
 
 
-// production error handler
-// no stacktraces leaked to user
+// production error handler no stacktraces leaked to user
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
