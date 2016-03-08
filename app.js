@@ -1,6 +1,5 @@
 'use strict';
 
-
 //тут подключаем модули
 const express = require('express');
 const path = require('path');
@@ -11,22 +10,21 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 const session = require('express-session');
 
-
 //инициализируем приложение
 const app = express();
-
 
 //подключаем роуты
 const site = require('./routes/index');
 const auth = require('./routes/auth');
+const users = require('./routes/users');
 
 
-// view engine setup
+// настройка шаблонизатора для views
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 
-// uncomment after placing your favicon in /public
+//раскоментить, когда будет favicon в /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -48,23 +46,28 @@ app.use(session({
 }));
 
 
+//проверяем сессию и если есть юзер патчим запрос
+app.use(require('./middleware/loadUser'));
+
+
 //определяем роуты
 app.get('/', site.index); //главная
 app.get('/login', auth.login); //логин
 app.get('/register', auth.register); //регистрация
+app.get('/users', users.list); //список пользователей
 
 
-
-// catch 404 and forward to error handler
+// если ни один роут не подошел, ставим 404 и перенаправляем в обработчик ошибок
 app.use(function (req, res, next) {
     let err = new Error('Страница не найдена');
     err.status = 404;
     next(err);
 });
 
-// error handlers
 
-// development error handler will print stacktrace
+// обработчики ошибок
+
+// разработческий обработчик ошибок с выводом stacktrace
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
@@ -76,7 +79,7 @@ if (app.get('env') === 'development') {
 }
 
 
-// production error handler no stacktraces leaked to user
+// обработчик ошибок для продакшена без stacktraces
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

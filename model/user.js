@@ -67,7 +67,17 @@ schema.statics.authorize = function(username, password, callback) {
 };
 
 exports.User = mongoose.model('User', schema);
+/*тестовый пользователь
+var User = mongoose.model('User', schema);
+var user = new User({
+     username: "Testuser",
+     password: "123456"
+ });
 
+ user.save(function(err) {
+    if (err) next(err);
+     console.log("Done");
+ });*/
 
 function AuthError(message) {
     Error.apply(this, arguments);
