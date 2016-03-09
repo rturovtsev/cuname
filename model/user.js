@@ -1,9 +1,13 @@
 var crypto = require('crypto');
 var util = require('util');
 
+
+//подключаемся к базе и определяем схему
 var mongoose = require('../lib/mongoose'),
     Schema = mongoose.Schema;
 
+
+//задаем поля
 var schema = new Schema({
     username: {
         type: String,
@@ -24,10 +28,14 @@ var schema = new Schema({
     }
 });
 
+
+//шифруем пароль
 schema.methods.encryptPassword = function(password) {
     return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
 };
 
+
+//виртуальное поле пароля для задания соли и шифрованного пароля для базы
 schema.virtual('password')
     .set(function(password) {
         this._plainPassword = password;
@@ -37,10 +45,13 @@ schema.virtual('password')
     .get(function() { return this._plainPassword; });
 
 
+//проверка пароля
 schema.methods.checkPassword = function(password) {
     return this.encryptPassword(password) === this.hashedPassword;
 };
 
+
+//проверка авторизации (нового пользователя сразу регистрирует)
 schema.statics.authorize = function(username, password, callback) {
     var User = this;
 
@@ -66,7 +77,11 @@ schema.statics.authorize = function(username, password, callback) {
     ], callback);
 };
 
-exports.User = mongoose.model('User', schema);
+
+var User = mongoose.model('User', schema);
+exports.User = User;
+
+
 /*тестовый пользователь
 var User = mongoose.model('User', schema);
 var user = new User({
@@ -79,15 +94,16 @@ var user = new User({
      console.log("Done");
  });*/
 
+
+//создаем ошибку авторизации
 function AuthError(message) {
     Error.apply(this, arguments);
     Error.captureStackTrace(this, AuthError);
 
     this.message = message;
 }
-
 util.inherits(AuthError, Error);
-
 AuthError.prototype.name = 'AuthError';
+
 
 exports.AuthError = AuthError;
