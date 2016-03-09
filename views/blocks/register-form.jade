@@ -2,15 +2,15 @@
     .col-md-6
         .panel.panel-default
             .panel-body
-                form#login-form(method="POST", action="/login")
+                form#auth-form(method="POST", action="/register")
                     .form-group
                         label(for="email") Email адресс
-                        input.form-control#email(type="email", placeholder="Email")
+                        input.form-control#email(type="email", placeholder="Email", required="true")
                     .form-group
                         label(for="password") Пароль
-                        input.form-control#password(type="password")
+                        input.form-control#password(type="password", required="true")
                     .form-group
                         label(for="repeat_password") Введите еще раз пароль
-                        input.form-control#repeat_password(type="password")
+                        input.form-control#repeat_password(type="password", required="true")
 
                     button.btn.btn-primary(type="submit") Зарегистрироваться

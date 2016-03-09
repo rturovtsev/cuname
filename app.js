@@ -75,8 +75,13 @@ app.use(require('./middleware/loadUser'));
 
 //определяем роуты
 app.get('/', site.index); //главная
-app.get('/login', auth.login); //логин
-app.get('/register', auth.register); //регистрация
+
+app.get('/login', auth.loginGet); //логин
+app.post('/login', auth.loginPost); //логин
+
+app.get('/register', auth.registerGet); //регистрация
+app.post('/register', auth.registerPost); //регистрация
+
 app.get('/users', users.list); //список пользователей
 
 
