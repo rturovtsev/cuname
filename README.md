@@ -1,5 +1,5 @@
 # cuname
 
-Linux:  $ DEBUG=myapp:* npm start
+Linux:  $ DEBUG=cuname:* npm start
 
-Windows: > set DEBUG=myapp:* & npm start
+Windows: > set DEBUG=cuname:* & npm start

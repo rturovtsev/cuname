@@ -1,9 +1,5 @@
-const express = require('express');
-const router = express.Router();
+/* Главная */
 
-/* Главная страница */
-router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Главная', user: ""});
-});
-
-module.exports = router;
+exports.index = function(req, res, next) {
+    res.render('index', {title: "Главная", user: ""});
+};
