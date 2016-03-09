@@ -8,9 +8,9 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const mongoose = require('./lib/mongoose');
 const config = require('./config');
 const session = require('express-session');
+const HttpError = require('./error').HttpError;
 
 
 //подключаем роуты
@@ -38,6 +38,25 @@ app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+app.use(function(err, req, res, next) {
+    if (typeof err == 'number') {
+        err = new HttpError(err);
+    }
+
+    if (err instanceof HttpError) {
+        res.sendHttpError(err);
+    } else {
+        if (app.get('env') == 'development') {
+            express.errorHandler()(err, req, res, next);
+        } else {
+            log.error(err);
+            err = new HttpError(500);
+            res.sendHttpError(err);
+        }
+    }
+});
+
+
 //сессии
 const sessionStore = require('./lib/sessionStore');
 app.use(session({
@@ -48,6 +67,9 @@ app.use(session({
     cookie: config.get('session:cookie'),
     store: sessionStore
 }));
+
+
+app.use(require('./middleware/sendHttpError'));
 
 
 //определяем роуты

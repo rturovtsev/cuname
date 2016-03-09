@@ -1,10 +1,12 @@
-var crypto = require('crypto');
-var util = require('util');
+'use strict';
 
-var mongoose = require('../lib/mongoose'),
+const crypto = require('crypto');
+const util = require('util');
+
+const mongoose = require('../lib/mongoose'),
     Schema = mongoose.Schema;
 
-var schema = new Schema({
+const schema = new Schema({
     username: {
         type: String,
         unique: true,
@@ -42,7 +44,7 @@ schema.methods.checkPassword = function(password) {
 };
 
 schema.statics.authorize = function(username, password, callback) {
-    var User = this;
+    let User = this;
 
     async.waterfall([
         function(callback) {
@@ -56,7 +58,7 @@ schema.statics.authorize = function(username, password, callback) {
                     callback(new AuthError("Пароль неверен"));
                 }
             } else {
-                var user = new User({username: username, password: password});
+                let user = new User({username: username, password: password});
                 user.save(function(err) {
                     if (err) return callback(err);
                     callback(null, user);
