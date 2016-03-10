@@ -5,12 +5,12 @@
                 form#auth-form(method="POST", action="/register")
                     .form-group
                         label(for="email") Email адресс
-                        input.form-control#email(type="email", placeholder="Email", required="true")
+                        input.form-control#email(type="email", name="email", placeholder="Email", required="true")
                     .form-group
                         label(for="password") Пароль
-                        input.form-control#password(type="password", required="true")
+                        input.form-control#password(type="password", name="password", required="true")
                     .form-group
                         label(for="repeat_password") Введите еще раз пароль
-                        input.form-control#repeat_password(type="password", required="true")
+                        input.form-control#repeat_password(type="password", name="password2", required="true")
 
                     button.btn.btn-primary(type="submit") Зарегистрироваться

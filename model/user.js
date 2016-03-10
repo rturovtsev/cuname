@@ -87,17 +87,23 @@ var User = mongoose.model('User', schema);
 exports.User = User;
 
 
-/*тестовый пользователь
-var User = mongoose.model('User', schema);
-var user = new User({
-     username: "Testuser",
-     password: "123456"
- });
-
- user.save(function(err) {
+//тестовый пользователь
+User.findOne({username: "test@test.ru"}, function(err, user) {
     if (err) next(err);
-     console.log("Done");
- });*/
+
+    if (!user) {
+        var testUser = new User({
+                username: "test@test.ru",
+                password: "123456"
+            });
+
+        testUser.save(function(err) {
+            if (err) next(err);
+            console.log("Создан тестовый пользователь");
+        });
+    }
+});
+
 
 
 //создаем ошибку авторизации

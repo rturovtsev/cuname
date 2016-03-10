@@ -14,7 +14,8 @@
                     p.navbar-text.navbar-right
                         if user
                             |Вы вошли как
-                            a.navbar-link(href="#") #{user}
+                            a.navbar-link(href="#") #{user.username}
+                            a.navbar-link#logout(href="#") Выйти
                         else
                             a.navbar-link(href="/login") Войти
 
