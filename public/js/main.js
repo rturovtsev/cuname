@@ -1,4 +1,4 @@
-var myAuth = (function(){
+var cAuth = (function(){
     var email = document.getElementById('email'),
         password = document.getElementById('password'),
         password2 = document.getElementById('repeat_password'),
@@ -51,7 +51,24 @@ var myAuth = (function(){
 })();
 
 
+var cLogout = (function() {
+    var logout = document.getElementById('logout');
+
+    return {
+        event: function() {
+            logout.addEventListener('click', function() {
+                var xhr = new XMLHttpRequest();
+            });
+        },
+        init: function() {
+            logout && this.event();
+        }
+    };
+})();
+
+
 
 
 /* =========== INIT FUNCTION =========== */
-myAuth.init();
+cAuth.init();
+cLogout.init();

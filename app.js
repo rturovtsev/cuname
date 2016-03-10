@@ -79,6 +79,8 @@ app.get('/', site.index); //главная
 app.get('/login', auth.loginGet); //логин
 app.post('/login', auth.loginPost); //логин
 
+app.post('/logout', auth.logout); //выход
+
 app.get('/register', auth.registerGet); //регистрация
 app.post('/register', auth.registerPost); //регистрация
 

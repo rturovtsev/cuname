@@ -44,3 +44,10 @@ exports.registerGet = function(req, res, next) {
 exports.registerPost = function(req, res, next) {
     res.render('register', {title: "Регистрация"});
 };
+
+
+/* Выход */
+exports.logout = function(req, res, next) {
+    req.session.destroy();
+    res.redirect('/');
+};
