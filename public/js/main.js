@@ -55,10 +55,15 @@ var cLogout = (function() {
     var logout = document.getElementById('logout');
 
     return {
+        xhrLogout: function() {
+            var xhr = new XMLHttpRequest(),
+                url = '/logout';
+
+            xhr.open('POST', url, true);
+            xhr.send();
+        },
         event: function() {
-            logout.addEventListener('click', function() {
-                var xhr = new XMLHttpRequest();
-            });
+            logout.addEventListener('click', this.xhrLogout);
         },
         init: function() {
             logout && this.event();
