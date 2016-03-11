@@ -1,16 +1,14 @@
-'use strict';
-
-var cAuth = function () {
+const cAuth = (function(){
     var email = document.getElementById('email'),
         password = document.getElementById('password'),
         password2 = document.getElementById('repeat_password'),
         form = document.getElementById('auth-form');
 
     return {
-        checkLength: function checkLength(el, length) {
+        checkLength: function(el, length) {
             return el.value.length > length;
         },
-        checkEmail: function checkEmail() {
+        checkEmail: function() {
             if (!this.checkLength(email, 5)) {
                 email.parentElement.classList.add('has-error');
                 return false;
@@ -19,7 +17,7 @@ var cAuth = function () {
             email.parentElement.classList.remove('has-error');
             return true;
         },
-        checkPassword: function checkPassword() {
+        checkPassword: function() {
             if (password2) {
                 if (!this.checkLength(password, 5) || password.value !== password2.value) {
                     password.parentElement.classList.add('has-error');
@@ -33,55 +31,58 @@ var cAuth = function () {
             } else {
                 if (!this.checkLength(password, 5)) {
                     password.parentElement.classList.add('has-error');
-                    return false;
+                    return false
                 }
             }
 
             password.parentElement.classList.remove('has-error');
             return true;
         },
-        event: function event() {
-            form.onsubmit = function () {
+        event: function() {
+            form.onsubmit = function() {
                 return cAuth.checkEmail() && cAuth.checkPassword();
             };
         },
-        init: function init() {
+        init: function() {
             form && this.event();
         }
     };
-}();
+})();
 
-var cLogout = function () {
+
+const cLogout = (function() {
     var logout = document.getElementById('logout');
 
     return {
-        xhrLogout: function xhrLogout(e) {
+        xhrLogout: function(e) {
             e.preventDefault();
 
-            var xhr = new XMLHttpRequest(),
+            let xhr = new XMLHttpRequest(),
                 url = '/logout';
 
             xhr.open('POST', url, true);
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = function() {
                 if (xhr.readyState != 4) return;
-                if (xhr.status != 200) {
+                if (xhr.status !=200) {
                     alert("Ошибка!");
                 } else {
-                    location.href = "/";
+                    location.href= "/";
                 }
             };
             xhr.send();
         },
-        event: function event() {
+        event: function() {
             logout.addEventListener('click', this.xhrLogout);
         },
-        init: function init() {
+        init: function() {
             logout && this.event();
         }
     };
-}();
+})();
+
+
+
 
 /* =========== INIT FUNCTION =========== */
 cAuth.init();
 cLogout.init();
-//# sourceMappingURL=main.js.map
