@@ -15,7 +15,7 @@ gulp.task('server', function () {
 });
 
 gulp.task('babel', function () {
-    return gulp.src('./js_modules/**/*.js')
+    return gulp.src('./js_modules/main.js')
         .pipe(sourcemaps.init())
         .pipe(babel({
             presets: ['es2015']
@@ -30,3 +30,5 @@ gulp.task('watch', function() {
 });
 
 gulp.task('default', gulp.parallel('watch', 'babel', 'server'));
+
+gulp.task('js', gulp.parallel('watch', 'babel'));
