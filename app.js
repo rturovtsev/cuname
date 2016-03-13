@@ -7,12 +7,19 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 const config = require('./config');
 const session = require('express-session');
 const HttpError = require('./error').HttpError;
 
+
+//настройка загружаемых файлов
+const uploading = multer({dest: path.join(__dirname, 'public/users_img')});
+
+
 //инициализируем приложение
 const app = express();
+
 
 //подключаем роуты
 const site = require('./routes/index');
