@@ -118,11 +118,14 @@
 	        form = document.getElementById('auth-form');
 	
 	    return {
+	        testHtml: function testHtml(s) {
+	            return s.search(/[<>&"']/ig) == -1;
+	        },
 	        checkLength: function checkLength(el, length) {
 	            return el.value.length > length;
 	        },
 	        checkEmail: function checkEmail() {
-	            if (!this.checkLength(email, 5)) {
+	            if (!this.checkLength(email, 5) || !this.testHtml(email.value)) {
 	                email.parentElement.classList.add('has-error');
 	                return false;
 	            }
@@ -132,7 +135,7 @@
 	        },
 	        checkPassword: function checkPassword() {
 	            if (password2) {
-	                if (!this.checkLength(password, 5) || password.value !== password2.value) {
+	                if (!this.checkLength(password, 5) || password.value !== password2.value || !this.testHtml(password2.value)) {
 	                    password.parentElement.classList.add('has-error');
 	                    password2.parentElement.classList.add('has-error');
 	                    return false;
@@ -142,7 +145,7 @@
 	                password2.parentElement.classList.remove('has-error');
 	                return true;
 	            } else {
-	                if (!this.checkLength(password, 5)) {
+	                if (!this.checkLength(password, 5) || !this.testHtml(password.value)) {
 	                    password.parentElement.classList.add('has-error');
 	                    return false;
 	                }
@@ -152,8 +155,10 @@
 	            return true;
 	        },
 	        event: function event() {
+	            var _this = this;
+	
 	            form.onsubmit = function () {
-	                return cAuth.checkEmail() && cAuth.checkPassword();
+	                return _this.checkEmail() && _this.checkPassword();
 	            };
 	        },
 	        init: function init() {

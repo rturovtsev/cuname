@@ -1,7 +1,7 @@
 'use strict';
 
-var User = require('../model/user').User;
-var AuthError = require('../model/user').AuthError;
+const User = require('../model/user').User;
+const AuthError = require('../model/user').AuthError;
 
 
 /* Страница логина */
@@ -42,7 +42,23 @@ exports.registerGet = function(req, res, next) {
 };
 
 exports.registerPost = function(req, res, next) {
-    res.render('register', {title: "Регистрация"});
+    let email = req.body.email,
+        pass = req.body.password;
+
+    if ( email.search(/[<>&"']/ig) != -1 || pass.search(/[<>&"']/ig) != -1 ) {
+        let err = new Error("Использованы недопустимые символы");
+        err.state = 403;
+
+        next(err);
+    }
+
+    let user = new User({username: email, password: pass});
+    user.save((err, user) => {
+        if (err) next(err);
+
+        req.session.user = user._id;
+        res.redirect('/');
+    });
 };
 
 

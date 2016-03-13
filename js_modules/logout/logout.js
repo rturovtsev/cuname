@@ -1,15 +1,15 @@
-export const cLogout = (function() {
-    var logout = document.getElementById('logout');
+export const cLogout = (() => {
+    const logout = document.getElementById('logout');
 
     return {
-        xhrLogout: function(e) {
+        xhrLogout(e) {
             e.preventDefault();
 
             let xhr = new XMLHttpRequest(),
                 url = '/logout';
 
             xhr.open('POST', url, true);
-            xhr.onreadystatechange = function() {
+            xhr.onreadystatechange = () => {
                 if (xhr.readyState != 4) return;
                 if (xhr.status !=200 ) {
                     alert("Ошибка!");
@@ -19,10 +19,10 @@ export const cLogout = (function() {
             };
             xhr.send();
         },
-        event: function() {
+        event() {
             logout.addEventListener('click', this.xhrLogout);
         },
-        init: function() {
+        init() {
             logout && this.event();
         }
     };
