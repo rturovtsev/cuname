@@ -7,14 +7,9 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const multer = require('multer');
 const config = require('./config');
 const session = require('express-session');
 const HttpError = require('./error').HttpError;
-
-
-//настройка загружаемых файлов
-const uploading = multer({dest: path.join(__dirname, 'public/users_img')});
 
 
 //инициализируем приложение
@@ -25,6 +20,7 @@ const app = express();
 const site = require('./routes/index');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
+const imgs = require('./routes/imgs');
 
 
 // настройка шаблонизатора для views
@@ -92,6 +88,8 @@ app.get('/register', auth.registerGet); //регистрация
 app.post('/register', auth.registerPost); //регистрация
 
 app.get('/users', users.list); //список пользователей
+
+app.post('/uploads', imgs.imgsPost); //картинки
 
 
 // если ни один роут не подошел, ставим 404 и перенаправляем в обработчик ошибок
