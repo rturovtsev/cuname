@@ -1,12 +1,167 @@
-'use strict';
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
 
-var _logout = require('./logout/logout');
+	module.exports = __webpack_require__(1);
 
-var _auth = require('./auth/auth');
 
-//Валидация формы авторизации/регистрации
-_auth.cAuth.init();
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
 
-//Post запрос на выход
-_logout.cLogout.init();
+	'use strict';
+	
+	var _logout = __webpack_require__(2);
+	
+	var _auth = __webpack_require__(3);
+	
+	//Валидация формы авторизации/регистрации
+	_auth.cAuth.init();
+	
+	//Post запрос на выход
+	_logout.cLogout.init();
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var cLogout = exports.cLogout = function () {
+	    var logout = document.getElementById('logout');
+	
+	    return {
+	        xhrLogout: function xhrLogout(e) {
+	            e.preventDefault();
+	
+	            var xhr = new XMLHttpRequest(),
+	                url = '/logout';
+	
+	            xhr.open('POST', url, true);
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState != 4) return;
+	                if (xhr.status != 200) {
+	                    alert("Ошибка!");
+	                } else {
+	                    location.href = "/";
+	                }
+	            };
+	            xhr.send();
+	        },
+	        event: function event() {
+	            logout.addEventListener('click', this.xhrLogout);
+	        },
+	        init: function init() {
+	            logout && this.event();
+	        }
+	    };
+	}();
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var cAuth = exports.cAuth = function () {
+	    var email = document.getElementById('email'),
+	        password = document.getElementById('password'),
+	        password2 = document.getElementById('repeat_password'),
+	        form = document.getElementById('auth-form');
+	
+	    return {
+	        checkLength: function checkLength(el, length) {
+	            return el.value.length > length;
+	        },
+	        checkEmail: function checkEmail() {
+	            if (!this.checkLength(email, 5)) {
+	                email.parentElement.classList.add('has-error');
+	                return false;
+	            }
+	
+	            email.parentElement.classList.remove('has-error');
+	            return true;
+	        },
+	        checkPassword: function checkPassword() {
+	            if (password2) {
+	                if (!this.checkLength(password, 5) || password.value !== password2.value) {
+	                    password.parentElement.classList.add('has-error');
+	                    password2.parentElement.classList.add('has-error');
+	                    return false;
+	                }
+	
+	                password.parentElement.classList.remove('has-error');
+	                password2.parentElement.classList.remove('has-error');
+	                return true;
+	            } else {
+	                if (!this.checkLength(password, 5)) {
+	                    password.parentElement.classList.add('has-error');
+	                    return false;
+	                }
+	            }
+	
+	            password.parentElement.classList.remove('has-error');
+	            return true;
+	        },
+	        event: function event() {
+	            form.onsubmit = function () {
+	                return cAuth.checkEmail() && cAuth.checkPassword();
+	            };
+	        },
+	        init: function init() {
+	            form && this.event();
+	        }
+	    };
+	}();
+
+/***/ }
+/******/ ]);
 //# sourceMappingURL=main.js.map
