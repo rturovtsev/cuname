@@ -1,8 +1,21 @@
-.panel.panel-default
+.panel.panel-default.ims-panel
     .panel-body
         .row
-            -for (var i = 0; i < 8; i++) {
+            -for (var i = 0; i < 4; i++) {
                 .col-xs-6.col-md-3
                     a.thumbnail(href="")
                         img(src="http://placehold.it/250x250", alt="")
             -}
+
+            if user
+                -for (var j = 0; j < 4; j++) {
+                    .col-xs-6.col-md-3
+                        div.thumbnail.no-img
+                            form(method="post", action="/uploads", enctype="multipart/form-data")
+                                .form-group
+                                    label(for="exampleInputFile") Загрузка файла
+                                    input#exampleInputFile(type="file", name="img_file")
+
+                                button.btn.btn-default(type="submit") Загрузить
+
+                -}

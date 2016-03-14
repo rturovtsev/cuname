@@ -4,11 +4,3 @@ block content
     h1= title
 
     include ./blocks/imgs
-
-    if user
-        form(method="post", action="/uploads", enctype="multipart/form-data")
-            .form-group
-                label(for="exampleInputFile") Загрузка файла
-                input#exampleInputFile(type="file", name="img_file")
-
-            button.btn.btn-default(type="submit") Загрузить
