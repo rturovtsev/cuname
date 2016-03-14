@@ -57,6 +57,12 @@
 	
 	var _auth = __webpack_require__(3);
 	
+	var _form = __webpack_require__(4);
+	
+	var _form2 = _interopRequireDefault(_form);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	//Валидация формы авторизации/регистрации
 	_auth.cAuth.init();
 	
@@ -166,6 +172,40 @@
 	        }
 	    };
 	}();
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Form = function () {
+		function Form(x, y) {
+			_classCallCheck(this, Form);
+	
+			this.x = x;
+			this.y = y;
+		}
+	
+		_createClass(Form, [{
+			key: 'toString',
+			value: function toString() {
+				return '(' + this.x + ', ' + this.y + ')';
+			}
+		}]);
+	
+		return Form;
+	}();
+
+	exports.default = Form;
 
 /***/ }
 /******/ ]);
