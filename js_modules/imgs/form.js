@@ -1,10 +1,17 @@
-export default class Form {
-	constructor(x, y) {
-		this.x = x;
-		this.y = y;
-	}
+export const cImgs = ( () => {
 
-	toString() {
-        return '(' + this.x + ', ' + this.y + ')';
-    }
-}
+	const imgsPanel = document.getElementById('imgs-panel');
+
+	return {
+		events() {
+			imgsPanel.onclick = (e) => {
+				let target = e.target;
+				
+				console.dir(target);
+			}
+		},
+		init() {
+			imgsPanel && this.events();
+		}
+	};
+} )();
