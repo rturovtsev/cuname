@@ -178,24 +178,54 @@
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 	var cImgs = exports.cImgs = function () {
 	
-		var imgsPanel = document.getElementById('imgs-panel');
+	  var imgsPanel = document.getElementById('imgs-panel');
 	
-		return {
-			events: function events() {
-				imgsPanel.onclick = function (e) {
-					var target = e.target;
+	  return {
+	    xhr: function xhr(button) {
+	      var xhr = new XMLHttpRequest(),
+	          url = '/uploads',
+	          form = button.parentNode,
+	          input = form.elements.img_file,
+	          data = new FormData(form);
 	
-					console.dir(target);
-				};
-			},
-			init: function init() {
-				imgsPanel && this.events();
-			}
-		};
+	      if (input.value == '') return;
+	
+	      data.append('img_file', input.name);
+	
+	      xhr.open('POST', url, true);
+	
+	      xhr.onreadystatechange = function () {
+	        if (xhr.readyState != 4) return;
+	        if (xhr.status != 200) {
+	          alert("Ошибка, попробуйте позже!");
+	        } else {
+	          var _url = "/i/" + xhr.responseText;
+	          form.parentNode.parentNode.innerHTML = "<a class='thumbnail' href='#'><img src='" + _url + "'</a>";
+	        }
+	      };
+	
+	      xhr.send(data);
+	    },
+	    events: function events() {
+	      var _this = this;
+	
+	      imgsPanel.onclick = function (e) {
+	        var target = e.target;
+	
+	        if (target.tagName != 'BUTTON') return;
+	
+	        e.preventDefault();
+	        _this.xhr(target);
+	      };
+	    },
+	    init: function init() {
+	      imgsPanel && this.events();
+	    }
+	  };
 	}();
 
 /***/ }

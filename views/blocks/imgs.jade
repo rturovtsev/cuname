@@ -11,7 +11,7 @@
                 -for (var j = 0; j < 4; j++) {
                     .col-xs-6.col-md-3
                         div.thumbnail.no-img
-                            form(method="post", action="/uploads", enctype="multipart/form-data")
+                            form.imgs_file_form(method="post", action="/uploads", onsubmit="return false;", enctype="multipart/form-data")
                                 .form-group
                                     label(for="exampleInputFile") Загрузка файла
                                     input#exampleInputFile(type="file", name="img_file")
