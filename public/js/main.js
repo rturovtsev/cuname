@@ -178,54 +178,78 @@
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 	var cImgs = exports.cImgs = function () {
 	
-	  var imgsPanel = document.getElementById('imgs-panel');
+	    var imgsPanel = document.getElementById('imgs-panel');
 	
-	  return {
-	    xhr: function xhr(button) {
-	      var xhr = new XMLHttpRequest(),
-	          url = '/uploads',
-	          form = button.parentNode,
-	          input = form.elements.img_file,
-	          data = new FormData(form);
+	    return {
+	        xhrAdd: function xhrAdd(button) {
+	            var xhr = new XMLHttpRequest(),
+	                url = '/uploads',
+	                form = button.parentNode,
+	                input = form.elements.img_file,
+	                data = new FormData(form);
 	
-	      if (input.value == '') return;
+	            if (input.value == '') return;
 	
-	      data.append('img_file', input.name);
+	            data.append('img_file', input.name);
 	
-	      xhr.open('POST', url, true);
+	            xhr.open('POST', url, true);
 	
-	      xhr.onreadystatechange = function () {
-	        if (xhr.readyState != 4) return;
-	        if (xhr.status != 200) {
-	          alert("Ошибка, попробуйте позже!");
-	        } else {
-	          var _url = "/i/" + xhr.responseText;
-	          form.parentNode.parentNode.innerHTML = "<a class='thumbnail' href='#'><img src='" + _url + "'</a>";
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState != 4) return;
+	                if (xhr.status != 200) {
+	                    alert("Ошибка, попробуйте позже!");
+	                } else {
+	                    var _url = "/i/" + xhr.responseText;
+	                    form.parentNode.parentNode.innerHTML = "<a class='thumbnail' href='#'><img src='" + _url + "'</a>";
+	                }
+	            };
+	
+	            xhr.send(data);
+	        },
+	        xhrRemove: function xhrRemove(button) {
+	            var xhr = new XMLHttpRequest(),
+	                url = '/removeimg',
+	                imgNum = button.parentNode.parentNode.dataset.imgform,
+	                data = JSON.stringify({ imgNum: imgNum });
+	
+	            xhr.open('POST', url, true);
+	
+	            xhr.setRequestHeader('Content-Type', 'application/json');
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState != 4) return;
+	                if (xhr.status != 200) {
+	                    alert("Попробуйте позже");
+	                } else {
+	                    location.reload();
+	                }
+	            };
+	
+	            xhr.send(data);
+	        },
+	        events: function events() {
+	            var _this = this;
+	
+	            imgsPanel.onclick = function (e) {
+	                var target = e.target;
+	
+	                if (target.type == 'submit') {
+	                    e.preventDefault();
+	                    _this.xhrAdd(target);
+	                } else if (target.className == 'remove_img') {
+	                    _this.xhrRemove(target);
+	                } else {
+	                    return;
+	                }
+	            };
+	        },
+	        init: function init() {
+	            imgsPanel && this.events();
 	        }
-	      };
-	
-	      xhr.send(data);
-	    },
-	    events: function events() {
-	      var _this = this;
-	
-	      imgsPanel.onclick = function (e) {
-	        var target = e.target;
-	
-	        if (target.tagName != 'BUTTON') return;
-	
-	        e.preventDefault();
-	        _this.xhr(target);
-	      };
-	    },
-	    init: function init() {
-	      imgsPanel && this.events();
-	    }
-	  };
+	    };
 	}();
 
 /***/ }

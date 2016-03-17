@@ -89,7 +89,8 @@ app.post('/register', auth.registerPost); //регистрация
 
 app.get('/users', users.list); //список пользователей
 
-app.post('/uploads', imgs.imgsPost); //картинки
+app.post('/uploads', imgs.addImgPost); //добавление картинки
+app.post('/removeimg', imgs.removeImgPost); //удаление картинки
 
 
 // если ни один роут не подошел, ставим 404 и перенаправляем в обработчик ошибок
