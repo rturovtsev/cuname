@@ -2,6 +2,7 @@
 
 const multer = require('multer');
 const path = require('path');
+const User = require('../model/user').User;
 
 //настройка загружаемых файлов
 const storage = multer.diskStorage({
@@ -38,6 +39,21 @@ const upload = multer({ storage: storage, fileFilter: fileFilter, limits: limits
 exports.imgsPost = (req, res, next) => {
     upload(req, res, (err) => {
         if (err) return next(err);
+
+        //Ищем юзера по id из сессии
+        User.findById(req.session.user, function(err, user) {
+            if (err) next(err);
+
+            //если нашли, то сохраняем имя картинки
+            if (user) {
+                user.images.push(req.file.filename);
+
+                user.save(function(err) {
+                    if (err) return next(err);
+                });
+            }
+        });
+
         res.send(req.file.filename);
     });
 };
