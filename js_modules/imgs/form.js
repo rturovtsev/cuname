@@ -19,10 +19,10 @@ export const cImgs = ( () => {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState != 4) return;
                 if (xhr.status != 200){
-                    alert("Ошибка, попробуйте позже!");
+                    alert('Ошибка, попробуйте позже!');
                 } else {
-                    let url = "/i/" + xhr.responseText;
-                    form.parentNode.parentNode.innerHTML = "<a class='thumbnail' href='#'><img src='" + url + "'</a>";
+                    let url = '/i/' + xhr.responseText;
+                    form.parentNode.parentNode.innerHTML = '<a class="thumbnail" href="#"><img src="' + url + '"</a>';
                 }
             };
 
@@ -41,7 +41,7 @@ export const cImgs = ( () => {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState != 4) return;
                 if (xhr.status != 200) {
-                    alert("Попробуйте позже")
+                    alert('Попробуйте позже')
                 } else {
                     location.reload();
                 }

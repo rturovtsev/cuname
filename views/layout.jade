@@ -8,12 +8,22 @@ html
                 link(rel='stylesheet', href='/css/main.css')
     body
         .container
-            block header
-                include ./blocks/header
+            #root
+
             block content
                 p Скоро все будет!
 
             block footer
 
     block scripts
+        if user
+            script(type='text/javascript').
+                var user = {
+                    username: !{JSON.stringify(user.username)},
+                    images: !{JSON.stringify(user.images)}
+                };
+        else
+            script(type='text/javascript').
+                var user = {};
+
         script(src="/js/main.js")
