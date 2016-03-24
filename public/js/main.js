@@ -71,7 +71,7 @@
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _configureStore = __webpack_require__(187);
+	var _configureStore = __webpack_require__(188);
 	
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 	
@@ -21630,63 +21630,49 @@
 	                logined = this.props.logined,
 	                name = this.props.name;
 	
-	            if (logined) {
-	                return _react2.default.createElement(
-	                    'p',
-	                    {
-	                        className: 'navbar-text navbar-right' },
-	                    fetching ? _react2.default.createElement(
-	                        'span',
-	                        null,
-	                        'Начали'
-	                    ) : _react2.default.createElement(
-	                        'span',
-	                        null,
-	                        'Закончили'
-	                    ),
+	            return _react2.default.createElement(
+	                'p',
+	                { className: 'navbar-text navbar-right' },
+	                fetching ? _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    'Начали'
+	                ) : _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    'Закончили'
+	                ),
+	                logined ? _react2.default.createElement(
+	                    'span',
+	                    null,
 	                    _react2.default.createElement(
 	                        'a',
-	                        { href: '#',
-	                            className: 'navbar-link' },
-	                        name
+	                        { href: '#', className: 'navbar-link' },
+	                        ' ',
+	                        name,
+	                        ' '
 	                    ),
+	                    ' ',
 	                    _react2.default.createElement(
 	                        'a',
-	                        { href: '#',
-	                            id: 'logout',
-	                            onClick: this.onClickLogoutBtn,
-	                            className: 'navbar-link' },
+	                        { href: '#', id: 'logout', onClick: this.onClickLogoutBtn, className: 'navbar-link' },
 	                        'Выйти'
 	                    )
-	                );
-	            } else {
-	                return _react2.default.createElement(
-	                    'p',
-	                    {
-	                        className: 'navbar-text navbar-right' },
-	                    fetching ? _react2.default.createElement(
-	                        'span',
-	                        null,
-	                        'Начали'
-	                    ) : _react2.default.createElement(
-	                        'span',
-	                        null,
-	                        'Закончили'
-	                    ),
+	                ) : _react2.default.createElement(
+	                    'span',
+	                    null,
 	                    _react2.default.createElement(
 	                        'a',
-	                        { href: '/login',
-	                            className: 'navbar-link' },
+	                        { href: '/login', className: 'navbar-link' },
 	                        'Войти'
 	                    ),
 	                    _react2.default.createElement(
 	                        'a',
-	                        { href: '/register',
-	                            className: 'navbar-link' },
+	                        { href: '/register', className: 'navbar-link' },
 	                        'Зарегистрироваться'
 	                    )
-	                );
-	            }
+	                )
+	            );
 	        }
 	    }]);
 	
@@ -21714,7 +21700,7 @@
 	});
 	exports.setLogined = setLogined;
 	
-	var _User = __webpack_require__(191);
+	var _User = __webpack_require__(187);
 	
 	function setLogined(bool) {
 	    return function (dispatch) {
@@ -21752,6 +21738,19 @@
 
 /***/ },
 /* 187 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var SET_LOGINED_REQUEST = exports.SET_LOGINED_REQUEST = 'SET_LOGINED_REQUEST';
+	var SET_LOGINED_SUCCESS = exports.SET_LOGINED_SUCCESS = 'SET_LOGINED_SUCCESS';
+	var SET_LOGINED_FAILED = exports.SET_LOGINED_FAILED = 'SET_LOGINED_FAILED';
+
+/***/ },
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21763,7 +21762,7 @@
 	
 	var _redux = __webpack_require__(162);
 	
-	var _reducers = __webpack_require__(188);
+	var _reducers = __webpack_require__(189);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
@@ -21787,7 +21786,7 @@
 	}
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21798,11 +21797,11 @@
 	
 	var _redux = __webpack_require__(162);
 	
-	var _page = __webpack_require__(189);
+	var _page = __webpack_require__(190);
 	
 	var _page2 = _interopRequireDefault(_page);
 	
-	var _user = __webpack_require__(190);
+	var _user = __webpack_require__(191);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
@@ -21814,7 +21813,7 @@
 	});
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21834,7 +21833,7 @@
 	}
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21844,7 +21843,7 @@
 	});
 	exports.default = user;
 	
-	var _User = __webpack_require__(191);
+	var _User = __webpack_require__(187);
 	
 	var initialState = {
 	    name: cunameUser.username,
@@ -21870,19 +21869,6 @@
 	            return state;
 	    }
 	}
-
-/***/ },
-/* 191 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var SET_LOGINED_REQUEST = exports.SET_LOGINED_REQUEST = 'SET_LOGINED_REQUEST';
-	var SET_LOGINED_SUCCESS = exports.SET_LOGINED_SUCCESS = 'SET_LOGINED_SUCCESS';
-	var SET_LOGINED_FAILED = exports.SET_LOGINED_FAILED = 'SET_LOGINED_FAILED';
 
 /***/ },
 /* 192 */

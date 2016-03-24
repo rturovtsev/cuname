@@ -15,45 +15,15 @@ export default class UserPanel extends Component {
             logined = this.props.logined,
             name = this.props.name;
 
-        if (logined) {
-            return <p
-                className='navbar-text navbar-right'>
-                {
-                    fetching ?
-                    <span>Начали</span>
+        return (
+            <p className='navbar-text navbar-right'>
+                {fetching ? <span>Начали</span> : <span>Закончили</span>}
+                {logined ?
+                    <span><a href='#' className='navbar-link'> {name} </a> <a href='#' id='logout' onClick= {this.onClickLogoutBtn} className='navbar-link'>Выйти</a></span>
                     :
-                    <span>Закончили</span>
-                }
-                <a  href='#'
-                    className='navbar-link'>
-                    {name}
-                </a>
-                <a  href='#'
-                    id='logout'
-                    onClick={this.onClickLogoutBtn}
-                    className='navbar-link'>
-                    Выйти
-                </a>
+                    <span><a href='/login' className='navbar-link'>Войти</a><a href='/register' className='navbar-link'>Зарегистрироваться</a></span>}
             </p>
-        } else {
-            return <p
-                className='navbar-text navbar-right'>
-                {
-                    fetching ?
-                        <span>Начали</span>
-                        :
-                        <span>Закончили</span>
-                }
-                <a  href='/login'
-                    className='navbar-link'>
-                    Войти
-                </a>
-                <a  href='/register'
-                    className='navbar-link'>
-                    Зарегистрироваться
-                </a>
-            </p>
-        }
+        );
     }
 }
 
