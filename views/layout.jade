@@ -18,12 +18,15 @@ html
     block scripts
         if user
             script(type='text/javascript').
-                var user = {
+                var cunameUser = {
                     username: !{JSON.stringify(user.username)},
                     images: !{JSON.stringify(user.images)}
                 };
         else
             script(type='text/javascript').
-                var user = {};
+                var cunameUser = {
+                    username: 'Гость',
+                    images: []
+                };
 
         script(src="/js/main.js")

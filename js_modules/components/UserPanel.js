@@ -1,23 +1,44 @@
 import React, { Component, PropTypes } from 'react';
 
 export default class UserPanel extends Component {
-    render() {
-        const data = this.props.data,
-            onClickLogoutBtn = this.props.onClickLogoutBtn;
+    constructor(props) {
+        super(props);
 
-        if (data.logined) {
+        this.onClickLogoutBtn = this.onClickLogoutBtn.bind(this);
+    }
+    onClickLogoutBtn(e) {
+        e.preventDefault();
+
+        let self = this,
+            xhr = new XMLHttpRequest(),
+            url = '/logout';
+
+        xhr.open('POST', url, true);
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState != 4) return;
+            if (xhr.status !=200 ) {
+                alert('Ошибка!');
+            } else {
+                self.props.setLogined(false);
+                console.log("GoodBy!");
+            }
+        };
+        xhr.send();
+    }
+    render() {
+        const logined = this.props.logined,
+            name = this.props.name;
+
+        if (logined) {
             return <p
                 className='navbar-text navbar-right'>
-                Вы вошли как
-                <a
-                    href='#'
+                <a  href='#'
                     className='navbar-link'>
-                    {data.user.username}
+                    {name}
                 </a>
-                <a
-                    href='#'
+                <a  href='#'
                     id='logout'
-                    onClick={onClickLogoutBtn}
+                    onClick={this.onClickLogoutBtn}
                     className='navbar-link'>
                     Выйти
                 </a>
@@ -25,13 +46,11 @@ export default class UserPanel extends Component {
         } else {
             return <p
                 className='navbar-text navbar-right'>
-                <a
-                    href='/login'
+                <a  href='/login'
                     className='navbar-link'>
                     Войти
                 </a>
-                <a
-                    href='/register'
+                <a  href='/register'
                     className='navbar-link'>
                     Зарегистрироваться
                 </a>
@@ -41,6 +60,7 @@ export default class UserPanel extends Component {
 }
 
 UserPanel.PropTypes = {
-    data: PropTypes.object.isRequired,
-    onClickLogoutBtn: PropTypes.func.isRequired
+    logined: PropTypes.bool.isRequired,
+    name: PropTypes.string.isRequired,
+    setLogined: PropTypes.func.isRequired
 };

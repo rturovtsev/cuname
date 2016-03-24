@@ -30,15 +30,6 @@ gulp.task('webpack', function(){
         },
         devtool: isDevelopment ? "source-map" : null,
         module: {
-            /*preLoaders: [
-                {
-                    test: /\.js$/,
-                    loaders: ['eslint'],
-                    include: [
-                        path.resolve(__dirname, "js_modules")
-                    ]
-                }
-            ],*/
             loaders: [{
                 test: /\.js$/,
                 loader: 'babel?presets[]=es2015,plugins[]=transform-es2015-modules-commonjs',
