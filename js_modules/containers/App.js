@@ -8,7 +8,7 @@ import * as userActions from '../actions/UserActions'
 
  class App extends Component {
     render() {
-        const { name, logined } = this.props.user;
+        const { name, logined, fetching } = this.props.user;
         const { setLogined } = this.props.userActions;
 
         return <header>
@@ -21,7 +21,7 @@ import * as userActions from '../actions/UserActions'
                             <div
                                 id='bs-example-navbar-collapse-1'
                                 className='collapse navbar-collapse'>
-                                <UserPanel name={name} logined={logined} setLogined={setLogined} />
+                                <UserPanel name={name} logined={logined} setLogined={setLogined} fetching={fetching} />
                             </div>
                         </div>
                     </div>

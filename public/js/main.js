@@ -21461,6 +21461,7 @@
 	            var _props$user = this.props.user;
 	            var name = _props$user.name;
 	            var logined = _props$user.logined;
+	            var fetching = _props$user.fetching;
 	            var setLogined = this.props.userActions.setLogined;
 	
 	
@@ -21485,7 +21486,7 @@
 	                                    {
 	                                        id: 'bs-example-navbar-collapse-1',
 	                                        className: 'collapse navbar-collapse' },
-	                                    _react2.default.createElement(_UserPanel2.default, { name: name, logined: logined, setLogined: setLogined })
+	                                    _react2.default.createElement(_UserPanel2.default, { name: name, logined: logined, setLogined: setLogined, fetching: fetching })
 	                                )
 	                            )
 	                        )
@@ -21620,27 +21621,13 @@
 	        key: 'onClickLogoutBtn',
 	        value: function onClickLogoutBtn(e) {
 	            e.preventDefault();
-	
-	            var self = this,
-	                xhr = new XMLHttpRequest(),
-	                url = '/logout';
-	
-	            xhr.open('POST', url, true);
-	            xhr.onreadystatechange = function () {
-	                if (xhr.readyState != 4) return;
-	                if (xhr.status != 200) {
-	                    alert('Ошибка!');
-	                } else {
-	                    self.props.setLogined(false);
-	                    console.log("GoodBy!");
-	                }
-	            };
-	            xhr.send();
+	            this.props.setLogined(false);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var logined = this.props.logined,
+	            var fetching = this.props.fetching,
+	                logined = this.props.logined,
 	                name = this.props.name;
 	
 	            if (logined) {
@@ -21648,6 +21635,15 @@
 	                    'p',
 	                    {
 	                        className: 'navbar-text navbar-right' },
+	                    fetching ? _react2.default.createElement(
+	                        'span',
+	                        null,
+	                        'Начали'
+	                    ) : _react2.default.createElement(
+	                        'span',
+	                        null,
+	                        'Закончили'
+	                    ),
 	                    _react2.default.createElement(
 	                        'a',
 	                        { href: '#',
@@ -21668,6 +21664,15 @@
 	                    'p',
 	                    {
 	                        className: 'navbar-text navbar-right' },
+	                    fetching ? _react2.default.createElement(
+	                        'span',
+	                        null,
+	                        'Начали'
+	                    ) : _react2.default.createElement(
+	                        'span',
+	                        null,
+	                        'Закончили'
+	                    ),
 	                    _react2.default.createElement(
 	                        'a',
 	                        { href: '/login',
@@ -21693,6 +21698,7 @@
 	
 	UserPanel.PropTypes = {
 	    logined: _react.PropTypes.bool.isRequired,
+	    fetching: _react.PropTypes.bool.isRequired,
 	    name: _react.PropTypes.string.isRequired,
 	    setLogined: _react.PropTypes.func.isRequired
 	};
@@ -21711,9 +21717,36 @@
 	var _User = __webpack_require__(191);
 	
 	function setLogined(bool) {
-	    return {
-	        type: _User.SET_LOGINED,
-	        payload: bool
+	    return function (dispatch) {
+	        dispatch({
+	            type: _User.SET_LOGINED_REQUEST,
+	            payload: bool
+	        });
+	
+	        var xhr = new XMLHttpRequest(),
+	            url = '/logout';
+	
+	        xhr.open('POST', url, true);
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState != 4) return;
+	            if (xhr.status != 200) {
+	
+	                dispatch({
+	                    type: _User.SET_LOGINED_FAILED
+	                });
+	
+	                console.log("Error! Not logout!");
+	            } else {
+	
+	                dispatch({
+	                    type: _User.SET_LOGINED_SUCCESS,
+	                    payload: false
+	                });
+	
+	                console.log("GoodBy!");
+	            }
+	        };
+	        xhr.send();
 	    };
 	}
 
@@ -21734,10 +21767,14 @@
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
+	var _reduxThunk = __webpack_require__(192);
+	
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function configureStore(initialState) {
-	    var store = (0, _redux.createStore)(_reducers2.default, initialState);
+	    var store = (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 	
 	    if (false) {
 	        module.hot.accept('../reducers', function () {
@@ -21811,7 +21848,8 @@
 	
 	var initialState = {
 	    name: cunameUser.username,
-	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false
+	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false,
+	    fetching: false
 	};
 	
 	function user() {
@@ -21819,8 +21857,14 @@
 	    var action = arguments[1];
 	
 	    switch (action.type) {
-	        case _User.SET_LOGINED:
-	            return Object.assign({}, state, { logined: action.payload });
+	        case _User.SET_LOGINED_REQUEST:
+	            return Object.assign({}, state, { logined: action.payload, fetching: true });
+	
+	        case _User.SET_LOGINED_FAILED:
+	            return Object.assign({}, state, { fetching: false });
+	
+	        case _User.SET_LOGINED_SUCCESS:
+	            return Object.assign({}, state, { logined: action.payload, fetching: false });
 	
 	        default:
 	            return state;
@@ -21836,7 +21880,32 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var SET_LOGINED = exports.SET_LOGINED = 'SET_LOGINED';
+	var SET_LOGINED_REQUEST = exports.SET_LOGINED_REQUEST = 'SET_LOGINED_REQUEST';
+	var SET_LOGINED_SUCCESS = exports.SET_LOGINED_SUCCESS = 'SET_LOGINED_SUCCESS';
+	var SET_LOGINED_FAILED = exports.SET_LOGINED_FAILED = 'SET_LOGINED_FAILED';
+
+/***/ },
+/* 192 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports['default'] = thunkMiddleware;
+	function thunkMiddleware(_ref) {
+	  var dispatch = _ref.dispatch;
+	  var getState = _ref.getState;
+	
+	  return function (next) {
+	    return function (action) {
+	      if (typeof action === 'function') {
+	        return action(dispatch, getState);
+	      }
+	
+	      return next(action);
+	    };
+	  };
+	}
 
 /***/ }
 /******/ ]);

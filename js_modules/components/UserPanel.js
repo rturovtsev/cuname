@@ -8,30 +8,22 @@ export default class UserPanel extends Component {
     }
     onClickLogoutBtn(e) {
         e.preventDefault();
-
-        let self = this,
-            xhr = new XMLHttpRequest(),
-            url = '/logout';
-
-        xhr.open('POST', url, true);
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState != 4) return;
-            if (xhr.status !=200 ) {
-                alert('Ошибка!');
-            } else {
-                self.props.setLogined(false);
-                console.log("GoodBy!");
-            }
-        };
-        xhr.send();
+        this.props.setLogined(false);
     }
     render() {
-        const logined = this.props.logined,
+        const fetching = this.props.fetching,
+            logined = this.props.logined,
             name = this.props.name;
 
         if (logined) {
             return <p
                 className='navbar-text navbar-right'>
+                {
+                    fetching ?
+                    <span>Начали</span>
+                    :
+                    <span>Закончили</span>
+                }
                 <a  href='#'
                     className='navbar-link'>
                     {name}
@@ -46,6 +38,12 @@ export default class UserPanel extends Component {
         } else {
             return <p
                 className='navbar-text navbar-right'>
+                {
+                    fetching ?
+                        <span>Начали</span>
+                        :
+                        <span>Закончили</span>
+                }
                 <a  href='/login'
                     className='navbar-link'>
                     Войти
@@ -61,6 +59,7 @@ export default class UserPanel extends Component {
 
 UserPanel.PropTypes = {
     logined: PropTypes.bool.isRequired,
+    fetching: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     setLogined: PropTypes.func.isRequired
 };
