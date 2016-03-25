@@ -5,3 +5,28 @@
 .imgs-panel .no-img {
   background-color: #ccc;
 }
+.fetching {
+  position: fixed;
+  height: 2px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.fetching:before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #00ccb8;
+  width: 0;
+}
+.fetching.start:before {
+  width: 70%;
+  transition: 1s cubic-bezier(0, 0.19, 0.02, 0.98);
+}
+.fetching.end:before {
+  width: 100%;
+  transition: 1s ease-in;
+}

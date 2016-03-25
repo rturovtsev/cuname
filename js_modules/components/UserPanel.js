@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
 
 export default class UserPanel extends Component {
     constructor(props) {
@@ -9,15 +9,14 @@ export default class UserPanel extends Component {
     onClickLogoutBtn(e) {
         e.preventDefault();
         this.props.setLogined(false);
+        this.props.setFetchingBarState('start');
     }
     render() {
-        const fetching = this.props.fetching,
-            logined = this.props.logined,
+        const logined = this.props.logined,
             name = this.props.name;
 
         return (
             <p className='navbar-text navbar-right'>
-                {fetching ? <span>Начали</span> : <span>Закончили</span>}
                 {logined ?
                     <span><a href='#' className='navbar-link'> {name} </a> <a href='#' id='logout' onClick= {this.onClickLogoutBtn} className='navbar-link'>Выйти</a></span>
                     :
@@ -29,7 +28,7 @@ export default class UserPanel extends Component {
 
 UserPanel.PropTypes = {
     logined: PropTypes.bool.isRequired,
-    fetching: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
-    setLogined: PropTypes.func.isRequired
+    setLogined: PropTypes.func.isRequired,
+    setFetchingBarState: PropTypes.func.isRequired
 };

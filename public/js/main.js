@@ -21424,6 +21424,10 @@
 	
 	var _reactRedux = __webpack_require__(172);
 	
+	var _FetchingBar = __webpack_require__(193);
+	
+	var _FetchingBar2 = _interopRequireDefault(_FetchingBar);
+	
 	var _NavbarBrand = __webpack_require__(184);
 	
 	var _NavbarBrand2 = _interopRequireDefault(_NavbarBrand);
@@ -21435,6 +21439,10 @@
 	var _UserActions = __webpack_require__(186);
 	
 	var userActions = _interopRequireWildcard(_UserActions);
+	
+	var _FetchingBarActions = __webpack_require__(196);
+	
+	var fetchingBarActions = _interopRequireWildcard(_FetchingBarActions);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
@@ -21461,13 +21469,15 @@
 	            var _props$user = this.props.user;
 	            var name = _props$user.name;
 	            var logined = _props$user.logined;
-	            var fetching = _props$user.fetching;
 	            var setLogined = this.props.userActions.setLogined;
+	            var fetching = this.props.fetchingBar.fetching;
+	            var setFetchingBarState = this.props.fetchingBarActions.setFetchingBarState;
 	
 	
 	            return _react2.default.createElement(
 	                'header',
 	                null,
+	                _react2.default.createElement(_FetchingBar2.default, { fetchClass: fetching, ref: 'fetching' }),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'row' },
@@ -21486,7 +21496,7 @@
 	                                    {
 	                                        id: 'bs-example-navbar-collapse-1',
 	                                        className: 'collapse navbar-collapse' },
-	                                    _react2.default.createElement(_UserPanel2.default, { name: name, logined: logined, setLogined: setLogined, fetching: fetching })
+	                                    _react2.default.createElement(_UserPanel2.default, { name: name, logined: logined, setLogined: setLogined, setFetchingBarState: setFetchingBarState })
 	                                )
 	                            )
 	                        )
@@ -21502,13 +21512,15 @@
 	function mapStateToProps(state) {
 	    return {
 	        user: state.user,
-	        page: state.page
+	        page: state.page,
+	        fetchingBar: state.fetchingBar
 	    };
 	}
 	
 	function mapDispatchToProps(dispatch) {
 	    return {
-	        userActions: (0, _redux.bindActionCreators)(userActions, dispatch)
+	        userActions: (0, _redux.bindActionCreators)(userActions, dispatch),
+	        fetchingBarActions: (0, _redux.bindActionCreators)(fetchingBarActions, dispatch)
 	    };
 	}
 	
@@ -21622,26 +21634,17 @@
 	        value: function onClickLogoutBtn(e) {
 	            e.preventDefault();
 	            this.props.setLogined(false);
+	            this.props.setFetchingBarState('start');
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var fetching = this.props.fetching,
-	                logined = this.props.logined,
+	            var logined = this.props.logined,
 	                name = this.props.name;
 	
 	            return _react2.default.createElement(
 	                'p',
 	                { className: 'navbar-text navbar-right' },
-	                fetching ? _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    'Начали'
-	                ) : _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    'Закончили'
-	                ),
 	                logined ? _react2.default.createElement(
 	                    'span',
 	                    null,
@@ -21684,9 +21687,9 @@
 	
 	UserPanel.PropTypes = {
 	    logined: _react.PropTypes.bool.isRequired,
-	    fetching: _react.PropTypes.bool.isRequired,
 	    name: _react.PropTypes.string.isRequired,
-	    setLogined: _react.PropTypes.func.isRequired
+	    setLogined: _react.PropTypes.func.isRequired,
+	    setFetchingBarState: _react.PropTypes.func.isRequired
 	};
 
 /***/ },
@@ -21805,11 +21808,16 @@
 	
 	var _user2 = _interopRequireDefault(_user);
 	
+	var _fetchingBar = __webpack_require__(194);
+	
+	var _fetchingBar2 = _interopRequireDefault(_fetchingBar);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = (0, _redux.combineReducers)({
 	    page: _page2.default,
-	    user: _user2.default
+	    user: _user2.default,
+	    fetchingBar: _fetchingBar2.default
 	});
 
 /***/ },
@@ -21847,8 +21855,7 @@
 	
 	var initialState = {
 	    name: cunameUser.username,
-	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false,
-	    fetching: false
+	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false
 	};
 	
 	function user() {
@@ -21857,13 +21864,13 @@
 	
 	    switch (action.type) {
 	        case _User.SET_LOGINED_REQUEST:
-	            return Object.assign({}, state, { logined: action.payload, fetching: true });
+	            return Object.assign({}, state, { logined: action.payload });
 	
 	        case _User.SET_LOGINED_FAILED:
-	            return Object.assign({}, state, { fetching: false });
+	            return Object.assign({}, state);
 	
 	        case _User.SET_LOGINED_SUCCESS:
-	            return Object.assign({}, state, { logined: action.payload, fetching: false });
+	            return Object.assign({}, state, { logined: action.payload });
 	
 	        default:
 	            return state;
@@ -21891,6 +21898,149 @@
 	      return next(action);
 	    };
 	  };
+	}
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FetchingBar = function (_Component) {
+	    _inherits(FetchingBar, _Component);
+	
+	    function FetchingBar() {
+	        _classCallCheck(this, FetchingBar);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FetchingBar).apply(this, arguments));
+	    }
+	
+	    _createClass(FetchingBar, [{
+	        key: 'render',
+	        value: function render() {
+	            var fetchClass = 'fetching ' + (this.props.fetchClass ? this.props.fetchClass : '');
+	
+	            return _react2.default.createElement('div', { id: 'fetching', className: fetchClass });
+	        }
+	    }]);
+	
+	    return FetchingBar;
+	}(_react.Component);
+
+	exports.default = FetchingBar;
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = fetchingBar;
+	
+	var _FetchingBar = __webpack_require__(195);
+	
+	var initialState = {
+	    fetching: false
+	};
+	
+	function fetchingBar() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _FetchingBar.SET_FETCHING_START:
+	            return Object.assign({}, state, { fetching: action.payload });
+	
+	        case _FetchingBar.SET_FETCHING_END:
+	            return Object.assign({}, state, { fetching: action.payload });
+	
+	        case _FetchingBar.SET_FETCHING_HIDE:
+	            return Object.assign({}, state, { fetching: false });
+	
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 195 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var SET_FETCHING_START = exports.SET_FETCHING_START = 'SET_FETCHING_START';
+	var SET_FETCHING_END = exports.SET_FETCHING_END = 'SET_FETCHING_END';
+	var SET_FETCHING_HIDE = exports.SET_FETCHING_HIDE = 'SET_FETCHING_HIDE';
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setFetchingBarState = setFetchingBarState;
+	
+	var _FetchingBar = __webpack_require__(195);
+	
+	function setFetchingBarState(barState) {
+	    return function (dispatch) {
+	        switch (barState) {
+	            case 'start':
+	                dispatch({
+	                    type: _FetchingBar.SET_FETCHING_START,
+	                    payload: 'start'
+	                });
+	                break;
+	
+	            case 'end':
+	                dispatch({
+	                    type: _FetchingBar.SET_FETCHING_END,
+	                    payload: 'end'
+	                });
+	                break;
+	
+	            case 'hide':
+	                dispatch({
+	                    type: _FetchingBar.SET_FETCHING_HIDE,
+	                    payload: false
+	                });
+	                break;
+	
+	            default:
+	                dispatch({
+	                    type: _FetchingBar.SET_FETCHING_HIDE,
+	                    payload: false
+	                });
+	
+	        }
+	    };
 	}
 
 /***/ }
