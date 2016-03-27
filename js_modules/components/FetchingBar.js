@@ -1,10 +1,18 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 
 
 export default class FetchingBar extends Component {
     componentDidMount() {
+        const self = this;
+
         window.ee.addListener('changeFetchState', function(fetchState) {
-            this.props.setFetchingBarState(fetchState);
+            self.props.setFetchingBarState(fetchState);
+
+            if (fetchState == 'end') {
+                setTimeout(function() {
+                    self.props.setFetchingBarState('hide');
+                }, 1000);
+            }
         });
     }
     componentWillUnmount() {
@@ -18,3 +26,7 @@ export default class FetchingBar extends Component {
         );
     }
 }
+
+FetchingBar.PropTypes = {
+    setFetchingBarState: PropTypes.func.isRequired
+};

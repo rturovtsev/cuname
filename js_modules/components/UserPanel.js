@@ -9,7 +9,7 @@ export default class UserPanel extends Component {
     onClickLogoutBtn(e) {
         e.preventDefault();
         this.props.setLogined(false);
-        this.props.setFetchingBarState('start');
+        window.ee.emit('changeFetchState', 'start');
     }
     render() {
         const logined = this.props.logined,

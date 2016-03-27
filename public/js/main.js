@@ -63,13 +63,13 @@
 	
 	var _reactDom = __webpack_require__(161);
 	
-	var _reactRedux = __webpack_require__(172);
+	var _reactRedux = __webpack_require__(162);
 	
 	var _App = __webpack_require__(183);
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _configureStore = __webpack_require__(188);
+	var _configureStore = __webpack_require__(192);
 	
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 	
@@ -19894,756 +19894,16 @@
 /* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-	
-	exports.__esModule = true;
-	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
-	
-	var _createStore = __webpack_require__(163);
-	
-	var _createStore2 = _interopRequireDefault(_createStore);
-	
-	var _combineReducers = __webpack_require__(167);
-	
-	var _combineReducers2 = _interopRequireDefault(_combineReducers);
-	
-	var _bindActionCreators = __webpack_require__(169);
-	
-	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
-	
-	var _applyMiddleware = __webpack_require__(170);
-	
-	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
-	
-	var _compose = __webpack_require__(171);
-	
-	var _compose2 = _interopRequireDefault(_compose);
-	
-	var _warning = __webpack_require__(168);
-	
-	var _warning2 = _interopRequireDefault(_warning);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { "default": obj };
-	}
-	
-	/*
-	* This is a dummy function to check if the function name has been altered by minification.
-	* If the function has been minified and NODE_ENV !== 'production', warn the user.
-	*/
-	function isCrushed() {}
-	
-	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
-	  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
-	}
-	
-	exports.createStore = _createStore2["default"];
-	exports.combineReducers = _combineReducers2["default"];
-	exports.bindActionCreators = _bindActionCreators2["default"];
-	exports.applyMiddleware = _applyMiddleware2["default"];
-	exports.compose = _compose2["default"];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ },
-/* 163 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	exports.ActionTypes = undefined;
-	exports["default"] = createStore;
-	
-	var _isPlainObject = __webpack_require__(164);
-	
-	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { "default": obj };
-	}
-	
-	/**
-	 * These are private action types reserved by Redux.
-	 * For any unknown actions, you must return the current state.
-	 * If the current state is undefined, you must return the initial state.
-	 * Do not reference these action types directly in your code.
-	 */
-	var ActionTypes = exports.ActionTypes = {
-	  INIT: '@@redux/INIT'
-	};
-	
-	/**
-	 * Creates a Redux store that holds the state tree.
-	 * The only way to change the data in the store is to call `dispatch()` on it.
-	 *
-	 * There should only be a single store in your app. To specify how different
-	 * parts of the state tree respond to actions, you may combine several reducers
-	 * into a single reducer function by using `combineReducers`.
-	 *
-	 * @param {Function} reducer A function that returns the next state tree, given
-	 * the current state tree and the action to handle.
-	 *
-	 * @param {any} [initialState] The initial state. You may optionally specify it
-	 * to hydrate the state from the server in universal apps, or to restore a
-	 * previously serialized user session.
-	 * If you use `combineReducers` to produce the root reducer function, this must be
-	 * an object with the same shape as `combineReducers` keys.
-	 *
-	 * @param {Function} enhancer The store enhancer. You may optionally specify it
-	 * to enhance the store with third-party capabilities such as middleware,
-	 * time travel, persistence, etc. The only store enhancer that ships with Redux
-	 * is `applyMiddleware()`.
-	 *
-	 * @returns {Store} A Redux store that lets you read the state, dispatch actions
-	 * and subscribe to changes.
-	 */
-	function createStore(reducer, initialState, enhancer) {
-	  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
-	    enhancer = initialState;
-	    initialState = undefined;
-	  }
-	
-	  if (typeof enhancer !== 'undefined') {
-	    if (typeof enhancer !== 'function') {
-	      throw new Error('Expected the enhancer to be a function.');
-	    }
-	
-	    return enhancer(createStore)(reducer, initialState);
-	  }
-	
-	  if (typeof reducer !== 'function') {
-	    throw new Error('Expected the reducer to be a function.');
-	  }
-	
-	  var currentReducer = reducer;
-	  var currentState = initialState;
-	  var currentListeners = [];
-	  var nextListeners = currentListeners;
-	  var isDispatching = false;
-	
-	  function ensureCanMutateNextListeners() {
-	    if (nextListeners === currentListeners) {
-	      nextListeners = currentListeners.slice();
-	    }
-	  }
-	
-	  /**
-	   * Reads the state tree managed by the store.
-	   *
-	   * @returns {any} The current state tree of your application.
-	   */
-	  function getState() {
-	    return currentState;
-	  }
-	
-	  /**
-	   * Adds a change listener. It will be called any time an action is dispatched,
-	   * and some part of the state tree may potentially have changed. You may then
-	   * call `getState()` to read the current state tree inside the callback.
-	   *
-	   * You may call `dispatch()` from a change listener, with the following
-	   * caveats:
-	   *
-	   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
-	   * If you subscribe or unsubscribe while the listeners are being invoked, this
-	   * will not have any effect on the `dispatch()` that is currently in progress.
-	   * However, the next `dispatch()` call, whether nested or not, will use a more
-	   * recent snapshot of the subscription list.
-	   *
-	   * 2. The listener should not expect to see all states changes, as the state
-	   * might have been updated multiple times during a nested `dispatch()` before
-	   * the listener is called. It is, however, guaranteed that all subscribers
-	   * registered before the `dispatch()` started will be called with the latest
-	   * state by the time it exits.
-	   *
-	   * @param {Function} listener A callback to be invoked on every dispatch.
-	   * @returns {Function} A function to remove this change listener.
-	   */
-	  function subscribe(listener) {
-	    if (typeof listener !== 'function') {
-	      throw new Error('Expected listener to be a function.');
-	    }
-	
-	    var isSubscribed = true;
-	
-	    ensureCanMutateNextListeners();
-	    nextListeners.push(listener);
-	
-	    return function unsubscribe() {
-	      if (!isSubscribed) {
-	        return;
-	      }
-	
-	      isSubscribed = false;
-	
-	      ensureCanMutateNextListeners();
-	      var index = nextListeners.indexOf(listener);
-	      nextListeners.splice(index, 1);
-	    };
-	  }
-	
-	  /**
-	   * Dispatches an action. It is the only way to trigger a state change.
-	   *
-	   * The `reducer` function, used to create the store, will be called with the
-	   * current state tree and the given `action`. Its return value will
-	   * be considered the **next** state of the tree, and the change listeners
-	   * will be notified.
-	   *
-	   * The base implementation only supports plain object actions. If you want to
-	   * dispatch a Promise, an Observable, a thunk, or something else, you need to
-	   * wrap your store creating function into the corresponding middleware. For
-	   * example, see the documentation for the `redux-thunk` package. Even the
-	   * middleware will eventually dispatch plain object actions using this method.
-	   *
-	   * @param {Object} action A plain object representing “what changed”. It is
-	   * a good idea to keep actions serializable so you can record and replay user
-	   * sessions, or use the time travelling `redux-devtools`. An action must have
-	   * a `type` property which may not be `undefined`. It is a good idea to use
-	   * string constants for action types.
-	   *
-	   * @returns {Object} For convenience, the same action object you dispatched.
-	   *
-	   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
-	   * return something else (for example, a Promise you can await).
-	   */
-	  function dispatch(action) {
-	    if (!(0, _isPlainObject2["default"])(action)) {
-	      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
-	    }
-	
-	    if (typeof action.type === 'undefined') {
-	      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
-	    }
-	
-	    if (isDispatching) {
-	      throw new Error('Reducers may not dispatch actions.');
-	    }
-	
-	    try {
-	      isDispatching = true;
-	      currentState = currentReducer(currentState, action);
-	    } finally {
-	      isDispatching = false;
-	    }
-	
-	    var listeners = currentListeners = nextListeners;
-	    for (var i = 0; i < listeners.length; i++) {
-	      listeners[i]();
-	    }
-	
-	    return action;
-	  }
-	
-	  /**
-	   * Replaces the reducer currently used by the store to calculate the state.
-	   *
-	   * You might need this if your app implements code splitting and you want to
-	   * load some of the reducers dynamically. You might also need this if you
-	   * implement a hot reloading mechanism for Redux.
-	   *
-	   * @param {Function} nextReducer The reducer for the store to use instead.
-	   * @returns {void}
-	   */
-	  function replaceReducer(nextReducer) {
-	    if (typeof nextReducer !== 'function') {
-	      throw new Error('Expected the nextReducer to be a function.');
-	    }
-	
-	    currentReducer = nextReducer;
-	    dispatch({ type: ActionTypes.INIT });
-	  }
-	
-	  // When a store is created, an "INIT" action is dispatched so that every
-	  // reducer returns their initial state. This effectively populates
-	  // the initial state tree.
-	  dispatch({ type: ActionTypes.INIT });
-	
-	  return {
-	    dispatch: dispatch,
-	    subscribe: subscribe,
-	    getState: getState,
-	    replaceReducer: replaceReducer
-	  };
-	}
-
-/***/ },
-/* 164 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var isHostObject = __webpack_require__(165),
-	    isObjectLike = __webpack_require__(166);
-	
-	/** `Object#toString` result references. */
-	var objectTag = '[object Object]';
-	
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-	
-	/** Used to resolve the decompiled source of functions. */
-	var funcToString = Function.prototype.toString;
-	
-	/** Used to infer the `Object` constructor. */
-	var objectCtorString = funcToString.call(Object);
-	
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objectToString = objectProto.toString;
-	
-	/** Built-in value references. */
-	var getPrototypeOf = Object.getPrototypeOf;
-	
-	/**
-	 * Checks if `value` is a plain object, that is, an object created by the
-	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 * }
-	 *
-	 * _.isPlainObject(new Foo);
-	 * // => false
-	 *
-	 * _.isPlainObject([1, 2, 3]);
-	 * // => false
-	 *
-	 * _.isPlainObject({ 'x': 0, 'y': 0 });
-	 * // => true
-	 *
-	 * _.isPlainObject(Object.create(null));
-	 * // => true
-	 */
-	function isPlainObject(value) {
-	  if (!isObjectLike(value) || objectToString.call(value) != objectTag || isHostObject(value)) {
-	    return false;
-	  }
-	  var proto = getPrototypeOf(value);
-	  if (proto === null) {
-	    return true;
-	  }
-	  var Ctor = proto.constructor;
-	  return typeof Ctor == 'function' && Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString;
-	}
-	
-	module.exports = isPlainObject;
-
-/***/ },
-/* 165 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 * Checks if `value` is a host object in IE < 9.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
-	 */
-	function isHostObject(value) {
-	  // Many host objects are `Object` objects that can coerce to strings
-	  // despite having improperly defined `toString` methods.
-	  var result = false;
-	  if (value != null && typeof value.toString != 'function') {
-	    try {
-	      result = !!(value + '');
-	    } catch (e) {}
-	  }
-	  return result;
-	}
-	
-	module.exports = isHostObject;
-
-/***/ },
-/* 166 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return !!value && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object';
-	}
-	
-	module.exports = isObjectLike;
-
-/***/ },
-/* 167 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-	
-	exports.__esModule = true;
-	exports["default"] = combineReducers;
-	
-	var _createStore = __webpack_require__(163);
-	
-	var _isPlainObject = __webpack_require__(164);
-	
-	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
-	
-	var _warning = __webpack_require__(168);
-	
-	var _warning2 = _interopRequireDefault(_warning);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { "default": obj };
-	}
-	
-	function getUndefinedStateErrorMessage(key, action) {
-	  var actionType = action && action.type;
-	  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
-	
-	  return 'Reducer "' + key + '" returned undefined handling ' + actionName + '. ' + 'To ignore an action, you must explicitly return the previous state.';
-	}
-	
-	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
-	  var reducerKeys = Object.keys(reducers);
-	  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
-	
-	  if (reducerKeys.length === 0) {
-	    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
-	  }
-	
-	  if (!(0, _isPlainObject2["default"])(inputState)) {
-	    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
-	  }
-	
-	  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
-	    return !reducers.hasOwnProperty(key);
-	  });
-	
-	  if (unexpectedKeys.length > 0) {
-	    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
-	  }
-	}
-	
-	function assertReducerSanity(reducers) {
-	  Object.keys(reducers).forEach(function (key) {
-	    var reducer = reducers[key];
-	    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
-	
-	    if (typeof initialState === 'undefined') {
-	      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
-	    }
-	
-	    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
-	    if (typeof reducer(undefined, { type: type }) === 'undefined') {
-	      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
-	    }
-	  });
-	}
-	
-	/**
-	 * Turns an object whose values are different reducer functions, into a single
-	 * reducer function. It will call every child reducer, and gather their results
-	 * into a single state object, whose keys correspond to the keys of the passed
-	 * reducer functions.
-	 *
-	 * @param {Object} reducers An object whose values correspond to different
-	 * reducer functions that need to be combined into one. One handy way to obtain
-	 * it is to use ES6 `import * as reducers` syntax. The reducers may never return
-	 * undefined for any action. Instead, they should return their initial state
-	 * if the state passed to them was undefined, and the current state for any
-	 * unrecognized action.
-	 *
-	 * @returns {Function} A reducer function that invokes every reducer inside the
-	 * passed object, and builds a state object with the same shape.
-	 */
-	function combineReducers(reducers) {
-	  var reducerKeys = Object.keys(reducers);
-	  var finalReducers = {};
-	  for (var i = 0; i < reducerKeys.length; i++) {
-	    var key = reducerKeys[i];
-	    if (typeof reducers[key] === 'function') {
-	      finalReducers[key] = reducers[key];
-	    }
-	  }
-	  var finalReducerKeys = Object.keys(finalReducers);
-	
-	  var sanityError;
-	  try {
-	    assertReducerSanity(finalReducers);
-	  } catch (e) {
-	    sanityError = e;
-	  }
-	
-	  return function combination() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	    var action = arguments[1];
-	
-	    if (sanityError) {
-	      throw sanityError;
-	    }
-	
-	    if (process.env.NODE_ENV !== 'production') {
-	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
-	      if (warningMessage) {
-	        (0, _warning2["default"])(warningMessage);
-	      }
-	    }
-	
-	    var hasChanged = false;
-	    var nextState = {};
-	    for (var i = 0; i < finalReducerKeys.length; i++) {
-	      var key = finalReducerKeys[i];
-	      var reducer = finalReducers[key];
-	      var previousStateForKey = state[key];
-	      var nextStateForKey = reducer(previousStateForKey, action);
-	      if (typeof nextStateForKey === 'undefined') {
-	        var errorMessage = getUndefinedStateErrorMessage(key, action);
-	        throw new Error(errorMessage);
-	      }
-	      nextState[key] = nextStateForKey;
-	      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
-	    }
-	    return hasChanged ? nextState : state;
-	  };
-	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ },
-/* 168 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	exports["default"] = warning;
-	/**
-	 * Prints a warning in the console if it exists.
-	 *
-	 * @param {String} message The warning message.
-	 * @returns {void}
-	 */
-	function warning(message) {
-	  /* eslint-disable no-console */
-	  if (typeof console !== 'undefined' && typeof console.error === 'function') {
-	    console.error(message);
-	  }
-	  /* eslint-enable no-console */
-	  try {
-	    // This error was thrown as a convenience so that you can use this stack
-	    // to find the callsite that caused this warning to fire.
-	    throw new Error(message);
-	    /* eslint-disable no-empty */
-	  } catch (e) {}
-	  /* eslint-enable no-empty */
-	}
-
-/***/ },
-/* 169 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	exports.__esModule = true;
-	exports["default"] = bindActionCreators;
-	function bindActionCreator(actionCreator, dispatch) {
-	  return function () {
-	    return dispatch(actionCreator.apply(undefined, arguments));
-	  };
-	}
-	
-	/**
-	 * Turns an object whose values are action creators, into an object with the
-	 * same keys, but with every function wrapped into a `dispatch` call so they
-	 * may be invoked directly. This is just a convenience method, as you can call
-	 * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
-	 *
-	 * For convenience, you can also pass a single function as the first argument,
-	 * and get a function in return.
-	 *
-	 * @param {Function|Object} actionCreators An object whose values are action
-	 * creator functions. One handy way to obtain it is to use ES6 `import * as`
-	 * syntax. You may also pass a single function.
-	 *
-	 * @param {Function} dispatch The `dispatch` function available on your Redux
-	 * store.
-	 *
-	 * @returns {Function|Object} The object mimicking the original object, but with
-	 * every action creator wrapped into the `dispatch` call. If you passed a
-	 * function as `actionCreators`, the return value will also be a single
-	 * function.
-	 */
-	function bindActionCreators(actionCreators, dispatch) {
-	  if (typeof actionCreators === 'function') {
-	    return bindActionCreator(actionCreators, dispatch);
-	  }
-	
-	  if ((typeof actionCreators === 'undefined' ? 'undefined' : _typeof(actionCreators)) !== 'object' || actionCreators === null) {
-	    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators === 'undefined' ? 'undefined' : _typeof(actionCreators)) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
-	  }
-	
-	  var keys = Object.keys(actionCreators);
-	  var boundActionCreators = {};
-	  for (var i = 0; i < keys.length; i++) {
-	    var key = keys[i];
-	    var actionCreator = actionCreators[key];
-	    if (typeof actionCreator === 'function') {
-	      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
-	    }
-	  }
-	  return boundActionCreators;
-	}
-
-/***/ },
-/* 170 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _extends = Object.assign || function (target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i];for (var key in source) {
-	      if (Object.prototype.hasOwnProperty.call(source, key)) {
-	        target[key] = source[key];
-	      }
-	    }
-	  }return target;
-	};
-	
-	exports.__esModule = true;
-	exports["default"] = applyMiddleware;
-	
-	var _compose = __webpack_require__(171);
-	
-	var _compose2 = _interopRequireDefault(_compose);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { "default": obj };
-	}
-	
-	/**
-	 * Creates a store enhancer that applies middleware to the dispatch method
-	 * of the Redux store. This is handy for a variety of tasks, such as expressing
-	 * asynchronous actions in a concise manner, or logging every action payload.
-	 *
-	 * See `redux-thunk` package as an example of the Redux middleware.
-	 *
-	 * Because middleware is potentially asynchronous, this should be the first
-	 * store enhancer in the composition chain.
-	 *
-	 * Note that each middleware will be given the `dispatch` and `getState` functions
-	 * as named arguments.
-	 *
-	 * @param {...Function} middlewares The middleware chain to be applied.
-	 * @returns {Function} A store enhancer applying the middleware.
-	 */
-	function applyMiddleware() {
-	  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
-	    middlewares[_key] = arguments[_key];
-	  }
-	
-	  return function (createStore) {
-	    return function (reducer, initialState, enhancer) {
-	      var store = createStore(reducer, initialState, enhancer);
-	      var _dispatch = store.dispatch;
-	      var chain = [];
-	
-	      var middlewareAPI = {
-	        getState: store.getState,
-	        dispatch: function dispatch(action) {
-	          return _dispatch(action);
-	        }
-	      };
-	      chain = middlewares.map(function (middleware) {
-	        return middleware(middlewareAPI);
-	      });
-	      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
-	
-	      return _extends({}, store, {
-	        dispatch: _dispatch
-	      });
-	    };
-	  };
-	}
-
-/***/ },
-/* 171 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	exports.__esModule = true;
-	exports["default"] = compose;
-	/**
-	 * Composes single-argument functions from right to left.
-	 *
-	 * @param {...Function} funcs The functions to compose.
-	 * @returns {Function} A function obtained by composing functions from right to
-	 * left. For example, compose(f, g, h) is identical to arg => f(g(h(arg))).
-	 */
-	function compose() {
-	  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
-	    funcs[_key] = arguments[_key];
-	  }
-	
-	  return function () {
-	    if (funcs.length === 0) {
-	      return arguments.length <= 0 ? undefined : arguments[0];
-	    }
-	
-	    var last = funcs[funcs.length - 1];
-	    var rest = funcs.slice(0, -1);
-	
-	    return rest.reduceRight(function (composed, f) {
-	      return f(composed);
-	    }, last.apply(undefined, arguments));
-	  };
-	}
-
-/***/ },
-/* 172 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 	
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 	
-	var _Provider = __webpack_require__(173);
+	var _Provider = __webpack_require__(163);
 	
 	var _Provider2 = _interopRequireDefault(_Provider);
 	
-	var _connect = __webpack_require__(175);
+	var _connect = __webpack_require__(165);
 	
 	var _connect2 = _interopRequireDefault(_connect);
 	
@@ -20655,7 +19915,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 173 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -20667,7 +19927,7 @@
 	
 	var _react = __webpack_require__(4);
 	
-	var _storeShape = __webpack_require__(174);
+	var _storeShape = __webpack_require__(164);
 	
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
@@ -20755,7 +20015,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ },
-/* 174 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20771,7 +20031,7 @@
 	});
 
 /***/ },
-/* 175 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -20793,15 +20053,15 @@
 	
 	var _react = __webpack_require__(4);
 	
-	var _storeShape = __webpack_require__(174);
+	var _storeShape = __webpack_require__(164);
 	
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
-	var _shallowEqual = __webpack_require__(176);
+	var _shallowEqual = __webpack_require__(166);
 	
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 	
-	var _wrapActionCreators = __webpack_require__(177);
+	var _wrapActionCreators = __webpack_require__(167);
 	
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 	
@@ -21123,7 +20383,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ },
-/* 176 */
+/* 166 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21154,7 +20414,7 @@
 	}
 
 /***/ },
-/* 177 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21162,11 +20422,751 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 	
-	var _redux = __webpack_require__(162);
+	var _redux = __webpack_require__(168);
 	
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
 	    return (0, _redux.bindActionCreators)(actionCreators, dispatch);
+	  };
+	}
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	
+	exports.__esModule = true;
+	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
+	
+	var _createStore = __webpack_require__(169);
+	
+	var _createStore2 = _interopRequireDefault(_createStore);
+	
+	var _combineReducers = __webpack_require__(173);
+	
+	var _combineReducers2 = _interopRequireDefault(_combineReducers);
+	
+	var _bindActionCreators = __webpack_require__(175);
+	
+	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
+	
+	var _applyMiddleware = __webpack_require__(176);
+	
+	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
+	
+	var _compose = __webpack_require__(177);
+	
+	var _compose2 = _interopRequireDefault(_compose);
+	
+	var _warning = __webpack_require__(174);
+	
+	var _warning2 = _interopRequireDefault(_warning);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { "default": obj };
+	}
+	
+	/*
+	* This is a dummy function to check if the function name has been altered by minification.
+	* If the function has been minified and NODE_ENV !== 'production', warn the user.
+	*/
+	function isCrushed() {}
+	
+	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+	  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+	}
+	
+	exports.createStore = _createStore2["default"];
+	exports.combineReducers = _combineReducers2["default"];
+	exports.bindActionCreators = _bindActionCreators2["default"];
+	exports.applyMiddleware = _applyMiddleware2["default"];
+	exports.compose = _compose2["default"];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports.ActionTypes = undefined;
+	exports["default"] = createStore;
+	
+	var _isPlainObject = __webpack_require__(170);
+	
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { "default": obj };
+	}
+	
+	/**
+	 * These are private action types reserved by Redux.
+	 * For any unknown actions, you must return the current state.
+	 * If the current state is undefined, you must return the initial state.
+	 * Do not reference these action types directly in your code.
+	 */
+	var ActionTypes = exports.ActionTypes = {
+	  INIT: '@@redux/INIT'
+	};
+	
+	/**
+	 * Creates a Redux store that holds the state tree.
+	 * The only way to change the data in the store is to call `dispatch()` on it.
+	 *
+	 * There should only be a single store in your app. To specify how different
+	 * parts of the state tree respond to actions, you may combine several reducers
+	 * into a single reducer function by using `combineReducers`.
+	 *
+	 * @param {Function} reducer A function that returns the next state tree, given
+	 * the current state tree and the action to handle.
+	 *
+	 * @param {any} [initialState] The initial state. You may optionally specify it
+	 * to hydrate the state from the server in universal apps, or to restore a
+	 * previously serialized user session.
+	 * If you use `combineReducers` to produce the root reducer function, this must be
+	 * an object with the same shape as `combineReducers` keys.
+	 *
+	 * @param {Function} enhancer The store enhancer. You may optionally specify it
+	 * to enhance the store with third-party capabilities such as middleware,
+	 * time travel, persistence, etc. The only store enhancer that ships with Redux
+	 * is `applyMiddleware()`.
+	 *
+	 * @returns {Store} A Redux store that lets you read the state, dispatch actions
+	 * and subscribe to changes.
+	 */
+	function createStore(reducer, initialState, enhancer) {
+	  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
+	    enhancer = initialState;
+	    initialState = undefined;
+	  }
+	
+	  if (typeof enhancer !== 'undefined') {
+	    if (typeof enhancer !== 'function') {
+	      throw new Error('Expected the enhancer to be a function.');
+	    }
+	
+	    return enhancer(createStore)(reducer, initialState);
+	  }
+	
+	  if (typeof reducer !== 'function') {
+	    throw new Error('Expected the reducer to be a function.');
+	  }
+	
+	  var currentReducer = reducer;
+	  var currentState = initialState;
+	  var currentListeners = [];
+	  var nextListeners = currentListeners;
+	  var isDispatching = false;
+	
+	  function ensureCanMutateNextListeners() {
+	    if (nextListeners === currentListeners) {
+	      nextListeners = currentListeners.slice();
+	    }
+	  }
+	
+	  /**
+	   * Reads the state tree managed by the store.
+	   *
+	   * @returns {any} The current state tree of your application.
+	   */
+	  function getState() {
+	    return currentState;
+	  }
+	
+	  /**
+	   * Adds a change listener. It will be called any time an action is dispatched,
+	   * and some part of the state tree may potentially have changed. You may then
+	   * call `getState()` to read the current state tree inside the callback.
+	   *
+	   * You may call `dispatch()` from a change listener, with the following
+	   * caveats:
+	   *
+	   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+	   * If you subscribe or unsubscribe while the listeners are being invoked, this
+	   * will not have any effect on the `dispatch()` that is currently in progress.
+	   * However, the next `dispatch()` call, whether nested or not, will use a more
+	   * recent snapshot of the subscription list.
+	   *
+	   * 2. The listener should not expect to see all states changes, as the state
+	   * might have been updated multiple times during a nested `dispatch()` before
+	   * the listener is called. It is, however, guaranteed that all subscribers
+	   * registered before the `dispatch()` started will be called with the latest
+	   * state by the time it exits.
+	   *
+	   * @param {Function} listener A callback to be invoked on every dispatch.
+	   * @returns {Function} A function to remove this change listener.
+	   */
+	  function subscribe(listener) {
+	    if (typeof listener !== 'function') {
+	      throw new Error('Expected listener to be a function.');
+	    }
+	
+	    var isSubscribed = true;
+	
+	    ensureCanMutateNextListeners();
+	    nextListeners.push(listener);
+	
+	    return function unsubscribe() {
+	      if (!isSubscribed) {
+	        return;
+	      }
+	
+	      isSubscribed = false;
+	
+	      ensureCanMutateNextListeners();
+	      var index = nextListeners.indexOf(listener);
+	      nextListeners.splice(index, 1);
+	    };
+	  }
+	
+	  /**
+	   * Dispatches an action. It is the only way to trigger a state change.
+	   *
+	   * The `reducer` function, used to create the store, will be called with the
+	   * current state tree and the given `action`. Its return value will
+	   * be considered the **next** state of the tree, and the change listeners
+	   * will be notified.
+	   *
+	   * The base implementation only supports plain object actions. If you want to
+	   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+	   * wrap your store creating function into the corresponding middleware. For
+	   * example, see the documentation for the `redux-thunk` package. Even the
+	   * middleware will eventually dispatch plain object actions using this method.
+	   *
+	   * @param {Object} action A plain object representing “what changed”. It is
+	   * a good idea to keep actions serializable so you can record and replay user
+	   * sessions, or use the time travelling `redux-devtools`. An action must have
+	   * a `type` property which may not be `undefined`. It is a good idea to use
+	   * string constants for action types.
+	   *
+	   * @returns {Object} For convenience, the same action object you dispatched.
+	   *
+	   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+	   * return something else (for example, a Promise you can await).
+	   */
+	  function dispatch(action) {
+	    if (!(0, _isPlainObject2["default"])(action)) {
+	      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
+	    }
+	
+	    if (typeof action.type === 'undefined') {
+	      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
+	    }
+	
+	    if (isDispatching) {
+	      throw new Error('Reducers may not dispatch actions.');
+	    }
+	
+	    try {
+	      isDispatching = true;
+	      currentState = currentReducer(currentState, action);
+	    } finally {
+	      isDispatching = false;
+	    }
+	
+	    var listeners = currentListeners = nextListeners;
+	    for (var i = 0; i < listeners.length; i++) {
+	      listeners[i]();
+	    }
+	
+	    return action;
+	  }
+	
+	  /**
+	   * Replaces the reducer currently used by the store to calculate the state.
+	   *
+	   * You might need this if your app implements code splitting and you want to
+	   * load some of the reducers dynamically. You might also need this if you
+	   * implement a hot reloading mechanism for Redux.
+	   *
+	   * @param {Function} nextReducer The reducer for the store to use instead.
+	   * @returns {void}
+	   */
+	  function replaceReducer(nextReducer) {
+	    if (typeof nextReducer !== 'function') {
+	      throw new Error('Expected the nextReducer to be a function.');
+	    }
+	
+	    currentReducer = nextReducer;
+	    dispatch({ type: ActionTypes.INIT });
+	  }
+	
+	  // When a store is created, an "INIT" action is dispatched so that every
+	  // reducer returns their initial state. This effectively populates
+	  // the initial state tree.
+	  dispatch({ type: ActionTypes.INIT });
+	
+	  return {
+	    dispatch: dispatch,
+	    subscribe: subscribe,
+	    getState: getState,
+	    replaceReducer: replaceReducer
+	  };
+	}
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var isHostObject = __webpack_require__(171),
+	    isObjectLike = __webpack_require__(172);
+	
+	/** `Object#toString` result references. */
+	var objectTag = '[object Object]';
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = Function.prototype.toString;
+	
+	/** Used to infer the `Object` constructor. */
+	var objectCtorString = funcToString.call(Object);
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var getPrototypeOf = Object.getPrototypeOf;
+	
+	/**
+	 * Checks if `value` is a plain object, that is, an object created by the
+	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 * }
+	 *
+	 * _.isPlainObject(new Foo);
+	 * // => false
+	 *
+	 * _.isPlainObject([1, 2, 3]);
+	 * // => false
+	 *
+	 * _.isPlainObject({ 'x': 0, 'y': 0 });
+	 * // => true
+	 *
+	 * _.isPlainObject(Object.create(null));
+	 * // => true
+	 */
+	function isPlainObject(value) {
+	  if (!isObjectLike(value) || objectToString.call(value) != objectTag || isHostObject(value)) {
+	    return false;
+	  }
+	  var proto = getPrototypeOf(value);
+	  if (proto === null) {
+	    return true;
+	  }
+	  var Ctor = proto.constructor;
+	  return typeof Ctor == 'function' && Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString;
+	}
+	
+	module.exports = isPlainObject;
+
+/***/ },
+/* 171 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Checks if `value` is a host object in IE < 9.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+	 */
+	function isHostObject(value) {
+	  // Many host objects are `Object` objects that can coerce to strings
+	  // despite having improperly defined `toString` methods.
+	  var result = false;
+	  if (value != null && typeof value.toString != 'function') {
+	    try {
+	      result = !!(value + '');
+	    } catch (e) {}
+	  }
+	  return result;
+	}
+	
+	module.exports = isHostObject;
+
+/***/ },
+/* 172 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object';
+	}
+	
+	module.exports = isObjectLike;
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	
+	exports.__esModule = true;
+	exports["default"] = combineReducers;
+	
+	var _createStore = __webpack_require__(169);
+	
+	var _isPlainObject = __webpack_require__(170);
+	
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+	
+	var _warning = __webpack_require__(174);
+	
+	var _warning2 = _interopRequireDefault(_warning);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { "default": obj };
+	}
+	
+	function getUndefinedStateErrorMessage(key, action) {
+	  var actionType = action && action.type;
+	  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
+	
+	  return 'Reducer "' + key + '" returned undefined handling ' + actionName + '. ' + 'To ignore an action, you must explicitly return the previous state.';
+	}
+	
+	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
+	  var reducerKeys = Object.keys(reducers);
+	  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
+	
+	  if (reducerKeys.length === 0) {
+	    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
+	  }
+	
+	  if (!(0, _isPlainObject2["default"])(inputState)) {
+	    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
+	  }
+	
+	  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
+	    return !reducers.hasOwnProperty(key);
+	  });
+	
+	  if (unexpectedKeys.length > 0) {
+	    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
+	  }
+	}
+	
+	function assertReducerSanity(reducers) {
+	  Object.keys(reducers).forEach(function (key) {
+	    var reducer = reducers[key];
+	    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
+	
+	    if (typeof initialState === 'undefined') {
+	      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
+	    }
+	
+	    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
+	    if (typeof reducer(undefined, { type: type }) === 'undefined') {
+	      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
+	    }
+	  });
+	}
+	
+	/**
+	 * Turns an object whose values are different reducer functions, into a single
+	 * reducer function. It will call every child reducer, and gather their results
+	 * into a single state object, whose keys correspond to the keys of the passed
+	 * reducer functions.
+	 *
+	 * @param {Object} reducers An object whose values correspond to different
+	 * reducer functions that need to be combined into one. One handy way to obtain
+	 * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+	 * undefined for any action. Instead, they should return their initial state
+	 * if the state passed to them was undefined, and the current state for any
+	 * unrecognized action.
+	 *
+	 * @returns {Function} A reducer function that invokes every reducer inside the
+	 * passed object, and builds a state object with the same shape.
+	 */
+	function combineReducers(reducers) {
+	  var reducerKeys = Object.keys(reducers);
+	  var finalReducers = {};
+	  for (var i = 0; i < reducerKeys.length; i++) {
+	    var key = reducerKeys[i];
+	    if (typeof reducers[key] === 'function') {
+	      finalReducers[key] = reducers[key];
+	    }
+	  }
+	  var finalReducerKeys = Object.keys(finalReducers);
+	
+	  var sanityError;
+	  try {
+	    assertReducerSanity(finalReducers);
+	  } catch (e) {
+	    sanityError = e;
+	  }
+	
+	  return function combination() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var action = arguments[1];
+	
+	    if (sanityError) {
+	      throw sanityError;
+	    }
+	
+	    if (process.env.NODE_ENV !== 'production') {
+	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
+	      if (warningMessage) {
+	        (0, _warning2["default"])(warningMessage);
+	      }
+	    }
+	
+	    var hasChanged = false;
+	    var nextState = {};
+	    for (var i = 0; i < finalReducerKeys.length; i++) {
+	      var key = finalReducerKeys[i];
+	      var reducer = finalReducers[key];
+	      var previousStateForKey = state[key];
+	      var nextStateForKey = reducer(previousStateForKey, action);
+	      if (typeof nextStateForKey === 'undefined') {
+	        var errorMessage = getUndefinedStateErrorMessage(key, action);
+	        throw new Error(errorMessage);
+	      }
+	      nextState[key] = nextStateForKey;
+	      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+	    }
+	    return hasChanged ? nextState : state;
+	  };
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+
+/***/ },
+/* 174 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports["default"] = warning;
+	/**
+	 * Prints a warning in the console if it exists.
+	 *
+	 * @param {String} message The warning message.
+	 * @returns {void}
+	 */
+	function warning(message) {
+	  /* eslint-disable no-console */
+	  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+	    console.error(message);
+	  }
+	  /* eslint-enable no-console */
+	  try {
+	    // This error was thrown as a convenience so that you can use this stack
+	    // to find the callsite that caused this warning to fire.
+	    throw new Error(message);
+	    /* eslint-disable no-empty */
+	  } catch (e) {}
+	  /* eslint-enable no-empty */
+	}
+
+/***/ },
+/* 175 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	exports.__esModule = true;
+	exports["default"] = bindActionCreators;
+	function bindActionCreator(actionCreator, dispatch) {
+	  return function () {
+	    return dispatch(actionCreator.apply(undefined, arguments));
+	  };
+	}
+	
+	/**
+	 * Turns an object whose values are action creators, into an object with the
+	 * same keys, but with every function wrapped into a `dispatch` call so they
+	 * may be invoked directly. This is just a convenience method, as you can call
+	 * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+	 *
+	 * For convenience, you can also pass a single function as the first argument,
+	 * and get a function in return.
+	 *
+	 * @param {Function|Object} actionCreators An object whose values are action
+	 * creator functions. One handy way to obtain it is to use ES6 `import * as`
+	 * syntax. You may also pass a single function.
+	 *
+	 * @param {Function} dispatch The `dispatch` function available on your Redux
+	 * store.
+	 *
+	 * @returns {Function|Object} The object mimicking the original object, but with
+	 * every action creator wrapped into the `dispatch` call. If you passed a
+	 * function as `actionCreators`, the return value will also be a single
+	 * function.
+	 */
+	function bindActionCreators(actionCreators, dispatch) {
+	  if (typeof actionCreators === 'function') {
+	    return bindActionCreator(actionCreators, dispatch);
+	  }
+	
+	  if ((typeof actionCreators === 'undefined' ? 'undefined' : _typeof(actionCreators)) !== 'object' || actionCreators === null) {
+	    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators === 'undefined' ? 'undefined' : _typeof(actionCreators)) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
+	  }
+	
+	  var keys = Object.keys(actionCreators);
+	  var boundActionCreators = {};
+	  for (var i = 0; i < keys.length; i++) {
+	    var key = keys[i];
+	    var actionCreator = actionCreators[key];
+	    if (typeof actionCreator === 'function') {
+	      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+	    }
+	  }
+	  return boundActionCreators;
+	}
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
+	
+	exports.__esModule = true;
+	exports["default"] = applyMiddleware;
+	
+	var _compose = __webpack_require__(177);
+	
+	var _compose2 = _interopRequireDefault(_compose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { "default": obj };
+	}
+	
+	/**
+	 * Creates a store enhancer that applies middleware to the dispatch method
+	 * of the Redux store. This is handy for a variety of tasks, such as expressing
+	 * asynchronous actions in a concise manner, or logging every action payload.
+	 *
+	 * See `redux-thunk` package as an example of the Redux middleware.
+	 *
+	 * Because middleware is potentially asynchronous, this should be the first
+	 * store enhancer in the composition chain.
+	 *
+	 * Note that each middleware will be given the `dispatch` and `getState` functions
+	 * as named arguments.
+	 *
+	 * @param {...Function} middlewares The middleware chain to be applied.
+	 * @returns {Function} A store enhancer applying the middleware.
+	 */
+	function applyMiddleware() {
+	  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
+	    middlewares[_key] = arguments[_key];
+	  }
+	
+	  return function (createStore) {
+	    return function (reducer, initialState, enhancer) {
+	      var store = createStore(reducer, initialState, enhancer);
+	      var _dispatch = store.dispatch;
+	      var chain = [];
+	
+	      var middlewareAPI = {
+	        getState: store.getState,
+	        dispatch: function dispatch(action) {
+	          return _dispatch(action);
+	        }
+	      };
+	      chain = middlewares.map(function (middleware) {
+	        return middleware(middlewareAPI);
+	      });
+	      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
+	
+	      return _extends({}, store, {
+	        dispatch: _dispatch
+	      });
+	    };
+	  };
+	}
+
+/***/ },
+/* 177 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	exports["default"] = compose;
+	/**
+	 * Composes single-argument functions from right to left.
+	 *
+	 * @param {...Function} funcs The functions to compose.
+	 * @returns {Function} A function obtained by composing functions from right to
+	 * left. For example, compose(f, g, h) is identical to arg => f(g(h(arg))).
+	 */
+	function compose() {
+	  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
+	    funcs[_key] = arguments[_key];
+	  }
+	
+	  return function () {
+	    if (funcs.length === 0) {
+	      return arguments.length <= 0 ? undefined : arguments[0];
+	    }
+	
+	    var last = funcs[funcs.length - 1];
+	    var rest = funcs.slice(0, -1);
+	
+	    return rest.reduceRight(function (composed, f) {
+	      return f(composed);
+	    }, last.apply(undefined, arguments));
 	  };
 	}
 
@@ -21418,31 +21418,33 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _redux = __webpack_require__(162);
+	var _redux = __webpack_require__(168);
 	
-	var _reactRedux = __webpack_require__(172);
+	var _reactRedux = __webpack_require__(162);
 	
-	var _FetchingBar = __webpack_require__(193);
+	var _FetchingBar = __webpack_require__(184);
 	
 	var _FetchingBar2 = _interopRequireDefault(_FetchingBar);
 	
-	var _NavbarBrand = __webpack_require__(184);
+	var _NavbarBrand = __webpack_require__(185);
 	
 	var _NavbarBrand2 = _interopRequireDefault(_NavbarBrand);
 	
-	var _UserPanel = __webpack_require__(185);
+	var _UserPanel = __webpack_require__(186);
 	
 	var _UserPanel2 = _interopRequireDefault(_UserPanel);
 	
-	var _UserActions = __webpack_require__(186);
+	var _UserActions = __webpack_require__(187);
 	
 	var userActions = _interopRequireWildcard(_UserActions);
 	
-	var _FetchingBarActions = __webpack_require__(196);
+	var _FetchingBarActions = __webpack_require__(189);
 	
 	var fetchingBarActions = _interopRequireWildcard(_FetchingBarActions);
 	
-	var _EventEmitter = __webpack_require__(197);
+	var _wolfy87Eventemitter = __webpack_require__(191);
+	
+	var _wolfy87Eventemitter2 = _interopRequireDefault(_wolfy87Eventemitter);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
@@ -21454,7 +21456,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	window.ee = new _EventEmitter.EventEmitter();
+	window.ee = new _wolfy87Eventemitter2.default();
 	
 	var App = function (_Component) {
 	    _inherits(App, _Component);
@@ -21552,6 +21554,78 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var FetchingBar = function (_Component) {
+	    _inherits(FetchingBar, _Component);
+	
+	    function FetchingBar() {
+	        _classCallCheck(this, FetchingBar);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FetchingBar).apply(this, arguments));
+	    }
+	
+	    _createClass(FetchingBar, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var self = this;
+	
+	            window.ee.addListener('changeFetchState', function (fetchState) {
+	                self.props.setFetchingBarState(fetchState);
+	
+	                if (fetchState == 'end') {
+	                    setTimeout(function () {
+	                        self.props.setFetchingBarState('hide');
+	                    }, 1000);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            window.ee.removeListener('changeFetchState');
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var fetchClass = 'fetching ' + (this.props.fetchClass ? this.props.fetchClass : '');
+	
+	            return _react2.default.createElement('div', { id: 'fetching', className: fetchClass });
+	        }
+	    }]);
+	
+	    return FetchingBar;
+	}(_react.Component);
+	
+	exports.default = FetchingBar;
+	
+	
+	FetchingBar.PropTypes = {
+	    setFetchingBarState: _react.PropTypes.func.isRequired
+	};
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
 	var NavbarBrand = function (_Component) {
 	    _inherits(NavbarBrand, _Component);
 	
@@ -21596,7 +21670,7 @@
 	exports.default = NavbarBrand;
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21636,7 +21710,7 @@
 	        value: function onClickLogoutBtn(e) {
 	            e.preventDefault();
 	            this.props.setLogined(false);
-	            this.props.setFetchingBarState('start');
+	            window.ee.emit('changeFetchState', 'start');
 	        }
 	    }, {
 	        key: 'render',
@@ -21694,7 +21768,7 @@
 	};
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21704,7 +21778,7 @@
 	});
 	exports.setLogined = setLogined;
 	
-	var _User = __webpack_require__(187);
+	var _User = __webpack_require__(188);
 	
 	function setLogined(bool) {
 	    return function (dispatch) {
@@ -21724,7 +21798,7 @@
 	                dispatch({
 	                    type: _User.SET_LOGINED_FAILED
 	                });
-	
+	                window.ee.emit('changeFetchState', 'hide');
 	                console.log("Error! Not logout!");
 	            } else {
 	
@@ -21741,7 +21815,7 @@
 	}
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21754,263 +21828,7 @@
 	var SET_LOGINED_FAILED = exports.SET_LOGINED_FAILED = 'SET_LOGINED_FAILED';
 
 /***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = configureStore;
-	
-	var _redux = __webpack_require__(162);
-	
-	var _reducers = __webpack_require__(189);
-	
-	var _reducers2 = _interopRequireDefault(_reducers);
-	
-	var _reduxThunk = __webpack_require__(192);
-	
-	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function configureStore(initialState) {
-	    var store = (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.applyMiddleware)(_reduxThunk2.default));
-	
-	    if (false) {
-	        module.hot.accept('../reducers', function () {
-	            var nextRootReducer = require('../reducers');
-	            store.replaceReducer(nextRootReducer);
-	        });
-	    }
-	
-	    return store;
-	}
-
-/***/ },
 /* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _redux = __webpack_require__(162);
-	
-	var _page = __webpack_require__(190);
-	
-	var _page2 = _interopRequireDefault(_page);
-	
-	var _user = __webpack_require__(191);
-	
-	var _user2 = _interopRequireDefault(_user);
-	
-	var _fetchingBar = __webpack_require__(194);
-	
-	var _fetchingBar2 = _interopRequireDefault(_fetchingBar);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = (0, _redux.combineReducers)({
-	    page: _page2.default,
-	    user: _user2.default,
-	    fetchingBar: _fetchingBar2.default
-	});
-
-/***/ },
-/* 190 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = page;
-	var initialState = {
-	    images: cunameUser.images
-	};
-	
-	function page() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	
-	    return state;
-	}
-
-/***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = user;
-	
-	var _User = __webpack_require__(187);
-	
-	var initialState = {
-	    name: cunameUser.username,
-	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false
-	};
-	
-	function user() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case _User.SET_LOGINED_REQUEST:
-	            return Object.assign({}, state, { logined: action.payload });
-	
-	        case _User.SET_LOGINED_FAILED:
-	            return Object.assign({}, state);
-	
-	        case _User.SET_LOGINED_SUCCESS:
-	            return Object.assign({}, state, { logined: action.payload });
-	
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 192 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	exports['default'] = thunkMiddleware;
-	function thunkMiddleware(_ref) {
-	  var dispatch = _ref.dispatch;
-	  var getState = _ref.getState;
-	
-	  return function (next) {
-	    return function (action) {
-	      if (typeof action === 'function') {
-	        return action(dispatch, getState);
-	      }
-	
-	      return next(action);
-	    };
-	  };
-	}
-
-/***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(4);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var FetchingBar = function (_Component) {
-	    _inherits(FetchingBar, _Component);
-	
-	    function FetchingBar() {
-	        _classCallCheck(this, FetchingBar);
-	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FetchingBar).apply(this, arguments));
-	    }
-	
-	    _createClass(FetchingBar, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            window.ee.addListener('changeFetchState', function (fetchState) {
-	                this.props.setFetchingBarState(fetchState);
-	            });
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            window.ee.removeListener('changeFetchState');
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var fetchClass = 'fetching ' + (this.props.fetchClass ? this.props.fetchClass : '');
-	
-	            return _react2.default.createElement('div', { id: 'fetching', className: fetchClass });
-	        }
-	    }]);
-	
-	    return FetchingBar;
-	}(_react.Component);
-
-	exports.default = FetchingBar;
-
-/***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = fetchingBar;
-	
-	var _FetchingBar = __webpack_require__(195);
-	
-	var initialState = {
-	    fetching: false
-	};
-	
-	function fetchingBar() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case _FetchingBar.SET_FETCHING_START:
-	            return Object.assign({}, state, { fetching: action.payload });
-	
-	        case _FetchingBar.SET_FETCHING_END:
-	            return Object.assign({}, state, { fetching: action.payload });
-	
-	        case _FetchingBar.SET_FETCHING_HIDE:
-	            return Object.assign({}, state, { fetching: false });
-	
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 195 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var SET_FETCHING_START = exports.SET_FETCHING_START = 'SET_FETCHING_START';
-	var SET_FETCHING_END = exports.SET_FETCHING_END = 'SET_FETCHING_END';
-	var SET_FETCHING_HIDE = exports.SET_FETCHING_HIDE = 'SET_FETCHING_HIDE';
-
-/***/ },
-/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22020,7 +21838,7 @@
 	});
 	exports.setFetchingBarState = setFetchingBarState;
 	
-	var _FetchingBar = __webpack_require__(195);
+	var _FetchingBar = __webpack_require__(190);
 	
 	function setFetchingBarState(barState) {
 	    return function (dispatch) {
@@ -22057,111 +21875,640 @@
 	}
 
 /***/ },
-/* 197 */
+/* 190 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var SET_FETCHING_START = exports.SET_FETCHING_START = 'SET_FETCHING_START';
+	var SET_FETCHING_END = exports.SET_FETCHING_END = 'SET_FETCHING_END';
+	var SET_FETCHING_HIDE = exports.SET_FETCHING_HIDE = 'SET_FETCHING_HIDE';
+
+/***/ },
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
+	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
 	/*!
-	 * EventEmitter v4.2.11 - git.io/ee
-	 * Unlicense - http://unlicense.org/
-	 * Oliver Caldwell - http://oli.me.uk/
+	 * EventEmitter v4.2.0 - git.io/ee
+	 * Oliver Caldwell
+	 * MIT license
 	 * @preserve
 	 */
+	
 	(function () {
-	  "use strict";
-	  function t() {}function i(t, n) {
-	    for (var e = t.length; e--;) {
-	      if (t[e].listener === n) return e;
-	    }return -1;
-	  }function n(e) {
-	    return function () {
-	      return this[e].apply(this, arguments);
-	    };
-	  }var e = t.prototype,
-	      r = this,
-	      s = r.EventEmitter;e.getListeners = function (n) {
-	    var r,
-	        e,
-	        t = this._getEvents();if (n instanceof RegExp) {
-	      r = {};for (e in t) {
-	        t.hasOwnProperty(e) && n.test(e) && (r[e] = t[e]);
-	      }
-	    } else r = t[n] || (t[n] = []);return r;
-	  }, e.flattenListeners = function (t) {
-	    var e,
-	        n = [];for (e = 0; e < t.length; e += 1) {
-	      n.push(t[e].listener);
-	    }return n;
-	  }, e.getListenersAsObject = function (n) {
-	    var e,
-	        t = this.getListeners(n);return t instanceof Array && (e = {}, e[n] = t), e || t;
-	  }, e.addListener = function (r, e) {
-	    var t,
-	        n = this.getListenersAsObject(r),
-	        s = "object" == (typeof e === "undefined" ? "undefined" : _typeof(e));for (t in n) {
-	      n.hasOwnProperty(t) && -1 === i(n[t], e) && n[t].push(s ? e : { listener: e, once: !1 });
-	    }return this;
-	  }, e.on = n("addListener"), e.addOnceListener = function (e, t) {
-	    return this.addListener(e, { listener: t, once: !0 });
-	  }, e.once = n("addOnceListener"), e.defineEvent = function (e) {
-	    return this.getListeners(e), this;
-	  }, e.defineEvents = function (t) {
-	    for (var e = 0; e < t.length; e += 1) {
-	      this.defineEvent(t[e]);
-	    }return this;
-	  }, e.removeListener = function (r, s) {
-	    var n,
-	        e,
-	        t = this.getListenersAsObject(r);for (e in t) {
-	      t.hasOwnProperty(e) && (n = i(t[e], s), -1 !== n && t[e].splice(n, 1));
-	    }return this;
-	  }, e.off = n("removeListener"), e.addListeners = function (e, t) {
-	    return this.manipulateListeners(!1, e, t);
-	  }, e.removeListeners = function (e, t) {
-	    return this.manipulateListeners(!0, e, t);
-	  }, e.manipulateListeners = function (r, t, i) {
-	    var e,
-	        n,
-	        s = r ? this.removeListener : this.addListener,
-	        o = r ? this.removeListeners : this.addListeners;if ("object" != (typeof t === "undefined" ? "undefined" : _typeof(t)) || t instanceof RegExp) for (e = i.length; e--;) {
-	      s.call(this, t, i[e]);
-	    } else for (e in t) {
-	      t.hasOwnProperty(e) && (n = t[e]) && ("function" == typeof n ? s.call(this, e, n) : o.call(this, e, n));
-	    }return this;
-	  }, e.removeEvent = function (e) {
-	    var t,
-	        r = typeof e === "undefined" ? "undefined" : _typeof(e),
-	        n = this._getEvents();if ("string" === r) delete n[e];else if (e instanceof RegExp) for (t in n) {
-	      n.hasOwnProperty(t) && e.test(t) && delete n[t];
-	    } else delete this._events;return this;
-	  }, e.removeAllListeners = n("removeEvent"), e.emitEvent = function (t, u) {
-	    var n,
-	        e,
-	        r,
-	        i,
-	        o,
-	        s = this.getListenersAsObject(t);for (i in s) {
-	      if (s.hasOwnProperty(i)) for (n = s[i].slice(0), r = n.length; r--;) {
-	        e = n[r], e.once === !0 && this.removeListener(t, e.listener), o = e.listener.apply(this, u || []), o === this._getOnceReturnValue() && this.removeListener(t, e.listener);
-	      }
-	    }return this;
-	  }, e.trigger = n("emitEvent"), e.emit = function (e) {
-	    var t = Array.prototype.slice.call(arguments, 1);return this.emitEvent(e, t);
-	  }, e.setOnceReturnValue = function (e) {
-	    return this._onceReturnValue = e, this;
-	  }, e._getOnceReturnValue = function () {
-	    return this.hasOwnProperty("_onceReturnValue") ? this._onceReturnValue : !0;
-	  }, e._getEvents = function () {
-	    return this._events || (this._events = {});
-	  }, t.noConflict = function () {
-	    return r.EventEmitter = s, t;
-	  },  true ? !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	    return t;
-	  }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof module === "undefined" ? "undefined" : _typeof(module)) && module.exports ? module.exports = t : r.EventEmitter = t;
+		// Place the script in strict mode
+		'use strict';
+	
+		/**
+	  * Class for managing events.
+	  * Can be extended to provide event functionality in other classes.
+	  *
+	  * @class EventEmitter Manages event registering and emitting.
+	  */
+	
+		function EventEmitter() {}
+	
+		// Shortcuts to improve speed and size
+	
+		// Easy access to the prototype
+		var proto = EventEmitter.prototype;
+	
+		/**
+	  * Finds the index of the listener for the event in it's storage array.
+	  *
+	  * @param {Function[]} listeners Array of listeners to search through.
+	  * @param {Function} listener Method to look for.
+	  * @return {Number} Index of the specified listener, -1 if not found
+	  * @api private
+	  */
+		function indexOfListener(listeners, listener) {
+			var i = listeners.length;
+			while (i--) {
+				if (listeners[i].listener === listener) {
+					return i;
+				}
+			}
+	
+			return -1;
+		}
+	
+		/**
+	  * Returns the listener array for the specified event.
+	  * Will initialise the event object and listener arrays if required.
+	  * Will return an object if you use a regex search. The object contains keys for each matched event. So /ba[rz]/ might return an object containing bar and baz. But only if you have either defined them with defineEvent or added some listeners to them.
+	  * Each property in the object response is an array of listener functions.
+	  *
+	  * @param {String|RegExp} evt Name of the event to return the listeners from.
+	  * @return {Function[]|Object} All listener functions for the event.
+	  */
+		proto.getListeners = function getListeners(evt) {
+			var events = this._getEvents();
+			var response;
+			var key;
+	
+			// Return a concatenated array of all matching events if
+			// the selector is a regular expression.
+			if ((typeof evt === 'undefined' ? 'undefined' : _typeof(evt)) === 'object') {
+				response = {};
+				for (key in events) {
+					if (events.hasOwnProperty(key) && evt.test(key)) {
+						response[key] = events[key];
+					}
+				}
+			} else {
+				response = events[evt] || (events[evt] = []);
+			}
+	
+			return response;
+		};
+	
+		/**
+	  * Takes a list of listener objects and flattens it into a list of listener functions.
+	  *
+	  * @param {Object[]} listeners Raw listener objects.
+	  * @return {Function[]} Just the listener functions.
+	  */
+		proto.flattenListeners = function flattenListeners(listeners) {
+			var flatListeners = [];
+			var i;
+	
+			for (i = 0; i < listeners.length; i += 1) {
+				flatListeners.push(listeners[i].listener);
+			}
+	
+			return flatListeners;
+		};
+	
+		/**
+	  * Fetches the requested listeners via getListeners but will always return the results inside an object. This is mainly for internal use but others may find it useful.
+	  *
+	  * @param {String|RegExp} evt Name of the event to return the listeners from.
+	  * @return {Object} All listener functions for an event in an object.
+	  */
+		proto.getListenersAsObject = function getListenersAsObject(evt) {
+			var listeners = this.getListeners(evt);
+			var response;
+	
+			if (listeners instanceof Array) {
+				response = {};
+				response[evt] = listeners;
+			}
+	
+			return response || listeners;
+		};
+	
+		/**
+	  * Adds a listener function to the specified event.
+	  * The listener will not be added if it is a duplicate.
+	  * If the listener returns true then it will be removed after it is called.
+	  * If you pass a regular expression as the event name then the listener will be added to all events that match it.
+	  *
+	  * @param {String|RegExp} evt Name of the event to attach the listener to.
+	  * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.addListener = function addListener(evt, listener) {
+			var listeners = this.getListenersAsObject(evt);
+			var listenerIsWrapped = (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) === 'object';
+			var key;
+	
+			for (key in listeners) {
+				if (listeners.hasOwnProperty(key) && indexOfListener(listeners[key], listener) === -1) {
+					listeners[key].push(listenerIsWrapped ? listener : {
+						listener: listener,
+						once: false
+					});
+				}
+			}
+	
+			return this;
+		};
+	
+		/**
+	  * Alias of addListener
+	  */
+		proto.on = proto.addListener;
+	
+		/**
+	  * Semi-alias of addListener. It will add a listener that will be
+	  * automatically removed after it's first execution.
+	  *
+	  * @param {String|RegExp} evt Name of the event to attach the listener to.
+	  * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.addOnceListener = function addOnceListener(evt, listener) {
+			return this.addListener(evt, {
+				listener: listener,
+				once: true
+			});
+		};
+	
+		/**
+	  * Alias of addOnceListener.
+	  */
+		proto.once = proto.addOnceListener;
+	
+		/**
+	  * Defines an event name. This is required if you want to use a regex to add a listener to multiple events at once. If you don't do this then how do you expect it to know what event to add to? Should it just add to every possible match for a regex? No. That is scary and bad.
+	  * You need to tell it what event names should be matched by a regex.
+	  *
+	  * @param {String} evt Name of the event to create.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.defineEvent = function defineEvent(evt) {
+			this.getListeners(evt);
+			return this;
+		};
+	
+		/**
+	  * Uses defineEvent to define multiple events.
+	  *
+	  * @param {String[]} evts An array of event names to define.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.defineEvents = function defineEvents(evts) {
+			for (var i = 0; i < evts.length; i += 1) {
+				this.defineEvent(evts[i]);
+			}
+			return this;
+		};
+	
+		/**
+	  * Removes a listener function from the specified event.
+	  * When passed a regular expression as the event name, it will remove the listener from all events that match it.
+	  *
+	  * @param {String|RegExp} evt Name of the event to remove the listener from.
+	  * @param {Function} listener Method to remove from the event.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.removeListener = function removeListener(evt, listener) {
+			var listeners = this.getListenersAsObject(evt);
+			var index;
+			var key;
+	
+			for (key in listeners) {
+				if (listeners.hasOwnProperty(key)) {
+					index = indexOfListener(listeners[key], listener);
+	
+					if (index !== -1) {
+						listeners[key].splice(index, 1);
+					}
+				}
+			}
+	
+			return this;
+		};
+	
+		/**
+	  * Alias of removeListener
+	  */
+		proto.off = proto.removeListener;
+	
+		/**
+	  * Adds listeners in bulk using the manipulateListeners method.
+	  * If you pass an object as the second argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
+	  * You can also pass it a regular expression to add the array of listeners to all events that match it.
+	  * Yeah, this function does quite a bit. That's probably a bad thing.
+	  *
+	  * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add to multiple events at once.
+	  * @param {Function[]} [listeners] An optional array of listener functions to add.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.addListeners = function addListeners(evt, listeners) {
+			// Pass through to manipulateListeners
+			return this.manipulateListeners(false, evt, listeners);
+		};
+	
+		/**
+	  * Removes listeners in bulk using the manipulateListeners method.
+	  * If you pass an object as the second argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
+	  * You can also pass it an event name and an array of listeners to be removed.
+	  * You can also pass it a regular expression to remove the listeners from all events that match it.
+	  *
+	  * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to remove from multiple events at once.
+	  * @param {Function[]} [listeners] An optional array of listener functions to remove.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.removeListeners = function removeListeners(evt, listeners) {
+			// Pass through to manipulateListeners
+			return this.manipulateListeners(true, evt, listeners);
+		};
+	
+		/**
+	  * Edits listeners in bulk. The addListeners and removeListeners methods both use this to do their job. You should really use those instead, this is a little lower level.
+	  * The first argument will determine if the listeners are removed (true) or added (false).
+	  * If you pass an object as the second argument you can add/remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
+	  * You can also pass it an event name and an array of listeners to be added/removed.
+	  * You can also pass it a regular expression to manipulate the listeners of all events that match it.
+	  *
+	  * @param {Boolean} remove True if you want to remove listeners, false if you want to add.
+	  * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add/remove from multiple events at once.
+	  * @param {Function[]} [listeners] An optional array of listener functions to add/remove.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
+			var i;
+			var value;
+			var single = remove ? this.removeListener : this.addListener;
+			var multiple = remove ? this.removeListeners : this.addListeners;
+	
+			// If evt is an object then pass each of it's properties to this method
+			if ((typeof evt === 'undefined' ? 'undefined' : _typeof(evt)) === 'object' && !(evt instanceof RegExp)) {
+				for (i in evt) {
+					if (evt.hasOwnProperty(i) && (value = evt[i])) {
+						// Pass the single listener straight through to the singular method
+						if (typeof value === 'function') {
+							single.call(this, i, value);
+						} else {
+							// Otherwise pass back to the multiple function
+							multiple.call(this, i, value);
+						}
+					}
+				}
+			} else {
+				// So evt must be a string
+				// And listeners must be an array of listeners
+				// Loop over it and pass each one to the multiple method
+				i = listeners.length;
+				while (i--) {
+					single.call(this, evt, listeners[i]);
+				}
+			}
+	
+			return this;
+		};
+	
+		/**
+	  * Removes all listeners from a specified event.
+	  * If you do not specify an event then all listeners will be removed.
+	  * That means every event will be emptied.
+	  * You can also pass a regex to remove all events that match it.
+	  *
+	  * @param {String|RegExp} [evt] Optional name of the event to remove all listeners for. Will remove from every event if not passed.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.removeEvent = function removeEvent(evt) {
+			var type = typeof evt === 'undefined' ? 'undefined' : _typeof(evt);
+			var events = this._getEvents();
+			var key;
+	
+			// Remove different things depending on the state of evt
+			if (type === 'string') {
+				// Remove all listeners for the specified event
+				delete events[evt];
+			} else if (type === 'object') {
+				// Remove all events matching the regex.
+				for (key in events) {
+					if (events.hasOwnProperty(key) && evt.test(key)) {
+						delete events[key];
+					}
+				}
+			} else {
+				// Remove all listeners in all events
+				delete this._events;
+			}
+	
+			return this;
+		};
+	
+		/**
+	  * Emits an event of your choice.
+	  * When emitted, every listener attached to that event will be executed.
+	  * If you pass the optional argument array then those arguments will be passed to every listener upon execution.
+	  * Because it uses `apply`, your array of arguments will be passed as if you wrote them out separately.
+	  * So they will not arrive within the array on the other side, they will be separate.
+	  * You can also pass a regular expression to emit to all events that match it.
+	  *
+	  * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
+	  * @param {Array} [args] Optional array of arguments to be passed to each listener.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.emitEvent = function emitEvent(evt, args) {
+			var listeners = this.getListenersAsObject(evt);
+			var listener;
+			var i;
+			var key;
+			var response;
+	
+			for (key in listeners) {
+				if (listeners.hasOwnProperty(key)) {
+					i = listeners[key].length;
+	
+					while (i--) {
+						// If the listener returns true then it shall be removed from the event
+						// The function is executed either with a basic call or an apply if there is an args array
+						listener = listeners[key][i];
+						response = listener.listener.apply(this, args || []);
+						if (response === this._getOnceReturnValue() || listener.once === true) {
+							this.removeListener(evt, listeners[key][i].listener);
+						}
+					}
+				}
+			}
+	
+			return this;
+		};
+	
+		/**
+	  * Alias of emitEvent
+	  */
+		proto.trigger = proto.emitEvent;
+	
+		/**
+	  * Subtly different from emitEvent in that it will pass its arguments on to the listeners, as opposed to taking a single array of arguments to pass on.
+	  * As with emitEvent, you can pass a regex in place of the event name to emit to all events that match it.
+	  *
+	  * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
+	  * @param {...*} Optional additional arguments to be passed to each listener.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.emit = function emit(evt) {
+			var args = Array.prototype.slice.call(arguments, 1);
+			return this.emitEvent(evt, args);
+		};
+	
+		/**
+	  * Sets the current value to check against when executing listeners. If a
+	  * listeners return value matches the one set here then it will be removed
+	  * after execution. This value defaults to true.
+	  *
+	  * @param {*} value The new value to check for when executing listeners.
+	  * @return {Object} Current instance of EventEmitter for chaining.
+	  */
+		proto.setOnceReturnValue = function setOnceReturnValue(value) {
+			this._onceReturnValue = value;
+			return this;
+		};
+	
+		/**
+	  * Fetches the current value to check against when executing listeners. If
+	  * the listeners return value matches this one then it should be removed
+	  * automatically. It will return true by default.
+	  *
+	  * @return {*|Boolean} The current value to check for or the default, true.
+	  * @api private
+	  */
+		proto._getOnceReturnValue = function _getOnceReturnValue() {
+			if (this.hasOwnProperty('_onceReturnValue')) {
+				return this._onceReturnValue;
+			} else {
+				return true;
+			}
+		};
+	
+		/**
+	  * Fetches the events object and creates one if required.
+	  *
+	  * @return {Object} The events storage object.
+	  * @api private
+	  */
+		proto._getEvents = function _getEvents() {
+			return this._events || (this._events = {});
+		};
+	
+		// Expose the class either via AMD, CommonJS or the global object
+		if (true) {
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return EventEmitter;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (typeof module !== 'undefined' && module.exports) {
+			module.exports = EventEmitter;
+		} else {
+			this.EventEmitter = EventEmitter;
+		}
 	}).call(undefined);
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = configureStore;
+	
+	var _redux = __webpack_require__(168);
+	
+	var _reducers = __webpack_require__(193);
+	
+	var _reducers2 = _interopRequireDefault(_reducers);
+	
+	var _reduxThunk = __webpack_require__(197);
+	
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function configureStore(initialState) {
+	    var store = (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+	
+	    if (false) {
+	        module.hot.accept('../reducers', function () {
+	            var nextRootReducer = require('../reducers');
+	            store.replaceReducer(nextRootReducer);
+	        });
+	    }
+	
+	    return store;
+	}
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _redux = __webpack_require__(168);
+	
+	var _page = __webpack_require__(194);
+	
+	var _page2 = _interopRequireDefault(_page);
+	
+	var _user = __webpack_require__(195);
+	
+	var _user2 = _interopRequireDefault(_user);
+	
+	var _fetchingBar = __webpack_require__(196);
+	
+	var _fetchingBar2 = _interopRequireDefault(_fetchingBar);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = (0, _redux.combineReducers)({
+	    page: _page2.default,
+	    user: _user2.default,
+	    fetchingBar: _fetchingBar2.default
+	});
+
+/***/ },
+/* 194 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = page;
+	var initialState = {
+	    images: cunameUser.images
+	};
+	
+	function page() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	
+	    return state;
+	}
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = user;
+	
+	var _User = __webpack_require__(188);
+	
+	var initialState = {
+	    name: cunameUser.username,
+	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false
+	};
+	
+	function user() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _User.SET_LOGINED_REQUEST:
+	            return Object.assign({}, state, { logined: action.payload });
+	
+	        case _User.SET_LOGINED_FAILED:
+	            return Object.assign({}, state);
+	
+	        case _User.SET_LOGINED_SUCCESS:
+	            return Object.assign({}, state, { logined: action.payload });
+	
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = fetchingBar;
+	
+	var _FetchingBar = __webpack_require__(190);
+	
+	var initialState = {
+	    fetching: false
+	};
+	
+	function fetchingBar() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _FetchingBar.SET_FETCHING_START:
+	            return Object.assign({}, state, { fetching: action.payload });
+	
+	        case _FetchingBar.SET_FETCHING_END:
+	            return Object.assign({}, state, { fetching: action.payload });
+	
+	        case _FetchingBar.SET_FETCHING_HIDE:
+	            return Object.assign({}, state, { fetching: false });
+	
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 197 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports['default'] = thunkMiddleware;
+	function thunkMiddleware(_ref) {
+	  var dispatch = _ref.dispatch;
+	  var getState = _ref.getState;
+	
+	  return function (next) {
+	    return function (action) {
+	      if (typeof action === 'function') {
+	        return action(dispatch, getState);
+	      }
+	
+	      return next(action);
+	    };
+	  };
+	}
 
 /***/ }
 /******/ ]);

@@ -19,7 +19,7 @@ export function setLogined(bool) {
                 dispatch({
                     type: SET_LOGINED_FAILED
                 });
-
+                window.ee.emit('changeFetchState', 'hide');
                 console.log("Error! Not logout!");
             } else {
 

@@ -6,7 +6,7 @@ import NavbarBrand from '../components/NavbarBrand'
 import UserPanel from '../components/UserPanel'
 import * as userActions from '../actions/UserActions'
 import * as fetchingBarActions from '../actions/FetchingBarActions'
-import { EventEmitter } from '../ee/EventEmitter.min'
+import EventEmitter from 'wolfy87-eventemitter'
 
 
 window.ee = new EventEmitter();
