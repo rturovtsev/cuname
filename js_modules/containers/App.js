@@ -6,6 +6,10 @@ import NavbarBrand from '../components/NavbarBrand'
 import UserPanel from '../components/UserPanel'
 import * as userActions from '../actions/UserActions'
 import * as fetchingBarActions from '../actions/FetchingBarActions'
+import { EventEmitter } from '../ee/EventEmitter.min'
+
+
+window.ee = new EventEmitter();
 
 
 class App extends Component {
@@ -16,7 +20,7 @@ class App extends Component {
         const { setFetchingBarState } = this.props.fetchingBarActions;
 
         return <header>
-            <FetchingBar fetchClass={fetching} ref='fetching' />
+            <FetchingBar fetchClass={fetching} setFetchingBarState={setFetchingBarState} />
             <div className='row'>
                 <div className='col-md-12'>
                     <div className='navbar navbar-default'>

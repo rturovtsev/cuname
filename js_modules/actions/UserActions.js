@@ -27,7 +27,7 @@ export function setLogined(bool) {
                     type: SET_LOGINED_SUCCESS,
                     payload: false
                 });
-
+                window.ee.emit('changeFetchState', 'end');
                 console.log("GoodBy!");
             }
         };

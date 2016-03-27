@@ -21442,6 +21442,8 @@
 	
 	var fetchingBarActions = _interopRequireWildcard(_FetchingBarActions);
 	
+	var _EventEmitter = __webpack_require__(197);
+	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -21451,6 +21453,8 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	window.ee = new _EventEmitter.EventEmitter();
 	
 	var App = function (_Component) {
 	    _inherits(App, _Component);
@@ -21475,7 +21479,7 @@
 	            return _react2.default.createElement(
 	                'header',
 	                null,
-	                _react2.default.createElement(_FetchingBar2.default, { fetchClass: fetching, ref: 'fetching' }),
+	                _react2.default.createElement(_FetchingBar2.default, { fetchClass: fetching, setFetchingBarState: setFetchingBarState }),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'row' },
@@ -21558,6 +21562,18 @@
 	    }
 	
 	    _createClass(FetchingBar, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            window.ee.addListener('changeFetchState', function (fetchState) {
+	                this.props.setFetchingBarState(fetchState);
+	            });
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            window.ee.removeListener('changeFetchState');
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var fetchClass = 'fetching ' + (this.props.fetchClass ? this.props.fetchClass : '');
@@ -21775,7 +21791,7 @@
 	                    type: _User.SET_LOGINED_SUCCESS,
 	                    payload: false
 	                });
-	
+	                window.ee.emit('changeFetchState', 'end');
 	                console.log("GoodBy!");
 	            }
 	        };
@@ -22039,6 +22055,113 @@
 	    };
 	  };
 	}
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	/*!
+	 * EventEmitter v4.2.11 - git.io/ee
+	 * Unlicense - http://unlicense.org/
+	 * Oliver Caldwell - http://oli.me.uk/
+	 * @preserve
+	 */
+	(function () {
+	  "use strict";
+	  function t() {}function i(t, n) {
+	    for (var e = t.length; e--;) {
+	      if (t[e].listener === n) return e;
+	    }return -1;
+	  }function n(e) {
+	    return function () {
+	      return this[e].apply(this, arguments);
+	    };
+	  }var e = t.prototype,
+	      r = this,
+	      s = r.EventEmitter;e.getListeners = function (n) {
+	    var r,
+	        e,
+	        t = this._getEvents();if (n instanceof RegExp) {
+	      r = {};for (e in t) {
+	        t.hasOwnProperty(e) && n.test(e) && (r[e] = t[e]);
+	      }
+	    } else r = t[n] || (t[n] = []);return r;
+	  }, e.flattenListeners = function (t) {
+	    var e,
+	        n = [];for (e = 0; e < t.length; e += 1) {
+	      n.push(t[e].listener);
+	    }return n;
+	  }, e.getListenersAsObject = function (n) {
+	    var e,
+	        t = this.getListeners(n);return t instanceof Array && (e = {}, e[n] = t), e || t;
+	  }, e.addListener = function (r, e) {
+	    var t,
+	        n = this.getListenersAsObject(r),
+	        s = "object" == (typeof e === "undefined" ? "undefined" : _typeof(e));for (t in n) {
+	      n.hasOwnProperty(t) && -1 === i(n[t], e) && n[t].push(s ? e : { listener: e, once: !1 });
+	    }return this;
+	  }, e.on = n("addListener"), e.addOnceListener = function (e, t) {
+	    return this.addListener(e, { listener: t, once: !0 });
+	  }, e.once = n("addOnceListener"), e.defineEvent = function (e) {
+	    return this.getListeners(e), this;
+	  }, e.defineEvents = function (t) {
+	    for (var e = 0; e < t.length; e += 1) {
+	      this.defineEvent(t[e]);
+	    }return this;
+	  }, e.removeListener = function (r, s) {
+	    var n,
+	        e,
+	        t = this.getListenersAsObject(r);for (e in t) {
+	      t.hasOwnProperty(e) && (n = i(t[e], s), -1 !== n && t[e].splice(n, 1));
+	    }return this;
+	  }, e.off = n("removeListener"), e.addListeners = function (e, t) {
+	    return this.manipulateListeners(!1, e, t);
+	  }, e.removeListeners = function (e, t) {
+	    return this.manipulateListeners(!0, e, t);
+	  }, e.manipulateListeners = function (r, t, i) {
+	    var e,
+	        n,
+	        s = r ? this.removeListener : this.addListener,
+	        o = r ? this.removeListeners : this.addListeners;if ("object" != (typeof t === "undefined" ? "undefined" : _typeof(t)) || t instanceof RegExp) for (e = i.length; e--;) {
+	      s.call(this, t, i[e]);
+	    } else for (e in t) {
+	      t.hasOwnProperty(e) && (n = t[e]) && ("function" == typeof n ? s.call(this, e, n) : o.call(this, e, n));
+	    }return this;
+	  }, e.removeEvent = function (e) {
+	    var t,
+	        r = typeof e === "undefined" ? "undefined" : _typeof(e),
+	        n = this._getEvents();if ("string" === r) delete n[e];else if (e instanceof RegExp) for (t in n) {
+	      n.hasOwnProperty(t) && e.test(t) && delete n[t];
+	    } else delete this._events;return this;
+	  }, e.removeAllListeners = n("removeEvent"), e.emitEvent = function (t, u) {
+	    var n,
+	        e,
+	        r,
+	        i,
+	        o,
+	        s = this.getListenersAsObject(t);for (i in s) {
+	      if (s.hasOwnProperty(i)) for (n = s[i].slice(0), r = n.length; r--;) {
+	        e = n[r], e.once === !0 && this.removeListener(t, e.listener), o = e.listener.apply(this, u || []), o === this._getOnceReturnValue() && this.removeListener(t, e.listener);
+	      }
+	    }return this;
+	  }, e.trigger = n("emitEvent"), e.emit = function (e) {
+	    var t = Array.prototype.slice.call(arguments, 1);return this.emitEvent(e, t);
+	  }, e.setOnceReturnValue = function (e) {
+	    return this._onceReturnValue = e, this;
+	  }, e._getOnceReturnValue = function () {
+	    return this.hasOwnProperty("_onceReturnValue") ? this._onceReturnValue : !0;
+	  }, e._getEvents = function () {
+	    return this._events || (this._events = {});
+	  }, t.noConflict = function () {
+	    return r.EventEmitter = s, t;
+	  },  true ? !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    return t;
+	  }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof module === "undefined" ? "undefined" : _typeof(module)) && module.exports ? module.exports = t : r.EventEmitter = t;
+	}).call(undefined);
 
 /***/ }
 /******/ ]);
