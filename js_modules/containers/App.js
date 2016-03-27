@@ -8,7 +8,7 @@ import * as userActions from '../actions/UserActions'
 import * as fetchingBarActions from '../actions/FetchingBarActions'
 
 
- class App extends Component {
+class App extends Component {
     render() {
         const { name, logined } = this.props.user;
         const { setLogined } = this.props.userActions;

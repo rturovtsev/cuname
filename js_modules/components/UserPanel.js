@@ -18,9 +18,16 @@ export default class UserPanel extends Component {
         return (
             <p className='navbar-text navbar-right'>
                 {logined ?
-                    <span><a href='#' className='navbar-link'> {name} </a> <a href='#' id='logout' onClick= {this.onClickLogoutBtn} className='navbar-link'>Выйти</a></span>
+                    <span>
+                        <a href='#' className='navbar-link'> {name} </a>
+                        <a href='#' id='logout' onClick= {this.onClickLogoutBtn} className='navbar-link'>Выйти</a>
+                    </span>
                     :
-                    <span><a href='/login' className='navbar-link'>Войти</a><a href='/register' className='navbar-link'>Зарегистрироваться</a></span>}
+                    <span>
+                        <a href='/login' className='navbar-link'>Войти</a>
+                        <a href='/register' className='navbar-link'>Зарегистрироваться</a>
+                    </span>
+                }
             </p>
         );
     }
