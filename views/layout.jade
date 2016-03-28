@@ -4,16 +4,15 @@ html
         head
             title= title
             block slyles
-                link(rel='stylesheet', href='/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css')
+                link(rel='stylesheet', href='https://fonts.googleapis.com/icon?family=Material+Icons')
+                link(rel='stylesheet', href='/vendor/material.min.css')
                 link(rel='stylesheet', href='/css/main.css')
     body
-        .container
-            #root
+        #root
 
-            block content
-                p Скоро все будет!
+        block content
+            p Скоро все будет!
 
-            block footer
 
     block scripts
         if user
@@ -29,4 +28,5 @@ html
                     images: []
                 };
 
+        script(src="/vendor/bower_components/material-design-lite/material.min.js")
         script(src="/js/main.js")

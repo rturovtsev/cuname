@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 
+
 export default class UserPanel extends Component {
     constructor(props) {
         super(props);
@@ -16,19 +17,18 @@ export default class UserPanel extends Component {
             name = this.props.name;
 
         return (
-            <p className='navbar-text navbar-right'>
+            <nav className='mdl-navigation'>
                 {logined ?
-                    <span>
-                        <a href='#' className='navbar-link'> {name} </a>
-                        <a href='#' id='logout' onClick= {this.onClickLogoutBtn} className='navbar-link'>Выйти</a>
-                    </span>
+                    <a href='#' className='mdl-navigation__link'> {name} </a>
                     :
-                    <span>
-                        <a href='/login' className='navbar-link'>Войти</a>
-                        <a href='/register' className='navbar-link'>Зарегистрироваться</a>
-                    </span>
+                    <a href='/login' className='mdl-navigation__link'>Войти</a>
                 }
-            </p>
+                {logined ?
+                    <a href='#' id='logout' onClick= {this.onClickLogoutBtn} className='mdl-navigation__link'>Выйти</a>
+                    :
+                    <a href='/register' className='mdl-navigation__link'>Зарегистрироваться</a>
+                }
+            </nav>
         );
     }
 }

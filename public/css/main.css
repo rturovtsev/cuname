@@ -1,9 +1,5 @@
-.navbar-link {
-  display: inline-block;
-  margin-left: 6px;
-}
-.imgs-panel .no-img {
-  background-color: #ccc;
+.mdl-layout-icon .material-icons {
+  font-size: 32px;
 }
 .fetching {
   position: fixed;
