@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as userActions from '../actions/UserActions'
 import * as fetchingBarActions from '../actions/FetchingBarActions'
+import * as modalActions from '../actions/ModalActions'
 import EventEmitter from 'wolfy87-eventemitter'
 
 //Components
@@ -22,7 +23,9 @@ class App extends Component {
         const { name, logined } = this.props.user;
         const { setLogined } = this.props.userActions;
         const { fetching } = this.props.fetchingBar;
+        const { modalIsOpen } = this.props.modal;
         const { setFetchingBarState } = this.props.fetchingBarActions;
+        const { setModalState } = this.props.modalActions;
 
         return (
             <div className="mdl-layout mdl-js-layout">
@@ -32,12 +35,11 @@ class App extends Component {
                     <div className='mdl-layout__header-row'>
                         <NavbarBrand />
                         <div className="mdl-layout-spacer"></div>
-                        <UserPanel name={name} logined={logined} setLogined={setLogined} setFetchingBarState={setFetchingBarState} />
+                        <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} modalIsOpen={modalIsOpen} />
                     </div>
                 </header>
                 <div className="mdl-layout__drawer">
                     <NavbarBrand />
-                    <UserPanel name={name} logined={logined} setLogined={setLogined} setFetchingBarState={setFetchingBarState} />
                 </div>
                 <main className="mdl-layout__content">
                     <div className="mdl-grid">
@@ -55,14 +57,16 @@ function mapStateToProps (state) {
     return {
         user: state.user,
         page: state.page,
-        fetchingBar: state.fetchingBar
+        fetchingBar: state.fetchingBar,
+        modal: state.modal
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         userActions: bindActionCreators(userActions, dispatch),
-        fetchingBarActions: bindActionCreators(fetchingBarActions, dispatch)
+        fetchingBarActions: bindActionCreators(fetchingBarActions, dispatch),
+        modalActions: bindActionCreators(modalActions, dispatch)
     };
 }
 

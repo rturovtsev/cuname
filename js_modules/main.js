@@ -24,8 +24,10 @@ const store = confugureStore();
 
 
 render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
+    <div>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </div>,
     document.getElementById('root')
 );
