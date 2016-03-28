@@ -20,12 +20,12 @@ window.ee = new EventEmitter();
 
 class App extends Component {
     render() {
-        const { name, logined } = this.props.user;
-        const { setLogined } = this.props.userActions;
-        const { fetching } = this.props.fetchingBar;
-        const { modalIsOpen } = this.props.modal;
-        const { setFetchingBarState } = this.props.fetchingBarActions;
-        const { setModalState } = this.props.modalActions;
+        const { name, logined } = this.props.user; //имя пользователя и статус авторизации
+        const { setLogined } = this.props.userActions; //меняем статус авторизации пользователя
+        const { fetching } = this.props.fetchingBar; //статус прогрессбара
+        const { setFetchingBarState } = this.props.fetchingBarActions; //меняем статус прогрессбара
+        const { modalIsOpen } = this.props.modal; //статус модального окна
+        const { setModalState } = this.props.modalActions; //меняем статус модального окна
 
         return (
             <div className="mdl-layout mdl-js-layout">

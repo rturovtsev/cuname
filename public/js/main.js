@@ -21492,13 +21492,17 @@
 	        value: function render() {
 	            var _props$user = this.props.user;
 	            var name = _props$user.name;
-	            var logined = _props$user.logined;
-	            var setLogined = this.props.userActions.setLogined;
-	            var fetching = this.props.fetchingBar.fetching;
-	            var modalIsOpen = this.props.modal.modalIsOpen;
-	            var setFetchingBarState = this.props.fetchingBarActions.setFetchingBarState;
-	            var setModalState = this.props.modalActions.setModalState;
+	            var logined = _props$user.logined; //имя пользователя и статус авторизации
 	
+	            var setLogined = this.props.userActions.setLogined; //меняем статус авторизации пользователя
+	
+	            var fetching = this.props.fetchingBar.fetching; //статус прогрессбара
+	
+	            var setFetchingBarState = this.props.fetchingBarActions.setFetchingBarState; //меняем статус прогрессбара
+	
+	            var modalIsOpen = this.props.modal.modalIsOpen; //статус модального окна
+	
+	            var setModalState = this.props.modalActions.setModalState; //меняем статус модального окна
 	
 	            return _react2.default.createElement(
 	                'div',
