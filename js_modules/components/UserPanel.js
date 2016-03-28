@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import Modal from 'react-modal'
-import { Textfield, Button } from 'react-mdl'
+import { Textfield, Button, Navigation } from 'react-mdl'
 
 
 export default class UserPanel extends Component {
