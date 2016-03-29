@@ -5,6 +5,9 @@
 .ReactModal__Overlay--after-open
     background-color: transparent !important
 
+.ReactModal__Content
+    transform: scale(0.5) rotateX(-30deg);
+
 .ReactModal__Content--after-open
     border 0
     box-shadow: 0 9px 46px 8px rgba(0, 0, 0, 0.14), 0 11px 15px -7px rgba(0, 0, 0, 0.12), 0 24px 38px 3px rgba(0, 0, 0, 0.2)
@@ -17,3 +20,9 @@
     height: -webkit-fit-content;
     height: fit-content;
     margin: auto;
+    transform: scale(1) rotateX(0deg);
+    transition: all .1s ease-in;
+
+.ReactModal__Content--before-close
+    transform: scale(0.5) rotateX(30deg);
+    transition: all .1s ease-in;

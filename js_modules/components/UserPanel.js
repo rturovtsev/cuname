@@ -44,6 +44,7 @@ export default class UserPanel extends Component {
                 <Modal
                     isOpen={modalIsOpen}
                     onRequestClose={this.closeModal}
+                    closeTimeoutMS={100}
                     >
                     <form id="auth-form" method="POST" action="/login">
                         <h3 className="mdl-dialog__title">Авторизация</h3>

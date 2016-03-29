@@ -22368,7 +22368,8 @@
 	                    _reactModal2.default,
 	                    {
 	                        isOpen: modalIsOpen,
-	                        onRequestClose: this.closeModal
+	                        onRequestClose: this.closeModal,
+	                        closeTimeoutMS: 100
 	                    },
 	                    _react2.default.createElement(
 	                        'form',
