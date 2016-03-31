@@ -11,6 +11,7 @@ import NavbarBrand from '../components/NavbarBrand'
 import UserPanel from '../components/UserPanel'
 import HeaderLogo from '../components/HeaderLogo'
 import Footer from '../components/Footer'
+import PopUp from '../components/PopUp'
 import { Layout, Header, Drawer } from 'react-mdl'
 
 
@@ -27,7 +28,7 @@ class App extends Component {
         return (
             <Layout fixedHeader>
                 <Header title={<NavbarBrand />} >
-                    <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} modalIsOpen={modalIsOpen} />
+                    <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} />
                 </Header>
                 <Drawer>
                     <NavbarBrand />
@@ -38,6 +39,7 @@ class App extends Component {
                     </div>
                 </main>
                 <Footer />
+                <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} />
             </Layout>
         );
     }
