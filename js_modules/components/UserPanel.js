@@ -14,7 +14,6 @@ export default class UserPanel extends Component {
     onClickLogoutBtn(e) {
         e.preventDefault();
         this.props.setLogined(false);
-        window.ee.emit('changeFetchState', 'start');
     }
     openModal(e) {
         e.preventDefault();

@@ -21430,10 +21430,6 @@
 	
 	var userActions = _interopRequireWildcard(_UserActions);
 	
-	var _FetchingBarActions = __webpack_require__(186);
-	
-	var fetchingBarActions = _interopRequireWildcard(_FetchingBarActions);
-	
 	var _ModalActions = __webpack_require__(188);
 	
 	var modalActions = _interopRequireWildcard(_ModalActions);
@@ -21441,10 +21437,6 @@
 	var _wolfy87Eventemitter = __webpack_require__(190);
 	
 	var _wolfy87Eventemitter2 = _interopRequireDefault(_wolfy87Eventemitter);
-	
-	var _FetchingBar = __webpack_require__(191);
-	
-	var _FetchingBar2 = _interopRequireDefault(_FetchingBar);
 	
 	var _NavbarBrand = __webpack_require__(192);
 	
@@ -21461,6 +21453,8 @@
 	var _Footer = __webpack_require__(278);
 	
 	var _Footer2 = _interopRequireDefault(_Footer);
+	
+	var _reactMdl = __webpack_require__(216);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
@@ -21496,33 +21490,21 @@
 	
 	            var setLogined = this.props.userActions.setLogined; //меняем статус авторизации пользователя
 	
-	            var fetching = this.props.fetchingBar.fetching; //статус прогрессбара
-	
-	            var setFetchingBarState = this.props.fetchingBarActions.setFetchingBarState; //меняем статус прогрессбара
-	
 	            var modalIsOpen = this.props.modal.modalIsOpen; //статус модального окна
 	
 	            var setModalState = this.props.modalActions.setModalState; //меняем статус модального окна
 	
 	            return _react2.default.createElement(
-	                'div',
-	                { className: 'mdl-layout mdl-js-layout' },
-	                _react2.default.createElement(_FetchingBar2.default, { fetchClass: fetching, setFetchingBarState: setFetchingBarState }),
+	                _reactMdl.Layout,
+	                { fixedHeader: true },
 	                _react2.default.createElement(
-	                    'header',
-	                    { className: 'mdl-layout__header' },
-	                    _react2.default.createElement(_HeaderLogo2.default, null),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'mdl-layout__header-row' },
-	                        _react2.default.createElement(_NavbarBrand2.default, null),
-	                        _react2.default.createElement('div', { className: 'mdl-layout-spacer' }),
-	                        _react2.default.createElement(_UserPanel2.default, { name: name, logined: logined, setLogined: setLogined, setModalState: setModalState, modalIsOpen: modalIsOpen })
-	                    )
+	                    _reactMdl.Header,
+	                    { title: _react2.default.createElement(_NavbarBrand2.default, null) },
+	                    _react2.default.createElement(_UserPanel2.default, { name: name, logined: logined, setLogined: setLogined, setModalState: setModalState, modalIsOpen: modalIsOpen })
 	                ),
 	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-layout__drawer' },
+	                    _reactMdl.Drawer,
+	                    null,
 	                    _react2.default.createElement(_NavbarBrand2.default, null)
 	                ),
 	                _react2.default.createElement(
@@ -21542,7 +21524,6 @@
 	    return {
 	        user: state.user,
 	        page: state.page,
-	        fetchingBar: state.fetchingBar,
 	        modal: state.modal
 	    };
 	}
@@ -21550,7 +21531,6 @@
 	function mapDispatchToProps(dispatch) {
 	    return {
 	        userActions: (0, _redux.bindActionCreators)(userActions, dispatch),
-	        fetchingBarActions: (0, _redux.bindActionCreators)(fetchingBarActions, dispatch),
 	        modalActions: (0, _redux.bindActionCreators)(modalActions, dispatch)
 	    };
 	}
@@ -21618,66 +21598,8 @@
 	var SET_LOGINED_FAILED = exports.SET_LOGINED_FAILED = 'SET_LOGINED_FAILED';
 
 /***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.setFetchingBarState = setFetchingBarState;
-	
-	var _FetchingBar = __webpack_require__(187);
-	
-	function setFetchingBarState(barState) {
-	    return function (dispatch) {
-	        switch (barState) {
-	            case 'start':
-	                dispatch({
-	                    type: _FetchingBar.SET_FETCHING_START,
-	                    payload: 'start'
-	                });
-	                break;
-	
-	            case 'end':
-	                dispatch({
-	                    type: _FetchingBar.SET_FETCHING_END,
-	                    payload: 'end'
-	                });
-	                break;
-	
-	            case 'hide':
-	                dispatch({
-	                    type: _FetchingBar.SET_FETCHING_HIDE,
-	                    payload: false
-	                });
-	                break;
-	
-	            default:
-	                dispatch({
-	                    type: _FetchingBar.SET_FETCHING_HIDE,
-	                    payload: false
-	                });
-	
-	        }
-	    };
-	}
-
-/***/ },
-/* 187 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var SET_FETCHING_START = exports.SET_FETCHING_START = 'SET_FETCHING_START';
-	var SET_FETCHING_END = exports.SET_FETCHING_END = 'SET_FETCHING_END';
-	var SET_FETCHING_HIDE = exports.SET_FETCHING_HIDE = 'SET_FETCHING_HIDE';
-
-/***/ },
+/* 186 */,
+/* 187 */,
 /* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -22156,78 +22078,7 @@
 	}).call(undefined);
 
 /***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(4);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var FetchingBar = function (_Component) {
-	    _inherits(FetchingBar, _Component);
-	
-	    function FetchingBar() {
-	        _classCallCheck(this, FetchingBar);
-	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FetchingBar).apply(this, arguments));
-	    }
-	
-	    _createClass(FetchingBar, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var self = this;
-	
-	            window.ee.addListener('changeFetchState', function (fetchState) {
-	                self.props.setFetchingBarState(fetchState);
-	
-	                if (fetchState == 'end') {
-	                    setTimeout(function () {
-	                        self.props.setFetchingBarState('hide');
-	                    }, 1000);
-	                }
-	            });
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            window.ee.removeListener('changeFetchState');
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var fetchClass = 'fetching ' + (this.props.fetchClass ? this.props.fetchClass : '');
-	
-	            return _react2.default.createElement('div', { id: 'fetching', className: fetchClass });
-	        }
-	    }]);
-	
-	    return FetchingBar;
-	}(_react.Component);
-	
-	exports.default = FetchingBar;
-	
-	
-	FetchingBar.PropTypes = {
-	    setFetchingBarState: _react.PropTypes.func.isRequired
-	};
-
-/***/ },
+/* 191 */,
 /* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -22325,7 +22176,6 @@
 	        value: function onClickLogoutBtn(e) {
 	            e.preventDefault();
 	            this.props.setLogined(false);
-	            window.ee.emit('changeFetchState', 'start');
 	        }
 	    }, {
 	        key: 'openModal',
@@ -30434,10 +30284,6 @@
 	
 	var _user2 = _interopRequireDefault(_user);
 	
-	var _fetchingBar = __webpack_require__(283);
-	
-	var _fetchingBar2 = _interopRequireDefault(_fetchingBar);
-	
 	var _modal = __webpack_require__(284);
 	
 	var _modal2 = _interopRequireDefault(_modal);
@@ -30447,7 +30293,6 @@
 	exports.default = (0, _redux.combineReducers)({
 	    page: _page2.default,
 	    user: _user2.default,
-	    fetchingBar: _fetchingBar2.default,
 	    modal: _modal2.default
 	});
 
@@ -30509,42 +30354,7 @@
 	}
 
 /***/ },
-/* 283 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = fetchingBar;
-	
-	var _FetchingBar = __webpack_require__(187);
-	
-	var initialState = {
-	    fetching: false
-	};
-	
-	function fetchingBar() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case _FetchingBar.SET_FETCHING_START:
-	            return Object.assign({}, state, { fetching: action.payload });
-	
-	        case _FetchingBar.SET_FETCHING_END:
-	            return Object.assign({}, state, { fetching: action.payload });
-	
-	        case _FetchingBar.SET_FETCHING_HIDE:
-	            return Object.assign({}, state, { fetching: false });
-	
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
+/* 283 */,
 /* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
