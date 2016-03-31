@@ -12,7 +12,7 @@ exports.loginGet = function(req, res, next) {
 
 exports.loginPost = function(req, res, next) {
     let email = req.body.email,
-        pass = req.body.password;
+        pass = req.body.pass;
 
     User.findOne({username: email}, function(err, user) {
         if (err) next(err);

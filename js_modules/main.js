@@ -1,9 +1,4 @@
-import {cAuth} from './auth/auth'
 import {cImgs} from './imgs/form'
-
-//Валидация формы авторизации/регистрации
-cAuth.init();
-
 
 cImgs.init();
 

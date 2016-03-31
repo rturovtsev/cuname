@@ -53,8 +53,6 @@
 
 	'use strict';
 	
-	var _auth = __webpack_require__(2);
-	
 	var _form = __webpack_require__(3);
 	
 	var _react = __webpack_require__(4);
@@ -75,9 +73,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	//Валидация формы авторизации/регистрации
-	_auth.cAuth.init();
-	
 	_form.cImgs.init();
 	
 	//=================================================//
@@ -95,71 +90,7 @@
 	), document.getElementById('root'));
 
 /***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var cAuth = exports.cAuth = function () {
-	    var email = document.getElementById('email'),
-	        password = document.getElementById('password'),
-	        password2 = document.getElementById('repeat_password'),
-	        form = document.getElementById('auth-form');
-	
-	    return {
-	        testHtml: function testHtml(s) {
-	            return s.search(/[<>&"']/ig) == -1;
-	        },
-	        checkLength: function checkLength(el, length) {
-	            return el.value.length > length;
-	        },
-	        checkEmail: function checkEmail() {
-	            if (!this.checkLength(email, 5) || !this.testHtml(email.value)) {
-	                email.parentElement.classList.add('has-error');
-	                return false;
-	            }
-	
-	            email.parentElement.classList.remove('has-error');
-	            return true;
-	        },
-	        checkPassword: function checkPassword() {
-	            if (password2) {
-	                if (!this.checkLength(password, 5) || password.value !== password2.value || !this.testHtml(password2.value)) {
-	                    password.parentElement.classList.add('has-error');
-	                    password2.parentElement.classList.add('has-error');
-	                    return false;
-	                }
-	
-	                password.parentElement.classList.remove('has-error');
-	                password2.parentElement.classList.remove('has-error');
-	                return true;
-	            } else {
-	                if (!this.checkLength(password, 5) || !this.testHtml(password.value)) {
-	                    password.parentElement.classList.add('has-error');
-	                    return false;
-	                }
-	            }
-	
-	            password.parentElement.classList.remove('has-error');
-	            return true;
-	        },
-	        event: function event() {
-	            var _this = this;
-	
-	            form.onsubmit = function () {
-	                return _this.checkEmail() && _this.checkPassword();
-	            };
-	        },
-	        init: function init() {
-	            form && this.event();
-	        }
-	    };
-	}();
-
-/***/ },
+/* 2 */,
 /* 3 */
 /***/ function(module, exports) {
 
@@ -28027,6 +27958,10 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactDom = __webpack_require__(161);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
 	var _reactMdl = __webpack_require__(191);
 	
 	var _reactModal = __webpack_require__(256);
@@ -28056,6 +27991,36 @@
 	            this.props.setModalState(false);
 	        }
 	    }, {
+	        key: 'login',
+	        value: function login(e) {
+	            e.preventDefault();
+	
+	            var email = _reactDom2.default.findDOMNode(this.refs.email).getElementsByTagName('input')[0].value;
+	            var pass = _reactDom2.default.findDOMNode(this.refs.pass).getElementsByTagName('input')[0].value;
+	            var auth = {
+	                email: email,
+	                pass: pass
+	            };
+	
+	            var elErrorTxt = _reactDom2.default.findDOMNode(this.refs.authError);
+	            var xhr = new XMLHttpRequest();
+	            var url = '/login';
+	
+	            elErrorTxt.innerHTML = '';
+	
+	            xhr.open('POST', url, true);
+	            xhr.setRequestHeader('Content-Type', 'application/json');
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState != 4) return;
+	                if (xhr.status == 200) {
+	                    console.log("Login!"); //TODO make login
+	                } else {
+	                        elErrorTxt.innerHTML = xhr.responseText;
+	                    }
+	            };
+	            xhr.send(JSON.stringify(auth));
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var modalIsOpen = this.props.modalIsOpen;
@@ -28068,55 +28033,58 @@
 	                    closeTimeoutMS: 100
 	                },
 	                _react2.default.createElement(
-	                    'form',
-	                    { id: 'auth-form', method: 'POST', action: '/login' },
+	                    'h3',
+	                    { className: 'mdl-dialog__title' },
+	                    'Авторизация'
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-dialog__content' },
 	                    _react2.default.createElement(
-	                        'h3',
-	                        { className: 'mdl-dialog__title' },
-	                        'Авторизация'
+	                        'p',
+	                        null,
+	                        'Войдите либо введите свои данные и учетная запись будет создана автоматически.'
+	                    ),
+	                    _react2.default.createElement('div', { ref: 'authError', className: 'error' }),
+	                    _react2.default.createElement(_reactMdl.Textfield, {
+	                        ref: 'email',
+	                        onChange: function onChange() {},
+	                        id: 'email',
+	                        type: 'email',
+	                        name: 'email',
+	                        label: 'Email адресс',
+	                        required: true,
+	                        floatingLabel: true,
+	                        pattern: '.+@.+\\..+',
+	                        error: 'Не верный формат Email!',
+	                        style: { width: '100%' }
+	                    }),
+	                    _react2.default.createElement(_reactMdl.Textfield, {
+	                        ref: 'pass',
+	                        onChange: function onChange() {},
+	                        id: 'password',
+	                        type: 'password',
+	                        name: 'password',
+	                        label: 'Пароль, минимум 6 символов',
+	                        required: true,
+	                        floatingLabel: true,
+	                        pattern: '^[a-zA-Z0-9_-]{6,18}$',
+	                        error: 'Не верный формат для поля пароль!',
+	                        style: { width: '100%' }
+	                    })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-dialog__actions' },
+	                    _react2.default.createElement(
+	                        _reactMdl.Button,
+	                        { raised: true, ripple: true, colored: true, type: 'button', onClick: this.closeModal.bind(this) },
+	                        'Отмена'
 	                    ),
 	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'mdl-dialog__content' },
-	                        _react2.default.createElement(
-	                            'p',
-	                            null,
-	                            'Войдите либо введите свои данные и учетная запись будет создана автоматически.'
-	                        ),
-	                        _react2.default.createElement(_reactMdl.Textfield, {
-	                            onChange: function onChange() {},
-	                            id: 'email',
-	                            type: 'email',
-	                            name: 'email',
-	                            label: 'Email адресс',
-	                            required: true,
-	                            floatingLabel: true,
-	                            style: { width: '100%' }
-	                        }),
-	                        _react2.default.createElement(_reactMdl.Textfield, {
-	                            onChange: function onChange() {},
-	                            id: 'password',
-	                            type: 'password',
-	                            name: 'password',
-	                            label: 'Пароль',
-	                            required: true,
-	                            floatingLabel: true,
-	                            style: { width: '100%' }
-	                        })
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'mdl-dialog__actions' },
-	                        _react2.default.createElement(
-	                            _reactMdl.Button,
-	                            { raised: true, ripple: true, colored: true, type: 'button', onClick: this.closeModal.bind(this) },
-	                            'Отмена'
-	                        ),
-	                        _react2.default.createElement(
-	                            _reactMdl.Button,
-	                            { raised: true, ripple: true, colored: true, type: 'submit' },
-	                            'Войти'
-	                        )
+	                        _reactMdl.Button,
+	                        { raised: true, ripple: true, colored: true, type: 'submit', onClick: this.login.bind(this) },
+	                        'Войти'
 	                    )
 	                )
 	            );
