@@ -29,6 +29,7 @@ export default class PopUp extends Component {
         xhr.onreadystatechange = () => {
             if (xhr.readyState != 4) return;
             if (xhr.status == 200) {
+                this.props.setModalState(false);
                 console.log("Login!"); //TODO make login
             } else {
                 elErrorTxt.innerHTML = xhr.responseText;

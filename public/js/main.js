@@ -27993,6 +27993,8 @@
 	    }, {
 	        key: 'login',
 	        value: function login(e) {
+	            var _this2 = this;
+	
 	            e.preventDefault();
 	
 	            var email = _reactDom2.default.findDOMNode(this.refs.email).getElementsByTagName('input')[0].value;
@@ -28013,6 +28015,7 @@
 	            xhr.onreadystatechange = function () {
 	                if (xhr.readyState != 4) return;
 	                if (xhr.status == 200) {
+	                    _this2.props.setModalState(false);
 	                    console.log("Login!"); //TODO make login
 	                } else {
 	                        elErrorTxt.innerHTML = xhr.responseText;

@@ -21,7 +21,12 @@ exports.loginPost = function(req, res, next) {
             if (user.checkPassword(pass)) {
                 req.session.user = user._id;
 
-                res.redirect('/');
+                let data = {
+                    username: user.username,
+                    images: user.images
+                };
+
+                res.json(data);
             } else {
                 next(new AuthError("Пароль неверен"));
             }
