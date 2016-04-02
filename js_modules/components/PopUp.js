@@ -29,8 +29,10 @@ export default class PopUp extends Component {
         xhr.onreadystatechange = () => {
             if (xhr.readyState != 4) return;
             if (xhr.status == 200) {
+                this.props.setLogined(true);
+                this.props.setName( JSON.parse(xhr.responseText).username );
                 this.props.setModalState(false);
-                console.log("Login!"); //TODO make login
+                console.log("Login!");
             } else {
                 elErrorTxt.innerHTML = xhr.responseText;
             }
@@ -90,5 +92,7 @@ export default class PopUp extends Component {
 
 PopUp.PropTypes = {
     setModalState: PropTypes.func.isRequired,
-    modalIsOpen: PropTypes.bool.isRequired
+    modalIsOpen: PropTypes.bool.isRequired,
+    setLogined: PropTypes.func.isRequired,
+    setName: PropTypes.func.isRequired
 };

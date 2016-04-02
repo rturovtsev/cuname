@@ -21,7 +21,7 @@ window.ee = new EventEmitter();
 class App extends Component {
     render() {
         const { name, logined } = this.props.user; //имя пользователя и статус авторизации
-        const { setLogined } = this.props.userActions; //меняем статус авторизации пользователя
+        const { setLogined, setName } = this.props.userActions; //меняем статус авторизации пользователя
         const { modalIsOpen } = this.props.modal; //статус модального окна
         const { setModalState } = this.props.modalActions; //меняем статус модального окна
 
@@ -39,7 +39,7 @@ class App extends Component {
                     </div>
                 </main>
                 <Footer />
-                <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} />
+                <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} setLogined={setLogined} setName={setName} />
             </Layout>
         );
     }
