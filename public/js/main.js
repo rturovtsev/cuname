@@ -67,7 +67,7 @@
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _configureStore = __webpack_require__(275);
+	var _configureStore = __webpack_require__(274);
 	
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 	
@@ -21364,31 +21364,31 @@
 	
 	var modalActions = _interopRequireWildcard(_ModalActions);
 	
-	var _wolfy87Eventemitter = __webpack_require__(187);
-	
-	var _wolfy87Eventemitter2 = _interopRequireDefault(_wolfy87Eventemitter);
-	
-	var _NavbarBrand = __webpack_require__(188);
+	var _NavbarBrand = __webpack_require__(187);
 	
 	var _NavbarBrand2 = _interopRequireDefault(_NavbarBrand);
 	
-	var _UserPanel = __webpack_require__(189);
+	var _UserPanel = __webpack_require__(188);
 	
 	var _UserPanel2 = _interopRequireDefault(_UserPanel);
 	
-	var _HeaderLogo = __webpack_require__(252);
-	
-	var _HeaderLogo2 = _interopRequireDefault(_HeaderLogo);
-	
-	var _Footer = __webpack_require__(253);
+	var _Footer = __webpack_require__(189);
 	
 	var _Footer2 = _interopRequireDefault(_Footer);
 	
-	var _PopUp = __webpack_require__(254);
+	var _PopUp = __webpack_require__(190);
 	
 	var _PopUp2 = _interopRequireDefault(_PopUp);
 	
-	var _reactMdl = __webpack_require__(190);
+	var _Content = __webpack_require__(273);
+	
+	var _Content2 = _interopRequireDefault(_Content);
+	
+	var _Cards = __webpack_require__(280);
+	
+	var _Cards2 = _interopRequireDefault(_Cards);
+	
+	var _reactMdl = __webpack_require__(191);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
@@ -21403,8 +21403,6 @@
 	
 	//Components
 	
-	
-	window.ee = new _wolfy87Eventemitter2.default();
 	
 	var App = function (_Component) {
 	    _inherits(App, _Component);
@@ -21446,7 +21444,11 @@
 	                _react2.default.createElement(
 	                    'main',
 	                    { className: 'mdl-layout__content' },
-	                    _react2.default.createElement('div', { className: 'mdl-grid' })
+	                    _react2.default.createElement(
+	                        _Content2.default,
+	                        null,
+	                        _react2.default.createElement(_Cards2.default, null)
+	                    )
 	                ),
 	                _react2.default.createElement(_Footer2.default, null),
 	                _react2.default.createElement(_PopUp2.default, { setModalState: setModalState, modalIsOpen: modalIsOpen, setLogined: setLogined, setName: setName })
@@ -21601,445 +21603,6 @@
 /* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	/*!
-	 * EventEmitter v4.2.0 - git.io/ee
-	 * Oliver Caldwell
-	 * MIT license
-	 * @preserve
-	 */
-	
-	(function () {
-		// Place the script in strict mode
-		'use strict';
-	
-		/**
-	  * Class for managing events.
-	  * Can be extended to provide event functionality in other classes.
-	  *
-	  * @class EventEmitter Manages event registering and emitting.
-	  */
-	
-		function EventEmitter() {}
-	
-		// Shortcuts to improve speed and size
-	
-		// Easy access to the prototype
-		var proto = EventEmitter.prototype;
-	
-		/**
-	  * Finds the index of the listener for the event in it's storage array.
-	  *
-	  * @param {Function[]} listeners Array of listeners to search through.
-	  * @param {Function} listener Method to look for.
-	  * @return {Number} Index of the specified listener, -1 if not found
-	  * @api private
-	  */
-		function indexOfListener(listeners, listener) {
-			var i = listeners.length;
-			while (i--) {
-				if (listeners[i].listener === listener) {
-					return i;
-				}
-			}
-	
-			return -1;
-		}
-	
-		/**
-	  * Returns the listener array for the specified event.
-	  * Will initialise the event object and listener arrays if required.
-	  * Will return an object if you use a regex search. The object contains keys for each matched event. So /ba[rz]/ might return an object containing bar and baz. But only if you have either defined them with defineEvent or added some listeners to them.
-	  * Each property in the object response is an array of listener functions.
-	  *
-	  * @param {String|RegExp} evt Name of the event to return the listeners from.
-	  * @return {Function[]|Object} All listener functions for the event.
-	  */
-		proto.getListeners = function getListeners(evt) {
-			var events = this._getEvents();
-			var response;
-			var key;
-	
-			// Return a concatenated array of all matching events if
-			// the selector is a regular expression.
-			if ((typeof evt === 'undefined' ? 'undefined' : _typeof(evt)) === 'object') {
-				response = {};
-				for (key in events) {
-					if (events.hasOwnProperty(key) && evt.test(key)) {
-						response[key] = events[key];
-					}
-				}
-			} else {
-				response = events[evt] || (events[evt] = []);
-			}
-	
-			return response;
-		};
-	
-		/**
-	  * Takes a list of listener objects and flattens it into a list of listener functions.
-	  *
-	  * @param {Object[]} listeners Raw listener objects.
-	  * @return {Function[]} Just the listener functions.
-	  */
-		proto.flattenListeners = function flattenListeners(listeners) {
-			var flatListeners = [];
-			var i;
-	
-			for (i = 0; i < listeners.length; i += 1) {
-				flatListeners.push(listeners[i].listener);
-			}
-	
-			return flatListeners;
-		};
-	
-		/**
-	  * Fetches the requested listeners via getListeners but will always return the results inside an object. This is mainly for internal use but others may find it useful.
-	  *
-	  * @param {String|RegExp} evt Name of the event to return the listeners from.
-	  * @return {Object} All listener functions for an event in an object.
-	  */
-		proto.getListenersAsObject = function getListenersAsObject(evt) {
-			var listeners = this.getListeners(evt);
-			var response;
-	
-			if (listeners instanceof Array) {
-				response = {};
-				response[evt] = listeners;
-			}
-	
-			return response || listeners;
-		};
-	
-		/**
-	  * Adds a listener function to the specified event.
-	  * The listener will not be added if it is a duplicate.
-	  * If the listener returns true then it will be removed after it is called.
-	  * If you pass a regular expression as the event name then the listener will be added to all events that match it.
-	  *
-	  * @param {String|RegExp} evt Name of the event to attach the listener to.
-	  * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.addListener = function addListener(evt, listener) {
-			var listeners = this.getListenersAsObject(evt);
-			var listenerIsWrapped = (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) === 'object';
-			var key;
-	
-			for (key in listeners) {
-				if (listeners.hasOwnProperty(key) && indexOfListener(listeners[key], listener) === -1) {
-					listeners[key].push(listenerIsWrapped ? listener : {
-						listener: listener,
-						once: false
-					});
-				}
-			}
-	
-			return this;
-		};
-	
-		/**
-	  * Alias of addListener
-	  */
-		proto.on = proto.addListener;
-	
-		/**
-	  * Semi-alias of addListener. It will add a listener that will be
-	  * automatically removed after it's first execution.
-	  *
-	  * @param {String|RegExp} evt Name of the event to attach the listener to.
-	  * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.addOnceListener = function addOnceListener(evt, listener) {
-			return this.addListener(evt, {
-				listener: listener,
-				once: true
-			});
-		};
-	
-		/**
-	  * Alias of addOnceListener.
-	  */
-		proto.once = proto.addOnceListener;
-	
-		/**
-	  * Defines an event name. This is required if you want to use a regex to add a listener to multiple events at once. If you don't do this then how do you expect it to know what event to add to? Should it just add to every possible match for a regex? No. That is scary and bad.
-	  * You need to tell it what event names should be matched by a regex.
-	  *
-	  * @param {String} evt Name of the event to create.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.defineEvent = function defineEvent(evt) {
-			this.getListeners(evt);
-			return this;
-		};
-	
-		/**
-	  * Uses defineEvent to define multiple events.
-	  *
-	  * @param {String[]} evts An array of event names to define.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.defineEvents = function defineEvents(evts) {
-			for (var i = 0; i < evts.length; i += 1) {
-				this.defineEvent(evts[i]);
-			}
-			return this;
-		};
-	
-		/**
-	  * Removes a listener function from the specified event.
-	  * When passed a regular expression as the event name, it will remove the listener from all events that match it.
-	  *
-	  * @param {String|RegExp} evt Name of the event to remove the listener from.
-	  * @param {Function} listener Method to remove from the event.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.removeListener = function removeListener(evt, listener) {
-			var listeners = this.getListenersAsObject(evt);
-			var index;
-			var key;
-	
-			for (key in listeners) {
-				if (listeners.hasOwnProperty(key)) {
-					index = indexOfListener(listeners[key], listener);
-	
-					if (index !== -1) {
-						listeners[key].splice(index, 1);
-					}
-				}
-			}
-	
-			return this;
-		};
-	
-		/**
-	  * Alias of removeListener
-	  */
-		proto.off = proto.removeListener;
-	
-		/**
-	  * Adds listeners in bulk using the manipulateListeners method.
-	  * If you pass an object as the second argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
-	  * You can also pass it a regular expression to add the array of listeners to all events that match it.
-	  * Yeah, this function does quite a bit. That's probably a bad thing.
-	  *
-	  * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add to multiple events at once.
-	  * @param {Function[]} [listeners] An optional array of listener functions to add.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.addListeners = function addListeners(evt, listeners) {
-			// Pass through to manipulateListeners
-			return this.manipulateListeners(false, evt, listeners);
-		};
-	
-		/**
-	  * Removes listeners in bulk using the manipulateListeners method.
-	  * If you pass an object as the second argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
-	  * You can also pass it an event name and an array of listeners to be removed.
-	  * You can also pass it a regular expression to remove the listeners from all events that match it.
-	  *
-	  * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to remove from multiple events at once.
-	  * @param {Function[]} [listeners] An optional array of listener functions to remove.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.removeListeners = function removeListeners(evt, listeners) {
-			// Pass through to manipulateListeners
-			return this.manipulateListeners(true, evt, listeners);
-		};
-	
-		/**
-	  * Edits listeners in bulk. The addListeners and removeListeners methods both use this to do their job. You should really use those instead, this is a little lower level.
-	  * The first argument will determine if the listeners are removed (true) or added (false).
-	  * If you pass an object as the second argument you can add/remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
-	  * You can also pass it an event name and an array of listeners to be added/removed.
-	  * You can also pass it a regular expression to manipulate the listeners of all events that match it.
-	  *
-	  * @param {Boolean} remove True if you want to remove listeners, false if you want to add.
-	  * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add/remove from multiple events at once.
-	  * @param {Function[]} [listeners] An optional array of listener functions to add/remove.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
-			var i;
-			var value;
-			var single = remove ? this.removeListener : this.addListener;
-			var multiple = remove ? this.removeListeners : this.addListeners;
-	
-			// If evt is an object then pass each of it's properties to this method
-			if ((typeof evt === 'undefined' ? 'undefined' : _typeof(evt)) === 'object' && !(evt instanceof RegExp)) {
-				for (i in evt) {
-					if (evt.hasOwnProperty(i) && (value = evt[i])) {
-						// Pass the single listener straight through to the singular method
-						if (typeof value === 'function') {
-							single.call(this, i, value);
-						} else {
-							// Otherwise pass back to the multiple function
-							multiple.call(this, i, value);
-						}
-					}
-				}
-			} else {
-				// So evt must be a string
-				// And listeners must be an array of listeners
-				// Loop over it and pass each one to the multiple method
-				i = listeners.length;
-				while (i--) {
-					single.call(this, evt, listeners[i]);
-				}
-			}
-	
-			return this;
-		};
-	
-		/**
-	  * Removes all listeners from a specified event.
-	  * If you do not specify an event then all listeners will be removed.
-	  * That means every event will be emptied.
-	  * You can also pass a regex to remove all events that match it.
-	  *
-	  * @param {String|RegExp} [evt] Optional name of the event to remove all listeners for. Will remove from every event if not passed.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.removeEvent = function removeEvent(evt) {
-			var type = typeof evt === 'undefined' ? 'undefined' : _typeof(evt);
-			var events = this._getEvents();
-			var key;
-	
-			// Remove different things depending on the state of evt
-			if (type === 'string') {
-				// Remove all listeners for the specified event
-				delete events[evt];
-			} else if (type === 'object') {
-				// Remove all events matching the regex.
-				for (key in events) {
-					if (events.hasOwnProperty(key) && evt.test(key)) {
-						delete events[key];
-					}
-				}
-			} else {
-				// Remove all listeners in all events
-				delete this._events;
-			}
-	
-			return this;
-		};
-	
-		/**
-	  * Emits an event of your choice.
-	  * When emitted, every listener attached to that event will be executed.
-	  * If you pass the optional argument array then those arguments will be passed to every listener upon execution.
-	  * Because it uses `apply`, your array of arguments will be passed as if you wrote them out separately.
-	  * So they will not arrive within the array on the other side, they will be separate.
-	  * You can also pass a regular expression to emit to all events that match it.
-	  *
-	  * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
-	  * @param {Array} [args] Optional array of arguments to be passed to each listener.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.emitEvent = function emitEvent(evt, args) {
-			var listeners = this.getListenersAsObject(evt);
-			var listener;
-			var i;
-			var key;
-			var response;
-	
-			for (key in listeners) {
-				if (listeners.hasOwnProperty(key)) {
-					i = listeners[key].length;
-	
-					while (i--) {
-						// If the listener returns true then it shall be removed from the event
-						// The function is executed either with a basic call or an apply if there is an args array
-						listener = listeners[key][i];
-						response = listener.listener.apply(this, args || []);
-						if (response === this._getOnceReturnValue() || listener.once === true) {
-							this.removeListener(evt, listeners[key][i].listener);
-						}
-					}
-				}
-			}
-	
-			return this;
-		};
-	
-		/**
-	  * Alias of emitEvent
-	  */
-		proto.trigger = proto.emitEvent;
-	
-		/**
-	  * Subtly different from emitEvent in that it will pass its arguments on to the listeners, as opposed to taking a single array of arguments to pass on.
-	  * As with emitEvent, you can pass a regex in place of the event name to emit to all events that match it.
-	  *
-	  * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
-	  * @param {...*} Optional additional arguments to be passed to each listener.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.emit = function emit(evt) {
-			var args = Array.prototype.slice.call(arguments, 1);
-			return this.emitEvent(evt, args);
-		};
-	
-		/**
-	  * Sets the current value to check against when executing listeners. If a
-	  * listeners return value matches the one set here then it will be removed
-	  * after execution. This value defaults to true.
-	  *
-	  * @param {*} value The new value to check for when executing listeners.
-	  * @return {Object} Current instance of EventEmitter for chaining.
-	  */
-		proto.setOnceReturnValue = function setOnceReturnValue(value) {
-			this._onceReturnValue = value;
-			return this;
-		};
-	
-		/**
-	  * Fetches the current value to check against when executing listeners. If
-	  * the listeners return value matches this one then it should be removed
-	  * automatically. It will return true by default.
-	  *
-	  * @return {*|Boolean} The current value to check for or the default, true.
-	  * @api private
-	  */
-		proto._getOnceReturnValue = function _getOnceReturnValue() {
-			if (this.hasOwnProperty('_onceReturnValue')) {
-				return this._onceReturnValue;
-			} else {
-				return true;
-			}
-		};
-	
-		/**
-	  * Fetches the events object and creates one if required.
-	  *
-	  * @return {Object} The events storage object.
-	  * @api private
-	  */
-		proto._getEvents = function _getEvents() {
-			return this._events || (this._events = {});
-		};
-	
-		// Expose the class either via AMD, CommonJS or the global object
-		if (true) {
-			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return EventEmitter;
-			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else if (typeof module !== 'undefined' && module.exports) {
-			module.exports = EventEmitter;
-		} else {
-			this.EventEmitter = EventEmitter;
-		}
-	}).call(undefined);
-
-/***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -22086,7 +21649,7 @@
 	exports.default = NavbarBrand;
 
 /***/ },
-/* 189 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22100,8 +21663,6 @@
 	var _react = __webpack_require__(3);
 	
 	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactMdl = __webpack_require__(190);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22175,7 +21736,231 @@
 	};
 
 /***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(3);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _NavbarBrand = __webpack_require__(187);
+	
+	var _NavbarBrand2 = _interopRequireDefault(_NavbarBrand);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Footer = function (_Component) {
+	    _inherits(Footer, _Component);
+	
+	    function Footer() {
+	        _classCallCheck(this, Footer);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Footer).apply(this, arguments));
+	    }
+	
+	    _createClass(Footer, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'footer',
+	                { className: 'mdl-mini-footer' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-mini-footer__left-section' },
+	                    _react2.default.createElement(_NavbarBrand2.default, null)
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Footer;
+	}(_react.Component);
+
+	exports.default = Footer;
+
+/***/ },
 /* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(3);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(160);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _reactMdl = __webpack_require__(191);
+	
+	var _reactModal = __webpack_require__(253);
+	
+	var _reactModal2 = _interopRequireDefault(_reactModal);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PopUp = function (_Component) {
+	    _inherits(PopUp, _Component);
+	
+	    function PopUp() {
+	        _classCallCheck(this, PopUp);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(PopUp).apply(this, arguments));
+	    }
+	
+	    _createClass(PopUp, [{
+	        key: 'closeModal',
+	        value: function closeModal() {
+	            this.props.setModalState(false);
+	        }
+	    }, {
+	        key: 'login',
+	        value: function login(e) {
+	            var _this2 = this;
+	
+	            e.preventDefault();
+	
+	            var email = _reactDom2.default.findDOMNode(this.refs.email).getElementsByTagName('input')[0].value;
+	            var pass = _reactDom2.default.findDOMNode(this.refs.pass).getElementsByTagName('input')[0].value;
+	            var auth = {
+	                email: email,
+	                pass: pass
+	            };
+	
+	            var elErrorTxt = _reactDom2.default.findDOMNode(this.refs.authError);
+	            var xhr = new XMLHttpRequest();
+	            var url = '/login';
+	
+	            elErrorTxt.innerHTML = '';
+	
+	            xhr.open('POST', url, true);
+	            xhr.setRequestHeader('Content-Type', 'application/json');
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState != 4) return;
+	                if (xhr.status == 200) {
+	                    _this2.props.setLogined(true);
+	                    _this2.props.setName(JSON.parse(xhr.responseText).username);
+	                    _this2.props.setModalState(false);
+	                    console.log("Login!");
+	                } else {
+	                    elErrorTxt.innerHTML = xhr.responseText;
+	                }
+	            };
+	            xhr.send(JSON.stringify(auth));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var modalIsOpen = this.props.modalIsOpen;
+	
+	            return _react2.default.createElement(
+	                _reactModal2.default,
+	                {
+	                    isOpen: modalIsOpen,
+	                    onRequestClose: this.closeModal.bind(this),
+	                    closeTimeoutMS: 100
+	                },
+	                _react2.default.createElement(
+	                    'h3',
+	                    { className: 'mdl-dialog__title' },
+	                    'Авторизация'
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-dialog__content' },
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        'Войдите либо введите свои данные и учетная запись будет создана автоматически.'
+	                    ),
+	                    _react2.default.createElement('div', { ref: 'authError', className: 'error' }),
+	                    _react2.default.createElement(_reactMdl.Textfield, {
+	                        ref: 'email',
+	                        onChange: function onChange() {},
+	                        id: 'email',
+	                        type: 'email',
+	                        name: 'email',
+	                        label: 'Email адресс',
+	                        required: true,
+	                        floatingLabel: true,
+	                        pattern: '.+@.+\\..+',
+	                        error: 'Не верный формат Email!',
+	                        style: { width: '100%' }
+	                    }),
+	                    _react2.default.createElement(_reactMdl.Textfield, {
+	                        ref: 'pass',
+	                        onChange: function onChange() {},
+	                        id: 'password',
+	                        type: 'password',
+	                        name: 'password',
+	                        label: 'Пароль, минимум 6 символов',
+	                        required: true,
+	                        floatingLabel: true,
+	                        pattern: '^[a-zA-Z0-9_-]{6,18}$',
+	                        error: 'Не верный формат для поля пароль!',
+	                        style: { width: '100%' }
+	                    })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-dialog__actions' },
+	                    _react2.default.createElement(
+	                        _reactMdl.Button,
+	                        { raised: true, ripple: true, colored: true, type: 'button', onClick: this.closeModal.bind(this) },
+	                        'Отмена'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactMdl.Button,
+	                        { raised: true, ripple: true, colored: true, type: 'submit', onClick: this.login.bind(this) },
+	                        'Войти'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return PopUp;
+	}(_react.Component);
+	
+	exports.default = PopUp;
+	
+	
+	PopUp.PropTypes = {
+	    setModalState: _react.PropTypes.func.isRequired,
+	    modalIsOpen: _react.PropTypes.bool.isRequired,
+	    setLogined: _react.PropTypes.func.isRequired,
+	    setName: _react.PropTypes.func.isRequired
+	};
+
+/***/ },
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22185,7 +21970,7 @@
 	});
 	exports.Tooltip = exports.Textfield = exports.TabBar = exports.Tab = exports.Tabs = exports.Switch = exports.Spinner = exports.Snackbar = exports.Slider = exports.RadioGroup = exports.Radio = exports.ProgressBar = exports.MenuItem = exports.Menu = exports.ListItemContent = exports.ListItemAction = exports.ListItem = exports.List = exports.Content = exports.Navigation = exports.Spacer = exports.HeaderTabs = exports.HeaderRow = exports.Drawer = exports.Header = exports.Layout = exports.IconToggle = exports.IconButton = exports.Icon = exports.Cell = exports.Grid = exports.FooterLinkList = exports.FooterDropDownSection = exports.FooterSection = exports.Footer = exports.FABButton = exports.DialogActions = exports.DialogContent = exports.DialogTitle = exports.Dialog = exports.TableHeader = exports.Table = exports.DataTable = exports.Checkbox = exports.CardMenu = exports.CardText = exports.CardMedia = exports.CardActions = exports.CardTitle = exports.Card = exports.Button = exports.Badge = exports.MDLComponent = exports.mdlUpgrade = undefined;
 	
-	var _Card = __webpack_require__(191);
+	var _Card = __webpack_require__(192);
 	
 	Object.defineProperty(exports, 'Card', {
 	    enumerable: true,
@@ -22224,7 +22009,7 @@
 	    }
 	});
 	
-	var _DataTable2 = __webpack_require__(200);
+	var _DataTable2 = __webpack_require__(201);
 	
 	Object.defineProperty(exports, 'Table', {
 	    enumerable: true,
@@ -22239,7 +22024,7 @@
 	    }
 	});
 	
-	var _Dialog = __webpack_require__(209);
+	var _Dialog = __webpack_require__(210);
 	
 	Object.defineProperty(exports, 'Dialog', {
 	    enumerable: true,
@@ -22266,7 +22051,7 @@
 	    }
 	});
 	
-	var _Footer = __webpack_require__(213);
+	var _Footer = __webpack_require__(214);
 	
 	Object.defineProperty(exports, 'Footer', {
 	    enumerable: true,
@@ -22293,7 +22078,7 @@
 	    }
 	});
 	
-	var _Grid2 = __webpack_require__(219);
+	var _Grid2 = __webpack_require__(220);
 	
 	Object.defineProperty(exports, 'Cell', {
 	    enumerable: true,
@@ -22302,7 +22087,7 @@
 	    }
 	});
 	
-	var _Layout = __webpack_require__(220);
+	var _Layout = __webpack_require__(221);
 	
 	Object.defineProperty(exports, 'Layout', {
 	    enumerable: true,
@@ -22353,7 +22138,7 @@
 	    }
 	});
 	
-	var _List = __webpack_require__(230);
+	var _List = __webpack_require__(231);
 	
 	Object.defineProperty(exports, 'List', {
 	    enumerable: true,
@@ -22380,7 +22165,7 @@
 	    }
 	});
 	
-	var _Menu2 = __webpack_require__(235);
+	var _Menu2 = __webpack_require__(236);
 	
 	Object.defineProperty(exports, 'MenuItem', {
 	    enumerable: true,
@@ -22389,7 +22174,7 @@
 	    }
 	});
 	
-	var _Tabs = __webpack_require__(236);
+	var _Tabs = __webpack_require__(237);
 	
 	Object.defineProperty(exports, 'Tabs', {
 	    enumerable: true,
@@ -22410,81 +22195,81 @@
 	    }
 	});
 	
-	var _mdlUpgrade2 = __webpack_require__(207);
+	var _mdlUpgrade2 = __webpack_require__(208);
 	
 	var _mdlUpgrade3 = _interopRequireDefault(_mdlUpgrade2);
 	
-	var _MDLComponent2 = __webpack_require__(203);
+	var _MDLComponent2 = __webpack_require__(204);
 	
 	var _MDLComponent3 = _interopRequireDefault(_MDLComponent2);
 	
-	var _Badge2 = __webpack_require__(239);
+	var _Badge2 = __webpack_require__(240);
 	
 	var _Badge3 = _interopRequireDefault(_Badge2);
 	
-	var _Button2 = __webpack_require__(240);
+	var _Button2 = __webpack_require__(241);
 	
 	var _Button3 = _interopRequireDefault(_Button2);
 	
-	var _Checkbox2 = __webpack_require__(206);
+	var _Checkbox2 = __webpack_require__(207);
 	
 	var _Checkbox3 = _interopRequireDefault(_Checkbox2);
 	
 	var _DataTable3 = _interopRequireDefault(_DataTable2);
 	
-	var _FABButton2 = __webpack_require__(241);
+	var _FABButton2 = __webpack_require__(242);
 	
 	var _FABButton3 = _interopRequireDefault(_FABButton2);
 	
 	var _Grid3 = _interopRequireDefault(_Grid2);
 	
-	var _Icon2 = __webpack_require__(233);
+	var _Icon2 = __webpack_require__(234);
 	
 	var _Icon3 = _interopRequireDefault(_Icon2);
 	
-	var _IconButton2 = __webpack_require__(242);
+	var _IconButton2 = __webpack_require__(243);
 	
 	var _IconButton3 = _interopRequireDefault(_IconButton2);
 	
-	var _IconToggle2 = __webpack_require__(243);
+	var _IconToggle2 = __webpack_require__(244);
 	
 	var _IconToggle3 = _interopRequireDefault(_IconToggle2);
 	
 	var _Menu3 = _interopRequireDefault(_Menu2);
 	
-	var _ProgressBar2 = __webpack_require__(244);
+	var _ProgressBar2 = __webpack_require__(245);
 	
 	var _ProgressBar3 = _interopRequireDefault(_ProgressBar2);
 	
-	var _Radio2 = __webpack_require__(245);
+	var _Radio2 = __webpack_require__(246);
 	
 	var _Radio3 = _interopRequireDefault(_Radio2);
 	
-	var _RadioGroup2 = __webpack_require__(246);
+	var _RadioGroup2 = __webpack_require__(247);
 	
 	var _RadioGroup3 = _interopRequireDefault(_RadioGroup2);
 	
-	var _Slider2 = __webpack_require__(247);
+	var _Slider2 = __webpack_require__(248);
 	
 	var _Slider3 = _interopRequireDefault(_Slider2);
 	
-	var _Snackbar2 = __webpack_require__(248);
+	var _Snackbar2 = __webpack_require__(249);
 	
 	var _Snackbar3 = _interopRequireDefault(_Snackbar2);
 	
-	var _Spinner2 = __webpack_require__(249);
+	var _Spinner2 = __webpack_require__(250);
 	
 	var _Spinner3 = _interopRequireDefault(_Spinner2);
 	
-	var _Switch2 = __webpack_require__(250);
+	var _Switch2 = __webpack_require__(251);
 	
 	var _Switch3 = _interopRequireDefault(_Switch2);
 	
-	var _Textfield2 = __webpack_require__(251);
+	var _Textfield2 = __webpack_require__(252);
 	
 	var _Textfield3 = _interopRequireDefault(_Textfield2);
 	
-	var _Tooltip2 = __webpack_require__(202);
+	var _Tooltip2 = __webpack_require__(203);
 	
 	var _Tooltip3 = _interopRequireDefault(_Tooltip2);
 	
@@ -22518,7 +22303,7 @@
 	exports.Tooltip = _Tooltip3.default;
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22528,19 +22313,19 @@
 	});
 	exports.CardMedia = exports.CardActions = exports.CardTitle = exports.CardMenu = exports.CardText = exports.Card = undefined;
 	
-	var _basicClassCreator = __webpack_require__(192);
+	var _basicClassCreator = __webpack_require__(193);
 	
 	var _basicClassCreator2 = _interopRequireDefault(_basicClassCreator);
 	
-	var _Card2 = __webpack_require__(195);
+	var _Card2 = __webpack_require__(196);
 	
 	var _Card3 = _interopRequireDefault(_Card2);
 	
-	var _CardTitle2 = __webpack_require__(198);
+	var _CardTitle2 = __webpack_require__(199);
 	
 	var _CardTitle3 = _interopRequireDefault(_CardTitle2);
 	
-	var _CardActions2 = __webpack_require__(199);
+	var _CardActions2 = __webpack_require__(200);
 	
 	var _CardActions3 = _interopRequireDefault(_CardActions2);
 	
@@ -22556,7 +22341,7 @@
 	var CardMedia = exports.CardMedia = (0, _basicClassCreator2.default)('CardMedia', 'mdl-card__media');
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22579,7 +22364,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -22616,7 +22401,7 @@
 	};
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -22662,7 +22447,7 @@
 	
 		if (typeof module !== 'undefined' && module.exports) {
 			module.exports = classNames;
-		} else if ("function" === 'function' && _typeof(__webpack_require__(194)) === 'object' && __webpack_require__(194)) {
+		} else if ("function" === 'function' && _typeof(__webpack_require__(195)) === 'object' && __webpack_require__(195)) {
 			// register as 'classnames', consistent with npm package name
 			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return classNames;
@@ -22673,7 +22458,7 @@
 	})();
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -22681,7 +22466,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22704,15 +22489,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _clamp = __webpack_require__(196);
+	var _clamp = __webpack_require__(197);
 	
 	var _clamp2 = _interopRequireDefault(_clamp);
 	
-	var _shadows = __webpack_require__(197);
+	var _shadows = __webpack_require__(198);
 	
 	var _shadows2 = _interopRequireDefault(_shadows);
 	
@@ -22756,7 +22541,7 @@
 	exports.default = Card;
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22768,7 +22553,7 @@
 	}
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22782,7 +22567,7 @@
 	});
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22817,7 +22602,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -22888,7 +22673,7 @@
 	exports.default = CardTitle;
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22911,7 +22696,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -22947,7 +22732,7 @@
 	exports.default = CardActions;
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22957,11 +22742,11 @@
 	});
 	exports.default = exports.Table = exports.TableHeader = undefined;
 	
-	var _TableHeader2 = __webpack_require__(201);
+	var _TableHeader2 = __webpack_require__(202);
 	
 	var _TableHeader3 = _interopRequireDefault(_TableHeader2);
 	
-	var _Table2 = __webpack_require__(204);
+	var _Table2 = __webpack_require__(205);
 	
 	var _Table3 = _interopRequireDefault(_Table2);
 	
@@ -22974,7 +22759,7 @@
 	exports.default = _Table3.default;
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22997,11 +22782,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _Tooltip = __webpack_require__(202);
+	var _Tooltip = __webpack_require__(203);
 	
 	var _Tooltip2 = _interopRequireDefault(_Tooltip);
 	
@@ -23053,7 +22838,7 @@
 	exports.default = TableHeader;
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23076,11 +22861,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _MDLComponent = __webpack_require__(203);
+	var _MDLComponent = __webpack_require__(204);
 	
 	var _MDLComponent2 = _interopRequireDefault(_MDLComponent);
 	
@@ -23139,7 +22924,7 @@
 	exports.default = Tooltip;
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23214,7 +22999,7 @@
 	exports.default = MDLComponent;
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23250,27 +23035,27 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _clamp = __webpack_require__(196);
+	var _clamp = __webpack_require__(197);
 	
 	var _clamp2 = _interopRequireDefault(_clamp);
 	
-	var _shadows = __webpack_require__(197);
+	var _shadows = __webpack_require__(198);
 	
 	var _shadows2 = _interopRequireDefault(_shadows);
 	
-	var _TableHeader = __webpack_require__(201);
+	var _TableHeader = __webpack_require__(202);
 	
 	var _TableHeader2 = _interopRequireDefault(_TableHeader);
 	
-	var _Selectable = __webpack_require__(205);
+	var _Selectable = __webpack_require__(206);
 	
 	var _Selectable2 = _interopRequireDefault(_Selectable);
 	
-	var _Sortable = __webpack_require__(208);
+	var _Sortable = __webpack_require__(209);
 	
 	var _Sortable2 = _interopRequireDefault(_Sortable);
 	
@@ -23384,7 +23169,7 @@
 	var UndecoratedTable = exports.UndecoratedTable = Table;
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23419,15 +23204,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _TableHeader = __webpack_require__(201);
+	var _TableHeader = __webpack_require__(202);
 	
 	var _TableHeader2 = _interopRequireDefault(_TableHeader);
 	
-	var _Checkbox = __webpack_require__(206);
+	var _Checkbox = __webpack_require__(207);
 	
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 	
@@ -23616,7 +23401,7 @@
 	};
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23653,11 +23438,11 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -23745,7 +23530,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(Checkbox);
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23758,7 +23543,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _MDLComponent = __webpack_require__(203);
+	var _MDLComponent = __webpack_require__(204);
 	
 	var _MDLComponent2 = _interopRequireDefault(_MDLComponent);
 	
@@ -23779,7 +23564,7 @@
 	};
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23814,11 +23599,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _TableHeader = __webpack_require__(201);
+	var _TableHeader = __webpack_require__(202);
 	
 	var _TableHeader2 = _interopRequireDefault(_TableHeader);
 	
@@ -23994,7 +23779,7 @@
 	};
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24004,19 +23789,19 @@
 	});
 	exports.DialogActions = exports.DialogContent = exports.DialogTitle = exports.Dialog = undefined;
 	
-	var _basicClassCreator = __webpack_require__(192);
+	var _basicClassCreator = __webpack_require__(193);
 	
 	var _basicClassCreator2 = _interopRequireDefault(_basicClassCreator);
 	
-	var _Dialog2 = __webpack_require__(210);
+	var _Dialog2 = __webpack_require__(211);
 	
 	var _Dialog3 = _interopRequireDefault(_Dialog2);
 	
-	var _DialogTitle2 = __webpack_require__(211);
+	var _DialogTitle2 = __webpack_require__(212);
 	
 	var _DialogTitle3 = _interopRequireDefault(_DialogTitle2);
 	
-	var _DialogActions2 = __webpack_require__(212);
+	var _DialogActions2 = __webpack_require__(213);
 	
 	var _DialogActions3 = _interopRequireDefault(_DialogActions2);
 	
@@ -24030,7 +23815,7 @@
 	exports.DialogActions = _DialogActions3.default;
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24067,7 +23852,7 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -24177,7 +23962,7 @@
 	exports.default = Dialog;
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24200,7 +23985,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -24234,7 +24019,7 @@
 	exports.default = DialogTitle;
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24257,7 +24042,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -24293,7 +24078,7 @@
 	exports.default = DialogActions;
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24303,19 +24088,19 @@
 	});
 	exports.FooterLinkList = exports.FooterDropDownSection = exports.FooterSection = exports.Footer = undefined;
 	
-	var _Footer2 = __webpack_require__(214);
+	var _Footer2 = __webpack_require__(215);
 	
 	var _Footer3 = _interopRequireDefault(_Footer2);
 	
-	var _Section = __webpack_require__(216);
+	var _Section = __webpack_require__(217);
 	
 	var _Section2 = _interopRequireDefault(_Section);
 	
-	var _DropDownSection = __webpack_require__(217);
+	var _DropDownSection = __webpack_require__(218);
 	
 	var _DropDownSection2 = _interopRequireDefault(_DropDownSection);
 	
-	var _LinkList = __webpack_require__(218);
+	var _LinkList = __webpack_require__(219);
 	
 	var _LinkList2 = _interopRequireDefault(_LinkList);
 	
@@ -24329,7 +24114,7 @@
 	exports.FooterLinkList = _LinkList2.default;
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24352,11 +24137,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _cloneChildren = __webpack_require__(215);
+	var _cloneChildren = __webpack_require__(216);
 	
 	var _cloneChildren2 = _interopRequireDefault(_cloneChildren);
 	
@@ -24401,7 +24186,7 @@
 	exports.default = Footer;
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24426,7 +24211,7 @@
 	};
 
 /***/ },
-/* 216 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24449,11 +24234,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _cloneChildren = __webpack_require__(215);
+	var _cloneChildren = __webpack_require__(216);
 	
 	var _cloneChildren2 = _interopRequireDefault(_cloneChildren);
 	
@@ -24503,7 +24288,7 @@
 	exports.default = Section;
 
 /***/ },
-/* 217 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24526,11 +24311,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _cloneChildren = __webpack_require__(215);
+	var _cloneChildren = __webpack_require__(216);
 	
 	var _cloneChildren2 = _interopRequireDefault(_cloneChildren);
 	
@@ -24577,7 +24362,7 @@
 	exports.default = DropDownSection;
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24600,7 +24385,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -24647,7 +24432,7 @@
 	exports.default = LinkList;
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24671,15 +24456,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _clamp = __webpack_require__(196);
+	var _clamp = __webpack_require__(197);
 	
 	var _clamp2 = _interopRequireDefault(_clamp);
 	
-	var _shadows = __webpack_require__(197);
+	var _shadows = __webpack_require__(198);
 	
 	var _shadows2 = _interopRequireDefault(_shadows);
 	
@@ -24774,7 +24559,7 @@
 	exports.Cell = Cell;
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24784,35 +24569,35 @@
 	});
 	exports.Spacer = exports.Navigation = exports.HeaderTabs = exports.HeaderRow = exports.Header = exports.Drawer = exports.Content = exports.Layout = undefined;
 	
-	var _Layout2 = __webpack_require__(221);
+	var _Layout2 = __webpack_require__(222);
 	
 	var _Layout3 = _interopRequireDefault(_Layout2);
 	
-	var _Content2 = __webpack_require__(222);
+	var _Content2 = __webpack_require__(223);
 	
 	var _Content3 = _interopRequireDefault(_Content2);
 	
-	var _Drawer2 = __webpack_require__(223);
+	var _Drawer2 = __webpack_require__(224);
 	
 	var _Drawer3 = _interopRequireDefault(_Drawer2);
 	
-	var _Header2 = __webpack_require__(224);
+	var _Header2 = __webpack_require__(225);
 	
 	var _Header3 = _interopRequireDefault(_Header2);
 	
-	var _HeaderRow2 = __webpack_require__(225);
+	var _HeaderRow2 = __webpack_require__(226);
 	
 	var _HeaderRow3 = _interopRequireDefault(_HeaderRow2);
 	
-	var _HeaderTabs2 = __webpack_require__(227);
+	var _HeaderTabs2 = __webpack_require__(228);
 	
 	var _HeaderTabs3 = _interopRequireDefault(_HeaderTabs2);
 	
-	var _Navigation2 = __webpack_require__(229);
+	var _Navigation2 = __webpack_require__(230);
 	
 	var _Navigation3 = _interopRequireDefault(_Navigation2);
 	
-	var _Spacer2 = __webpack_require__(226);
+	var _Spacer2 = __webpack_require__(227);
 	
 	var _Spacer3 = _interopRequireDefault(_Spacer2);
 	
@@ -24830,7 +24615,7 @@
 	exports.Spacer = _Spacer3.default;
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24865,11 +24650,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -24943,7 +24728,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(Layout);
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24966,7 +24751,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -25002,7 +24787,7 @@
 	exports.default = Content;
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25025,7 +24810,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -25058,7 +24843,7 @@
 	exports.default = Drawer;
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25081,15 +24866,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _HeaderRow = __webpack_require__(225);
+	var _HeaderRow = __webpack_require__(226);
 	
 	var _HeaderRow2 = _interopRequireDefault(_HeaderRow);
 	
-	var _HeaderTabs = __webpack_require__(227);
+	var _HeaderTabs = __webpack_require__(228);
 	
 	var _HeaderTabs2 = _interopRequireDefault(_HeaderTabs);
 	
@@ -25145,7 +24930,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 225 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25168,11 +24953,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _Spacer = __webpack_require__(226);
+	var _Spacer = __webpack_require__(227);
 	
 	var _Spacer2 = _interopRequireDefault(_Spacer);
 	
@@ -25205,7 +24990,7 @@
 	exports.default = HeaderRow;
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25214,7 +24999,7 @@
 	  value: true
 	});
 	
-	var _basicClassCreator = __webpack_require__(192);
+	var _basicClassCreator = __webpack_require__(193);
 	
 	var _basicClassCreator2 = _interopRequireDefault(_basicClassCreator);
 	
@@ -25225,7 +25010,7 @@
 	exports.default = (0, _basicClassCreator2.default)('Spacer', 'mdl-layout-spacer');
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25248,11 +25033,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _TabBar = __webpack_require__(228);
+	var _TabBar = __webpack_require__(229);
 	
 	var _TabBar2 = _interopRequireDefault(_TabBar);
 	
@@ -25289,7 +25074,7 @@
 	exports.default = HeaderTabs;
 
 /***/ },
-/* 228 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25324,7 +25109,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -25424,7 +25209,7 @@
 	exports.default = TabBar;
 
 /***/ },
-/* 229 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25447,15 +25232,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _cloneChildren = __webpack_require__(215);
+	var _cloneChildren = __webpack_require__(216);
 	
 	var _cloneChildren2 = _interopRequireDefault(_cloneChildren);
 	
-	var _Spacer = __webpack_require__(226);
+	var _Spacer = __webpack_require__(227);
 	
 	var _Spacer2 = _interopRequireDefault(_Spacer);
 	
@@ -25490,7 +25275,7 @@
 	exports.default = Navigation;
 
 /***/ },
-/* 230 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25500,19 +25285,19 @@
 	});
 	exports.ListItemContent = exports.ListItemAction = exports.ListItem = exports.List = undefined;
 	
-	var _basicClassCreator = __webpack_require__(192);
+	var _basicClassCreator = __webpack_require__(193);
 	
 	var _basicClassCreator2 = _interopRequireDefault(_basicClassCreator);
 	
-	var _ListItem2 = __webpack_require__(231);
+	var _ListItem2 = __webpack_require__(232);
 	
 	var _ListItem3 = _interopRequireDefault(_ListItem2);
 	
-	var _ListItemAction2 = __webpack_require__(234);
+	var _ListItemAction2 = __webpack_require__(235);
 	
 	var _ListItemAction3 = _interopRequireDefault(_ListItemAction2);
 	
-	var _ListItemContent2 = __webpack_require__(232);
+	var _ListItemContent2 = __webpack_require__(233);
 	
 	var _ListItemContent3 = _interopRequireDefault(_ListItemContent2);
 	
@@ -25526,7 +25311,7 @@
 	exports.ListItemContent = _ListItemContent3.default;
 
 /***/ },
-/* 231 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25561,11 +25346,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _ListItemContent = __webpack_require__(232);
+	var _ListItemContent = __webpack_require__(233);
 	
 	var _ListItemContent2 = _interopRequireDefault(_ListItemContent);
 	
@@ -25648,7 +25433,7 @@
 	exports.default = ListItem;
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25683,11 +25468,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _Icon = __webpack_require__(233);
+	var _Icon = __webpack_require__(234);
 	
 	var _Icon2 = _interopRequireDefault(_Icon);
 	
@@ -25776,7 +25561,7 @@
 	exports.default = ListItemContent;
 
 /***/ },
-/* 233 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25799,7 +25584,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -25832,7 +25617,7 @@
 	exports.default = Icon;
 
 /***/ },
-/* 234 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25867,7 +25652,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -25935,7 +25720,7 @@
 	exports.default = ListItemAction;
 
 /***/ },
-/* 235 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25971,15 +25756,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
-	var _basicClassCreator = __webpack_require__(192);
+	var _basicClassCreator = __webpack_require__(193);
 	
 	var _basicClassCreator2 = _interopRequireDefault(_basicClassCreator);
 	
@@ -26067,7 +25852,7 @@
 	var MenuItem = exports.MenuItem = (0, _basicClassCreator2.default)('MenuItem', 'mdl-menu__item', 'li');
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26077,15 +25862,15 @@
 	});
 	exports.Tab = exports.TabBar = exports.Tabs = undefined;
 	
-	var _Tabs2 = __webpack_require__(237);
+	var _Tabs2 = __webpack_require__(238);
 	
 	var _Tabs3 = _interopRequireDefault(_Tabs2);
 	
-	var _TabBar2 = __webpack_require__(228);
+	var _TabBar2 = __webpack_require__(229);
 	
 	var _TabBar3 = _interopRequireDefault(_TabBar2);
 	
-	var _Tab2 = __webpack_require__(238);
+	var _Tab2 = __webpack_require__(239);
 	
 	var _Tab3 = _interopRequireDefault(_Tab2);
 	
@@ -26098,7 +25883,7 @@
 	exports.Tab = _Tab3.default;
 
 /***/ },
-/* 237 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26133,15 +25918,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _Tab = __webpack_require__(238);
+	var _Tab = __webpack_require__(239);
 	
 	var _Tab2 = _interopRequireDefault(_Tab);
 	
-	var _TabBar = __webpack_require__(228);
+	var _TabBar = __webpack_require__(229);
 	
 	var _TabBar2 = _interopRequireDefault(_TabBar);
 	
@@ -26218,7 +26003,7 @@
 	exports.default = Tabs;
 
 /***/ },
-/* 238 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26241,7 +26026,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -26310,7 +26095,7 @@
 	exports.default = Tab;
 
 /***/ },
-/* 239 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26335,7 +26120,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -26410,7 +26195,7 @@
 	exports.default = Badge;
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26445,11 +26230,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -26537,7 +26322,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(Button);
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26560,11 +26345,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _Button = __webpack_require__(240);
+	var _Button = __webpack_require__(241);
 	
 	var _Button2 = _interopRequireDefault(_Button);
 	
@@ -26600,7 +26385,7 @@
 	exports.default = FABButton;
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26623,15 +26408,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _Button = __webpack_require__(240);
+	var _Button = __webpack_require__(241);
 	
 	var _Button2 = _interopRequireDefault(_Button);
 	
-	var _Icon = __webpack_require__(233);
+	var _Icon = __webpack_require__(234);
 	
 	var _Icon2 = _interopRequireDefault(_Icon);
 	
@@ -26664,7 +26449,7 @@
 	exports.default = IconButton;
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26701,15 +26486,15 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _Icon = __webpack_require__(233);
+	var _Icon = __webpack_require__(234);
 	
 	var _Icon2 = _interopRequireDefault(_Icon);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -26797,7 +26582,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(IconToggle);
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26834,11 +26619,11 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -26934,7 +26719,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(ProgressBar);
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26971,11 +26756,11 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -27068,7 +26853,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(Radio);
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27091,7 +26876,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Radio = __webpack_require__(245);
+	var _Radio = __webpack_require__(246);
 	
 	var _Radio2 = _interopRequireDefault(_Radio);
 	
@@ -27154,7 +26939,7 @@
 	exports.default = RadioGroup;
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27191,11 +26976,11 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -27273,7 +27058,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(Slider);
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27308,7 +27093,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -27444,7 +27229,7 @@
 	exports.default = Snackbar;
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27479,11 +27264,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -27551,7 +27336,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(Spinner);
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27588,11 +27373,11 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -27679,7 +27464,7 @@
 	exports.default = (0, _mdlUpgrade2.default)(Switch);
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27716,11 +27501,11 @@
 	
 	var _reactDom = __webpack_require__(160);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(194);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _mdlUpgrade = __webpack_require__(207);
+	var _mdlUpgrade = __webpack_require__(208);
 	
 	var _mdlUpgrade2 = _interopRequireDefault(_mdlUpgrade);
 	
@@ -27858,302 +27643,25 @@
 	exports.default = (0, _mdlUpgrade2.default)(Textfield);
 
 /***/ },
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(3);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var HeaderLogo = function (_Component) {
-	    _inherits(HeaderLogo, _Component);
-	
-	    function HeaderLogo() {
-	        _classCallCheck(this, HeaderLogo);
-	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeaderLogo).apply(this, arguments));
-	    }
-	
-	    _createClass(HeaderLogo, [{
-	        key: "render",
-	        value: function render() {
-	            return _react2.default.createElement(
-	                "div",
-	                { className: "mdl-layout-icon" },
-	                _react2.default.createElement(
-	                    "i",
-	                    { className: "material-icons" },
-	                    ""
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return HeaderLogo;
-	}(_react.Component);
-
-	exports.default = HeaderLogo;
-
-/***/ },
 /* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(3);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _NavbarBrand = __webpack_require__(188);
-	
-	var _NavbarBrand2 = _interopRequireDefault(_NavbarBrand);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Footer = function (_Component) {
-	    _inherits(Footer, _Component);
-	
-	    function Footer() {
-	        _classCallCheck(this, Footer);
-	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Footer).apply(this, arguments));
-	    }
-	
-	    _createClass(Footer, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'footer',
-	                { className: 'mdl-mini-footer' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-mini-footer__left-section' },
-	                    _react2.default.createElement(_NavbarBrand2.default, null)
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return Footer;
-	}(_react.Component);
-
-	exports.default = Footer;
+	module.exports = __webpack_require__(254);
 
 /***/ },
 /* 254 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(3);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(160);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _reactMdl = __webpack_require__(190);
-	
-	var _reactModal = __webpack_require__(255);
-	
-	var _reactModal2 = _interopRequireDefault(_reactModal);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PopUp = function (_Component) {
-	    _inherits(PopUp, _Component);
-	
-	    function PopUp() {
-	        _classCallCheck(this, PopUp);
-	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(PopUp).apply(this, arguments));
-	    }
-	
-	    _createClass(PopUp, [{
-	        key: 'closeModal',
-	        value: function closeModal() {
-	            this.props.setModalState(false);
-	        }
-	    }, {
-	        key: 'login',
-	        value: function login(e) {
-	            var _this2 = this;
-	
-	            e.preventDefault();
-	
-	            var email = _reactDom2.default.findDOMNode(this.refs.email).getElementsByTagName('input')[0].value;
-	            var pass = _reactDom2.default.findDOMNode(this.refs.pass).getElementsByTagName('input')[0].value;
-	            var auth = {
-	                email: email,
-	                pass: pass
-	            };
-	
-	            var elErrorTxt = _reactDom2.default.findDOMNode(this.refs.authError);
-	            var xhr = new XMLHttpRequest();
-	            var url = '/login';
-	
-	            elErrorTxt.innerHTML = '';
-	
-	            xhr.open('POST', url, true);
-	            xhr.setRequestHeader('Content-Type', 'application/json');
-	            xhr.onreadystatechange = function () {
-	                if (xhr.readyState != 4) return;
-	                if (xhr.status == 200) {
-	                    _this2.props.setLogined(true);
-	                    _this2.props.setName(JSON.parse(xhr.responseText).username);
-	                    _this2.props.setModalState(false);
-	                    console.log("Login!");
-	                } else {
-	                    elErrorTxt.innerHTML = xhr.responseText;
-	                }
-	            };
-	            xhr.send(JSON.stringify(auth));
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var modalIsOpen = this.props.modalIsOpen;
-	
-	            return _react2.default.createElement(
-	                _reactModal2.default,
-	                {
-	                    isOpen: modalIsOpen,
-	                    onRequestClose: this.closeModal.bind(this),
-	                    closeTimeoutMS: 100
-	                },
-	                _react2.default.createElement(
-	                    'h3',
-	                    { className: 'mdl-dialog__title' },
-	                    'Авторизация'
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-dialog__content' },
-	                    _react2.default.createElement(
-	                        'p',
-	                        null,
-	                        'Войдите либо введите свои данные и учетная запись будет создана автоматически.'
-	                    ),
-	                    _react2.default.createElement('div', { ref: 'authError', className: 'error' }),
-	                    _react2.default.createElement(_reactMdl.Textfield, {
-	                        ref: 'email',
-	                        onChange: function onChange() {},
-	                        id: 'email',
-	                        type: 'email',
-	                        name: 'email',
-	                        label: 'Email адресс',
-	                        required: true,
-	                        floatingLabel: true,
-	                        pattern: '.+@.+\\..+',
-	                        error: 'Не верный формат Email!',
-	                        style: { width: '100%' }
-	                    }),
-	                    _react2.default.createElement(_reactMdl.Textfield, {
-	                        ref: 'pass',
-	                        onChange: function onChange() {},
-	                        id: 'password',
-	                        type: 'password',
-	                        name: 'password',
-	                        label: 'Пароль, минимум 6 символов',
-	                        required: true,
-	                        floatingLabel: true,
-	                        pattern: '^[a-zA-Z0-9_-]{6,18}$',
-	                        error: 'Не верный формат для поля пароль!',
-	                        style: { width: '100%' }
-	                    })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-dialog__actions' },
-	                    _react2.default.createElement(
-	                        _reactMdl.Button,
-	                        { raised: true, ripple: true, colored: true, type: 'button', onClick: this.closeModal.bind(this) },
-	                        'Отмена'
-	                    ),
-	                    _react2.default.createElement(
-	                        _reactMdl.Button,
-	                        { raised: true, ripple: true, colored: true, type: 'submit', onClick: this.login.bind(this) },
-	                        'Войти'
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return PopUp;
-	}(_react.Component);
-	
-	exports.default = PopUp;
-	
-	
-	PopUp.PropTypes = {
-	    setModalState: _react.PropTypes.func.isRequired,
-	    modalIsOpen: _react.PropTypes.bool.isRequired,
-	    setLogined: _react.PropTypes.func.isRequired,
-	    setName: _react.PropTypes.func.isRequired
-	};
-
-/***/ },
-/* 255 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	module.exports = __webpack_require__(256);
-
-/***/ },
-/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
 	var React = __webpack_require__(3);
 	var ReactDOM = __webpack_require__(160);
-	var ExecutionEnvironment = __webpack_require__(257);
-	var ModalPortal = React.createFactory(__webpack_require__(258));
-	var ariaAppHider = __webpack_require__(273);
-	var elementClass = __webpack_require__(274);
+	var ExecutionEnvironment = __webpack_require__(255);
+	var ModalPortal = React.createFactory(__webpack_require__(256));
+	var ariaAppHider = __webpack_require__(271);
+	var elementClass = __webpack_require__(272);
 	var renderSubtreeIntoContainer = __webpack_require__(160).unstable_renderSubtreeIntoContainer;
 	
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -28229,7 +27737,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ },
-/* 257 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -28259,7 +27767,7 @@
 	
 		};
 	
-		if ("function" === 'function' && _typeof(__webpack_require__(194)) === 'object' && __webpack_require__(194)) {
+		if ("function" === 'function' && _typeof(__webpack_require__(195)) === 'object' && __webpack_require__(195)) {
 			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
 				return ExecutionEnvironment;
 			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -28271,16 +27779,16 @@
 	})();
 
 /***/ },
-/* 258 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(3);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(259);
-	var scopeTab = __webpack_require__(261);
-	var Assign = __webpack_require__(262);
+	var focusManager = __webpack_require__(257);
+	var scopeTab = __webpack_require__(259);
+	var Assign = __webpack_require__(260);
 	
 	// so that our CSS is statically analyzable
 	var CLASS_NAMES = {
@@ -28459,12 +27967,12 @@
 	});
 
 /***/ },
-/* 259 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var findTabbable = __webpack_require__(260);
+	var findTabbable = __webpack_require__(258);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -28530,7 +28038,7 @@
 	};
 
 /***/ },
-/* 260 */
+/* 258 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28581,12 +28089,12 @@
 	module.exports = findTabbableDescendants;
 
 /***/ },
-/* 261 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var findTabbable = __webpack_require__(260);
+	var findTabbable = __webpack_require__(258);
 	
 	module.exports = function (node, event) {
 	  var tabbable = findTabbable(node);
@@ -28601,7 +28109,7 @@
 	};
 
 /***/ },
-/* 262 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28614,9 +28122,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(263),
-	    createAssigner = __webpack_require__(269),
-	    keys = __webpack_require__(265);
+	var baseAssign = __webpack_require__(261),
+	    createAssigner = __webpack_require__(267),
+	    keys = __webpack_require__(263);
 	
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -28685,7 +28193,7 @@
 	module.exports = assign;
 
 /***/ },
-/* 263 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28698,8 +28206,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(264),
-	    keys = __webpack_require__(265);
+	var baseCopy = __webpack_require__(262),
+	    keys = __webpack_require__(263);
 	
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -28717,7 +28225,7 @@
 	module.exports = baseAssign;
 
 /***/ },
-/* 264 */
+/* 262 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -28756,7 +28264,7 @@
 	module.exports = baseCopy;
 
 /***/ },
-/* 265 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28771,9 +28279,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(266),
-	    isArguments = __webpack_require__(267),
-	    isArray = __webpack_require__(268);
+	var getNative = __webpack_require__(264),
+	    isArguments = __webpack_require__(265),
+	    isArray = __webpack_require__(266);
 	
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -28997,7 +28505,7 @@
 	module.exports = keys;
 
 /***/ },
-/* 266 */
+/* 264 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29140,7 +28648,7 @@
 	module.exports = getNative;
 
 /***/ },
-/* 267 */
+/* 265 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29390,7 +28898,7 @@
 	module.exports = isArguments;
 
 /***/ },
-/* 268 */
+/* 266 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29576,7 +29084,7 @@
 	module.exports = isArray;
 
 /***/ },
-/* 269 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29589,9 +29097,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(270),
-	    isIterateeCall = __webpack_require__(271),
-	    restParam = __webpack_require__(272);
+	var bindCallback = __webpack_require__(268),
+	    isIterateeCall = __webpack_require__(269),
+	    restParam = __webpack_require__(270);
 	
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -29635,7 +29143,7 @@
 	module.exports = createAssigner;
 
 /***/ },
-/* 270 */
+/* 268 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29711,7 +29219,7 @@
 	module.exports = bindCallback;
 
 /***/ },
-/* 271 */
+/* 269 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29850,7 +29358,7 @@
 	module.exports = isIterateeCall;
 
 /***/ },
-/* 272 */
+/* 270 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29927,7 +29435,7 @@
 	module.exports = restParam;
 
 /***/ },
-/* 273 */
+/* 271 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29971,7 +29479,7 @@
 	exports.resetForTesting = resetForTesting;
 
 /***/ },
-/* 274 */
+/* 272 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -30038,7 +29546,56 @@
 	};
 
 /***/ },
-/* 275 */
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(3);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Content = function (_Component) {
+	    _inherits(Content, _Component);
+	
+	    function Content() {
+	        _classCallCheck(this, Content);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Content).apply(this, arguments));
+	    }
+	
+	    _createClass(Content, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "content" },
+	                this.props.children
+	            );
+	        }
+	    }]);
+	
+	    return Content;
+	}(_react.Component);
+
+	exports.default = Content;
+
+/***/ },
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30050,11 +29607,11 @@
 	
 	var _redux = __webpack_require__(167);
 	
-	var _reducers = __webpack_require__(276);
+	var _reducers = __webpack_require__(275);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
-	var _reduxThunk = __webpack_require__(280);
+	var _reduxThunk = __webpack_require__(279);
 	
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 	
@@ -30074,7 +29631,7 @@
 	}
 
 /***/ },
-/* 276 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30085,15 +29642,15 @@
 	
 	var _redux = __webpack_require__(167);
 	
-	var _page = __webpack_require__(277);
+	var _page = __webpack_require__(276);
 	
 	var _page2 = _interopRequireDefault(_page);
 	
-	var _user = __webpack_require__(278);
+	var _user = __webpack_require__(277);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
-	var _modal = __webpack_require__(279);
+	var _modal = __webpack_require__(278);
 	
 	var _modal2 = _interopRequireDefault(_modal);
 	
@@ -30106,7 +29663,7 @@
 	});
 
 /***/ },
-/* 277 */
+/* 276 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30126,7 +29683,7 @@
 	}
 
 /***/ },
-/* 278 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30167,7 +29724,7 @@
 	}
 
 /***/ },
-/* 279 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30200,7 +29757,7 @@
 	}
 
 /***/ },
-/* 280 */
+/* 279 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -30221,6 +29778,80 @@
 	    };
 	  };
 	}
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(3);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactMdl = __webpack_require__(191);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Content = function (_Component) {
+	    _inherits(Content, _Component);
+	
+	    function Content() {
+	        _classCallCheck(this, Content);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Content).apply(this, arguments));
+	    }
+	
+	    _createClass(Content, [{
+	        key: 'render',
+	        value: function render() {
+	            var imgsArr = ['http://www.getmdl.io/assets/demos/image_card.jpg', 'http://www.getmdl.io/assets/demos/image_card.jpg', 'http://www.getmdl.io/assets/demos/image_card.jpg', 'http://www.getmdl.io/assets/demos/image_card.jpg'];
+	
+	            var template = imgsArr.map(function (item, i) {
+	                return _react2.default.createElement(
+	                    _reactMdl.Cell,
+	                    { key: i, col: 3 },
+	                    _react2.default.createElement(
+	                        _reactMdl.Card,
+	                        { shadow: 0, style: { width: '256px', height: '256px', background: 'url(' + item + ') center / cover', margin: 'auto' } },
+	                        _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
+	                        _react2.default.createElement(
+	                            _reactMdl.CardActions,
+	                            { style: { height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)' } },
+	                            _react2.default.createElement(
+	                                'span',
+	                                { style: { color: '#fff', fontSize: '14px', fontWeight: '500' } },
+	                                item
+	                            )
+	                        )
+	                    )
+	                );
+	            });
+	
+	            return _react2.default.createElement(
+	                _reactMdl.Grid,
+	                null,
+	                template
+	            );
+	        }
+	    }]);
+	
+	    return Content;
+	}(_react.Component);
+
+	exports.default = Content;
 
 /***/ }
 /******/ ]);

@@ -4,18 +4,15 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as userActions from '../actions/UserActions'
 import * as modalActions from '../actions/ModalActions'
-import EventEmitter from 'wolfy87-eventemitter'
 
 //Components
 import NavbarBrand from '../components/NavbarBrand'
 import UserPanel from '../components/UserPanel'
-import HeaderLogo from '../components/HeaderLogo'
 import Footer from '../components/Footer'
 import PopUp from '../components/PopUp'
+import Content from '../components/Content'
+import Cards from '../components/Cards'
 import { Layout, Header, Drawer } from 'react-mdl'
-
-
-window.ee = new EventEmitter();
 
 
 class App extends Component {
@@ -34,9 +31,9 @@ class App extends Component {
                     <NavbarBrand />
                 </Drawer>
                 <main className="mdl-layout__content">
-                    <div className="mdl-grid">
-
-                    </div>
+                    <Content>
+                        <Cards />
+                    </Content>
                 </main>
                 <Footer />
                 <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} setLogined={setLogined} setName={setName} />

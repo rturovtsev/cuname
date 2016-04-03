@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import { Navigation } from 'react-mdl'
 
 
 export default class UserPanel extends Component {

@@ -58,3 +58,7 @@ a:focus {
   transform: scale(0.5) rotateX(30deg);
   transition: all 0.1s ease-in;
 }
+.content {
+  width: 80%;
+  margin: 50px auto;
+}
