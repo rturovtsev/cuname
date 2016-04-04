@@ -32,6 +32,7 @@ export default class PopUp extends Component {
                 this.props.setLogined(true);
                 this.props.setName( JSON.parse(xhr.responseText).username );
                 this.props.setModalState(false);
+                this.props.getImgs('get');
                 console.log("Login!");
             } else {
                 elErrorTxt.innerHTML = xhr.responseText;

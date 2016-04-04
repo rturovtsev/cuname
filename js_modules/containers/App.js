@@ -35,11 +35,11 @@ class App extends Component {
                 </Drawer>
                 <main className="mdl-layout__content">
                     <Content>
-                        <Cards images={images} getImgs={getImgs} />
+                        <Cards logined={logined} images={images} getImgs={getImgs} />
                     </Content>
                 </main>
                 <Footer />
-                <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} setLogined={setLogined} setName={setName} />
+                <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} setLogined={setLogined} setName={setName} getImgs={getImgs} />
             </Layout>
         );
     }

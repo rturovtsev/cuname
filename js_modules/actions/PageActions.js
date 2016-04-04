@@ -21,7 +21,7 @@ export function getImgs(imgsState) {
 
                     console.log("Error! Imgs are not loaded");
                 } else {
-                    let imgsArr = xhr.responseText;
+                    let imgsArr = JSON.parse(xhr.responseText);
 
                     dispatch({
                         type: SET_IMGS_SUCCESS,
