@@ -5,6 +5,22 @@ const path = require('path');
 const fs = require('fs');
 const User = require('../model/user').User;
 
+
+exports.getImgPost = (req, res, next) => {
+    //Ищем юзера по id из сессии
+    User.findById(req.session.user, function(err, user) {
+        if (err) next(err);
+
+        //если нашли, то удаляем картинку по номеру в массиве
+        if (user) {
+             res.json(user.images);
+        } else {
+            res.sendStatus(404);
+        }
+    });
+};
+
+
 //настройка загружаемых файлов
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

@@ -3,8 +3,7 @@ import { SET_NAME } from '../constants/User'
 
 const initialState = {
     name: cunameUser.username,
-    logined: (cunameUser.username && cunameUser.username != 'Гость') ? true : false,
-    images: (cunameUser.username && cunameUser.username != 'Гость') ? cunameUser.images : []
+    logined: (cunameUser.username && cunameUser.username != 'Гость') ? true : false
 };
 
 export default function user(state = initialState, action) {

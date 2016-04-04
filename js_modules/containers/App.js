@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as userActions from '../actions/UserActions'
 import * as modalActions from '../actions/ModalActions'
+import * as pageActions from '../actions/PageActions'
 
 //Components
 import NavbarBrand from '../components/NavbarBrand'
@@ -21,6 +22,8 @@ class App extends Component {
         const { setLogined, setName } = this.props.userActions; //меняем статус авторизации пользователя
         const { modalIsOpen } = this.props.modal; //статус модального окна
         const { setModalState } = this.props.modalActions; //меняем статус модального окна
+        const { images } = this.props.page; //картинки
+        const { getImgs } = this.props.pageActions; //получаем картинки
 
         return (
             <Layout fixedHeader>
@@ -32,7 +35,7 @@ class App extends Component {
                 </Drawer>
                 <main className="mdl-layout__content">
                     <Content>
-                        <Cards />
+                        <Cards images={images} getImgs={getImgs} />
                     </Content>
                 </main>
                 <Footer />
@@ -54,7 +57,8 @@ function mapStateToProps (state) {
 function mapDispatchToProps(dispatch) {
     return {
         userActions: bindActionCreators(userActions, dispatch),
-        modalActions: bindActionCreators(modalActions, dispatch)
+        modalActions: bindActionCreators(modalActions, dispatch),
+        pageActions: bindActionCreators(pageActions, dispatch)
     };
 }
 

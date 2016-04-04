@@ -89,6 +89,7 @@ app.post('/register', auth.registerPost); //регистрация
 
 app.get('/users', users.list); //список пользователей
 
+app.post('/imgs', imgs.getImgPost); //получение картинок
 app.post('/uploads', imgs.addImgPost); //добавление картинки
 app.post('/removeimg', imgs.removeImgPost); //удаление картинки
 

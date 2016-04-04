@@ -21365,6 +21365,10 @@
 	
 	var modalActions = _interopRequireWildcard(_ModalActions);
 	
+	var _PageActions = __webpack_require__(286);
+	
+	var pageActions = _interopRequireWildcard(_PageActions);
+	
 	var _NavbarBrand = __webpack_require__(189);
 	
 	var _NavbarBrand2 = _interopRequireDefault(_NavbarBrand);
@@ -21429,6 +21433,10 @@
 	
 	            var setModalState = this.props.modalActions.setModalState; //меняем статус модального окна
 	
+	            var images = this.props.page.images; //картинки
+	
+	            var getImgs = this.props.pageActions.getImgs; //получаем картинки
+	
 	            return _react2.default.createElement(
 	                _reactMdl.Layout,
 	                { fixedHeader: true },
@@ -21448,7 +21456,7 @@
 	                    _react2.default.createElement(
 	                        _Content2.default,
 	                        null,
-	                        _react2.default.createElement(_Cards2.default, null)
+	                        _react2.default.createElement(_Cards2.default, { images: images, getImgs: getImgs })
 	                    )
 	                ),
 	                _react2.default.createElement(_Footer2.default, null),
@@ -21471,7 +21479,8 @@
 	function mapDispatchToProps(dispatch) {
 	    return {
 	        userActions: (0, _redux.bindActionCreators)(userActions, dispatch),
-	        modalActions: (0, _redux.bindActionCreators)(modalActions, dispatch)
+	        modalActions: (0, _redux.bindActionCreators)(modalActions, dispatch),
+	        pageActions: (0, _redux.bindActionCreators)(pageActions, dispatch)
 	    };
 	}
 	
@@ -29867,22 +29876,38 @@
 
 /***/ },
 /* 279 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	exports.default = page;
+	
+	var _Page = __webpack_require__(285);
+	
 	var initialState = {
-	    images: cunameUser.images
+	    images: cunameUser.username && cunameUser.username != 'Гость' ? cunameUser.images : []
 	};
 	
 	function page() {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
 	
-	    return state;
+	    switch (action.type) {
+	        case _Page.SET_IMGS_REQUEST:
+	            return Object.assign({}, state);
+	
+	        case _Page.SET_IMGS_FAILED:
+	            return Object.assign({}, state);
+	
+	        case _Page.SET_IMGS_SUCCESS:
+	            return Object.assign({}, state, { images: action.payload });
+	
+	        default:
+	            return state;
+	    }
 	}
 
 /***/ },
@@ -29900,8 +29925,7 @@
 	
 	var initialState = {
 	    name: cunameUser.username,
-	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false,
-	    images: cunameUser.username && cunameUser.username != 'Гость' ? cunameUser.images : []
+	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false
 	};
 	
 	function user() {
@@ -30069,7 +30093,7 @@
 	    _createClass(Content, [{
 	        key: 'render',
 	        value: function render() {
-	            var imgsArr = ['http://www.getmdl.io/assets/demos/image_card.jpg', 'http://www.getmdl.io/assets/demos/image_card.jpg', 'http://www.getmdl.io/assets/demos/image_card.jpg', 'http://www.getmdl.io/assets/demos/image_card.jpg'];
+	            var imgsArr = this.props.images;
 	
 	            var template = imgsArr.map(function (item, i) {
 	                return _react2.default.createElement(
@@ -30077,7 +30101,7 @@
 	                    { key: i, col: 3 },
 	                    _react2.default.createElement(
 	                        _reactMdl.Card,
-	                        { shadow: 0, style: { width: '256px', height: '256px', background: 'url(' + item + ') center / cover', margin: 'auto' } },
+	                        { shadow: 0, style: { width: '256px', height: '256px', background: 'url(/i/' + item + ') center / cover', margin: 'auto' } },
 	                        _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
 	                        _react2.default.createElement(
 	                            _reactMdl.CardActions,
@@ -30104,6 +30128,70 @@
 	}(_react.Component);
 
 	exports.default = Content;
+
+/***/ },
+/* 285 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var SET_IMGS_REQUEST = exports.SET_IMGS_REQUEST = 'SET_IMGS_REQUEST';
+	var SET_IMGS_SUCCESS = exports.SET_IMGS_SUCCESS = 'SET_IMGS_SUCCESS';
+	var SET_IMGS_FAILED = exports.SET_IMGS_FAILED = 'SET_IMGS_FAILED';
+
+/***/ },
+/* 286 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getImgs = getImgs;
+	
+	var _Page = __webpack_require__(285);
+	
+	function getImgs(imgsState) {
+	    return function (dispatch) {
+	        if (imgsState == 'get') {
+	            (function () {
+	                dispatch({
+	                    type: _Page.SET_IMGS_REQUEST
+	                });
+	
+	                var xhr = new XMLHttpRequest(),
+	                    url = '/imgs';
+	
+	                xhr.open('POST', url, true);
+	                xhr.onreadystatechange = function () {
+	                    if (xhr.readyState != 4) return;
+	                    if (xhr.status != 200) {
+	
+	                        dispatch({
+	                            type: _Page.SET_IMGS_FAILED
+	                        });
+	
+	                        console.log("Error! Imgs are not loaded");
+	                    } else {
+	                        var imgsArr = xhr.responseText;
+	
+	                        dispatch({
+	                            type: _Page.SET_IMGS_SUCCESS,
+	                            payload: imgsArr
+	                        });
+	
+	                        console.log("Imgs loaded!");
+	                    }
+	                };
+	                xhr.send();
+	            })();
+	        }
+	    };
+	}
 
 /***/ }
 /******/ ]);
