@@ -29955,9 +29955,12 @@
 	    _createClass(Content, [{
 	        key: 'render',
 	        value: function render() {
+	            var numImgs = 8;
+	
 	            var imgsArr = this.props.images,
 	                logined = this.props.logined,
-	                template = '';
+	                template = '',
+	                staticTemplate = '';
 	
 	            if (imgsArr.length > 0 && logined) {
 	                template = imgsArr.map(function (item, i) {
@@ -29982,10 +29985,37 @@
 	                });
 	            }
 	
+	            if (imgsArr.length < numImgs) {
+	                var staticCardsNum = numImgs - imgsArr.length;
+	                staticTemplate = [];
+	
+	                for (var i = 0; i < staticCardsNum; i++) {
+	                    staticTemplate.push(_react2.default.createElement(
+	                        _reactMdl.Cell,
+	                        { key: i, col: 3 },
+	                        _react2.default.createElement(
+	                            _reactMdl.Card,
+	                            { shadow: 0, style: { width: '256px', height: '256px', background: 'url(http://www.getmdl.io/assets/demos/image_card.jpg) center / cover', margin: 'auto' } },
+	                            _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
+	                            _react2.default.createElement(
+	                                _reactMdl.CardActions,
+	                                { style: { height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)' } },
+	                                _react2.default.createElement(
+	                                    'span',
+	                                    { style: { color: '#fff', fontSize: '14px', fontWeight: '500' } },
+	                                    'Image.jpg'
+	                                )
+	                            )
+	                        )
+	                    ));
+	                }
+	            }
+	
 	            return _react2.default.createElement(
 	                _reactMdl.Grid,
 	                null,
-	                template
+	                template,
+	                staticTemplate ? staticTemplate : null
 	            );
 	        }
 	    }]);
