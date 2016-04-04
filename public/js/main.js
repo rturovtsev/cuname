@@ -29933,6 +29933,10 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _CardItem = __webpack_require__(284);
+	
+	var _CardItem2 = _interopRequireDefault(_CardItem);
+	
 	var _reactMdl = __webpack_require__(193);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -29943,87 +29947,57 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Content = function (_Component) {
-	    _inherits(Content, _Component);
+	var Cards = function (_Component) {
+	    _inherits(Cards, _Component);
 	
-	    function Content() {
-	        _classCallCheck(this, Content);
+	    function Cards() {
+	        _classCallCheck(this, Cards);
 	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Content).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Cards).apply(this, arguments));
 	    }
 	
-	    _createClass(Content, [{
+	    _createClass(Cards, [{
 	        key: 'render',
 	        value: function render() {
 	            var numImgs = 8;
 	
 	            var imgsArr = this.props.images,
 	                logined = this.props.logined,
-	                template = '',
-	                staticTemplate = '';
+	                template = [];
 	
-	            if (imgsArr.length > 0 && logined) {
+	            if (logined && imgsArr.length > 0) {
+	                //если пользователь залогинен и у него есть свои картинки
+	
 	                template = imgsArr.map(function (item, i) {
-	                    return _react2.default.createElement(
-	                        _reactMdl.Cell,
-	                        { key: i, col: 3 },
-	                        _react2.default.createElement(
-	                            _reactMdl.Card,
-	                            { shadow: 0, style: { width: '256px', height: '256px', background: 'url(/i/' + item + ') center / cover', margin: 'auto' } },
-	                            _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
-	                            _react2.default.createElement(
-	                                _reactMdl.CardActions,
-	                                { style: { height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)' } },
-	                                _react2.default.createElement(
-	                                    'span',
-	                                    { style: { color: '#fff', fontSize: '14px', fontWeight: '500' } },
-	                                    item
-	                                )
-	                            )
-	                        )
-	                    );
+	                    //наполняем картинками пользователя
+	                    return _react2.default.createElement(_CardItem2.default, { key: i, item: item });
 	                });
-	            }
 	
-	            if (imgsArr.length < numImgs) {
-	                var staticCardsNum = numImgs - imgsArr.length;
-	                staticTemplate = [];
-	
-	                for (var i = 0; i < staticCardsNum; i++) {
-	                    staticTemplate.push(_react2.default.createElement(
-	                        _reactMdl.Cell,
-	                        { key: i, col: 3 },
-	                        _react2.default.createElement(
-	                            _reactMdl.Card,
-	                            { shadow: 0, style: { width: '256px', height: '256px', background: 'url(http://www.getmdl.io/assets/demos/image_card.jpg) center / cover', margin: 'auto' } },
-	                            _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
-	                            _react2.default.createElement(
-	                                _reactMdl.CardActions,
-	                                { style: { height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)' } },
-	                                _react2.default.createElement(
-	                                    'span',
-	                                    { style: { color: '#fff', fontSize: '14px', fontWeight: '500' } },
-	                                    'Image.jpg'
-	                                )
-	                            )
-	                        )
-	                    ));
+	                if (imgsArr.length < numImgs) {
+	                    //дополняем картинки заглушками до нужного числа
+	                    for (var i = 0; i < numImgs - imgsArr.length; i++) {
+	                        template.push(_react2.default.createElement(_CardItem2.default, { key: imgsArr.length + i }));
+	                    }
+	                }
+	            } else {
+	                //если пользователь не залогинен, либо у него нет картинок
+	                for (var _i = 0; _i < numImgs; _i++) {
+	                    template.push(_react2.default.createElement(_CardItem2.default, { key: _i }));
 	                }
 	            }
 	
 	            return _react2.default.createElement(
 	                _reactMdl.Grid,
 	                null,
-	                template,
-	                staticTemplate ? staticTemplate : null
+	                template
 	            );
 	        }
 	    }]);
 	
-	    return Content;
+	    return Cards;
 	}(_react.Component);
 
-	exports.default = Content;
+	exports.default = Cards;
 
 /***/ },
 /* 278 */
@@ -30224,6 +30198,86 @@
 	    };
 	  };
 	}
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(3);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactMdl = __webpack_require__(193);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var CardItem = function (_Component) {
+	    _inherits(CardItem, _Component);
+	
+	    function CardItem() {
+	        _classCallCheck(this, CardItem);
+	
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(CardItem).apply(this, arguments));
+	    }
+	
+	    _createClass(CardItem, [{
+	        key: 'render',
+	        value: function render() {
+	            var key = this.props.key;
+	            var item = this.props.item;
+	
+	            var url = item ? '/i/' + item : 'http://www.getmdl.io/assets/demos/image_card.jpg';
+	
+	            return _react2.default.createElement(
+	                _reactMdl.Cell,
+	                { key: key, col: 3 },
+	                _react2.default.createElement(
+	                    _reactMdl.Card,
+	                    { shadow: 0, style: { width: '256px', height: '256px', background: 'url(' + url + ') center / cover', margin: 'auto' } },
+	                    _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
+	                    _react2.default.createElement(
+	                        _reactMdl.CardActions,
+	                        { style: { height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)' } },
+	                        _react2.default.createElement(
+	                            'span',
+	                            { style: { color: '#fff', fontSize: '14px', fontWeight: '500' } },
+	                            item ? item : 'Заглушка'
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return CardItem;
+	}(_react.Component);
+	
+	exports.default = CardItem;
+	
+	
+	CardItem.PropTypes = {
+	    key: _react.PropTypes.number,
+	    item: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.bool])
+	};
+	
+	CardItem.defaultProps = {
+	    key: 0,
+	    item: false
+	};
 
 /***/ }
 /******/ ]);

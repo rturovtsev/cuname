@@ -1,57 +1,44 @@
 import React, { Component, PropTypes } from 'react'
-import { Grid, Cell, Card, CardActions, CardTitle } from 'react-mdl'
+import CardItem from './CardItem'
+import { Grid } from 'react-mdl'
 
 
-export default class Content extends Component {
+export default class Cards extends Component {
     render() {
         const numImgs = 8;
 
         let imgsArr = this.props.images,
             logined = this.props.logined,
-            template = '',
-            staticTemplate = '';
+            template = [];
 
-        if (imgsArr.length > 0 && logined) {
-            template = imgsArr.map((item, i) => {
+        if (logined && imgsArr.length > 0) { //если пользователь залогинен и у него есть свои картинки
+
+            template = imgsArr.map((item, i) => { //наполняем картинками пользователя
                 return (
-                    <Cell key={i} col={3}>
-                        <Card shadow={0} style={{width: '256px', height: '256px', background: 'url(/i/' + item + ') center / cover', margin: 'auto'}}>
-                            <CardTitle expand />
-                            <CardActions style={{height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)'}}>
-                                <span style={{color: '#fff', fontSize: '14px', fontWeight: '500'}}>
-                                    {item}
-                                </span>
-                            </CardActions>
-                        </Card>
-                    </Cell>
+                    <CardItem key={i} item={item} />
                 );
             });
-        }
 
-        if (imgsArr.length < numImgs) {
-            let staticCardsNum = numImgs - imgsArr.length;
-            staticTemplate = [];
+            if (imgsArr.length < numImgs) { //дополняем картинки заглушками до нужного числа
+                for (let i = 0; i < numImgs - imgsArr.length; i++) {
+                    template.push(
+                        <CardItem key={imgsArr.length + i} />
+                    );
+                }
+            }
 
-            for (let i = 0; i < staticCardsNum; i++) {
-                staticTemplate.push(
-                    <Cell key={i} col={3}>
-                        <Card shadow={0} style={{width: '256px', height: '256px', background: 'url(http://www.getmdl.io/assets/demos/image_card.jpg) center / cover', margin: 'auto'}}>
-                            <CardTitle expand />
-                            <CardActions style={{height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)'}}>
-                                <span style={{color: '#fff', fontSize: '14px', fontWeight: '500'}}>
-                                    Image.jpg
-                                </span>
-                            </CardActions>
-                        </Card>
-                    </Cell>
+        } else { //если пользователь не залогинен, либо у него нет картинок
+            for (let i = 0; i < numImgs; i++) {
+                template.push(
+                    <CardItem key={i} />
                 );
             }
         }
 
+
         return (
             <Grid>
                 {template}
-                {staticTemplate ? staticTemplate : null}
             </Grid>
         );
     }
