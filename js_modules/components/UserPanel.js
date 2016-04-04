@@ -14,20 +14,20 @@ export default class UserPanel extends Component {
         const logined = this.props.logined;
         const name = this.props.name;
 
-        return (
-            <nav className='mdl-navigation'>
-                {logined ?
+        if (logined) {
+            return (
+                <nav className='mdl-navigation'>
                     <a href='#' className='mdl-navigation__link'> {name} </a>
-                    :
-                    <a href="/login" onClick={this.openModal.bind(this)} className='mdl-navigation__link'>Войти или зарегистрироваться</a>
-                }
-                {logined ?
                     <a href='#' id='logout' onClick= {this.onClickLogoutBtn.bind(this)} className='mdl-navigation__link'>Выйти</a>
-                    :
-                    ''
-                }
-            </nav>
-        );
+                </nav>
+            );
+        } else {
+            return (
+                <nav className='mdl-navigation'>
+                    <a href="/login" onClick={this.openModal.bind(this)} className='mdl-navigation__link'>Войти или зарегистрироваться</a>
+                </nav>
+            );
+        }
     }
 }
 
