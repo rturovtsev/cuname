@@ -18,7 +18,7 @@ export default class PopUp extends Component {
             pass: pass
         };
 
-        const elErrorTxt = ReactDOM.findDOMNode(this.refs.authError);
+        const elErrorTxt = this.refs.authError;
         const xhr = new XMLHttpRequest();
         const url = '/login';
 

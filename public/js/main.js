@@ -67,7 +67,7 @@
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _configureStore = __webpack_require__(278);
+	var _configureStore = __webpack_require__(279);
 	
 	var _configureStore2 = _interopRequireDefault(_configureStore);
 	
@@ -21935,7 +21935,7 @@
 	                pass: pass
 	            };
 	
-	            var elErrorTxt = _reactDom2.default.findDOMNode(this.refs.authError);
+	            var elErrorTxt = this.refs.authError;
 	            var xhr = new XMLHttpRequest();
 	            var url = '/login';
 	
@@ -29933,7 +29933,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _CardItem = __webpack_require__(284);
+	var _CardItem = __webpack_require__(278);
 	
 	var _CardItem2 = _interopRequireDefault(_CardItem);
 	
@@ -30001,206 +30001,6 @@
 
 /***/ },
 /* 278 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = configureStore;
-	
-	var _redux = __webpack_require__(167);
-	
-	var _reducers = __webpack_require__(279);
-	
-	var _reducers2 = _interopRequireDefault(_reducers);
-	
-	var _reduxThunk = __webpack_require__(283);
-	
-	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function configureStore(initialState) {
-	    var store = (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.applyMiddleware)(_reduxThunk2.default));
-	
-	    if (false) {
-	        module.hot.accept('../reducers', function () {
-	            var nextRootReducer = require('../reducers');
-	            store.replaceReducer(nextRootReducer);
-	        });
-	    }
-	
-	    return store;
-	}
-
-/***/ },
-/* 279 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _redux = __webpack_require__(167);
-	
-	var _page = __webpack_require__(280);
-	
-	var _page2 = _interopRequireDefault(_page);
-	
-	var _user = __webpack_require__(281);
-	
-	var _user2 = _interopRequireDefault(_user);
-	
-	var _modal = __webpack_require__(282);
-	
-	var _modal2 = _interopRequireDefault(_modal);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = (0, _redux.combineReducers)({
-	    page: _page2.default,
-	    user: _user2.default,
-	    modal: _modal2.default
-	});
-
-/***/ },
-/* 280 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = page;
-	
-	var _Page = __webpack_require__(188);
-	
-	var initialState = {
-	    images: cunameUser.username && cunameUser.username != 'Гость' ? cunameUser.images : []
-	};
-	
-	function page() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case _Page.SET_IMGS_REQUEST:
-	            return Object.assign({}, state);
-	
-	        case _Page.SET_IMGS_FAILED:
-	            return Object.assign({}, state);
-	
-	        case _Page.SET_IMGS_SUCCESS:
-	            return Object.assign({}, state, { images: action.payload });
-	
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 281 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = user;
-	
-	var _User = __webpack_require__(184);
-	
-	var initialState = {
-	    name: cunameUser.username,
-	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false
-	};
-	
-	function user() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case _User.SET_LOGINED_REQUEST:
-	            return Object.assign({}, state, { logined: action.payload.logined });
-	
-	        case _User.SET_LOGINED_FAILED:
-	            return Object.assign({}, state);
-	
-	        case _User.SET_LOGINED_SUCCESS:
-	            return Object.assign({}, state, { logined: action.payload.logined });
-	
-	        case _User.SET_NAME:
-	            return Object.assign({}, state, { name: action.payload.name });
-	
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 282 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = modal;
-	
-	var _Modal = __webpack_require__(186);
-	
-	var initialState = {
-	    modalIsOpen: false
-	};
-	
-	function modal() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case _Modal.MODAL_OPEN:
-	            return Object.assign({}, state, { modalIsOpen: true });
-	
-	        case _Modal.MODAL_CLOSE:
-	            return Object.assign({}, state, { modalIsOpen: false });
-	
-	        default:
-	            return state;
-	    }
-	}
-
-/***/ },
-/* 283 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	exports['default'] = thunkMiddleware;
-	function thunkMiddleware(_ref) {
-	  var dispatch = _ref.dispatch;
-	  var getState = _ref.getState;
-	
-	  return function (next) {
-	    return function (action) {
-	      if (typeof action === 'function') {
-	        return action(dispatch, getState);
-	      }
-	
-	      return next(action);
-	    };
-	  };
-	}
-
-/***/ },
-/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30278,6 +30078,206 @@
 	    key: 0,
 	    item: false
 	};
+
+/***/ },
+/* 279 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = configureStore;
+	
+	var _redux = __webpack_require__(167);
+	
+	var _reducers = __webpack_require__(280);
+	
+	var _reducers2 = _interopRequireDefault(_reducers);
+	
+	var _reduxThunk = __webpack_require__(284);
+	
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function configureStore(initialState) {
+	    var store = (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+	
+	    if (false) {
+	        module.hot.accept('../reducers', function () {
+	            var nextRootReducer = require('../reducers');
+	            store.replaceReducer(nextRootReducer);
+	        });
+	    }
+	
+	    return store;
+	}
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _redux = __webpack_require__(167);
+	
+	var _page = __webpack_require__(281);
+	
+	var _page2 = _interopRequireDefault(_page);
+	
+	var _user = __webpack_require__(282);
+	
+	var _user2 = _interopRequireDefault(_user);
+	
+	var _modal = __webpack_require__(283);
+	
+	var _modal2 = _interopRequireDefault(_modal);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = (0, _redux.combineReducers)({
+	    page: _page2.default,
+	    user: _user2.default,
+	    modal: _modal2.default
+	});
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = page;
+	
+	var _Page = __webpack_require__(188);
+	
+	var initialState = {
+	    images: cunameUser.username && cunameUser.username != 'Гость' ? cunameUser.images : []
+	};
+	
+	function page() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _Page.SET_IMGS_REQUEST:
+	            return Object.assign({}, state);
+	
+	        case _Page.SET_IMGS_FAILED:
+	            return Object.assign({}, state);
+	
+	        case _Page.SET_IMGS_SUCCESS:
+	            return Object.assign({}, state, { images: action.payload });
+	
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = user;
+	
+	var _User = __webpack_require__(184);
+	
+	var initialState = {
+	    name: cunameUser.username,
+	    logined: cunameUser.username && cunameUser.username != 'Гость' ? true : false
+	};
+	
+	function user() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _User.SET_LOGINED_REQUEST:
+	            return Object.assign({}, state, { logined: action.payload.logined });
+	
+	        case _User.SET_LOGINED_FAILED:
+	            return Object.assign({}, state);
+	
+	        case _User.SET_LOGINED_SUCCESS:
+	            return Object.assign({}, state, { logined: action.payload.logined });
+	
+	        case _User.SET_NAME:
+	            return Object.assign({}, state, { name: action.payload.name });
+	
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = modal;
+	
+	var _Modal = __webpack_require__(186);
+	
+	var initialState = {
+	    modalIsOpen: false
+	};
+	
+	function modal() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _Modal.MODAL_OPEN:
+	            return Object.assign({}, state, { modalIsOpen: true });
+	
+	        case _Modal.MODAL_CLOSE:
+	            return Object.assign({}, state, { modalIsOpen: false });
+	
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 284 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports['default'] = thunkMiddleware;
+	function thunkMiddleware(_ref) {
+	  var dispatch = _ref.dispatch;
+	  var getState = _ref.getState;
+	
+	  return function (next) {
+	    return function (action) {
+	      if (typeof action === 'function') {
+	        return action(dispatch, getState);
+	      }
+	
+	      return next(action);
+	    };
+	  };
+	}
 
 /***/ }
 /******/ ]);
