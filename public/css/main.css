@@ -62,3 +62,17 @@ a:focus {
   width: 80%;
   margin: 50px auto;
 }
+.img-card {
+  height: 250px;
+  width: 100%;
+}
+.img-card .mdl-card__actions {
+  height: 52px;
+  padding: 16px;
+  background: rgba(0,0,0,0.2);
+}
+.img-card .mdl-card__actions span {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}

@@ -11,12 +11,12 @@ export default class CardItem extends Component {
 
         return (
             <Cell key={key} col={3}>
-                <Card shadow={0} style={{width: '256px', height: '256px', background: 'url(' + url + ') center / cover', margin: 'auto'}}>
+                <Card className="img-card" shadow={0} style={{background: 'url(' + url + ') center / cover'}}>
                     <CardTitle expand />
-                    <CardActions style={{height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)'}}>
-                                <span style={{color: '#fff', fontSize: '14px', fontWeight: '500'}}>
-                                    {item ? item : 'Заглушка'}
-                                </span>
+                    <CardActions>
+                        <span>
+                            {item ? item : 'Заглушка'}
+                        </span>
                     </CardActions>
                 </Card>
             </Cell>

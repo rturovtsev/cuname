@@ -30047,14 +30047,14 @@
 	                { key: key, col: 3 },
 	                _react2.default.createElement(
 	                    _reactMdl.Card,
-	                    { shadow: 0, style: { width: '256px', height: '256px', background: 'url(' + url + ') center / cover', margin: 'auto' } },
+	                    { className: 'img-card', shadow: 0, style: { background: 'url(' + url + ') center / cover' } },
 	                    _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
 	                    _react2.default.createElement(
 	                        _reactMdl.CardActions,
-	                        { style: { height: '52px', padding: '16px', background: 'rgba(0,0,0,0.2)' } },
+	                        null,
 	                        _react2.default.createElement(
 	                            'span',
-	                            { style: { color: '#fff', fontSize: '14px', fontWeight: '500' } },
+	                            null,
 	                            item ? item : 'Заглушка'
 	                        )
 	                    )
