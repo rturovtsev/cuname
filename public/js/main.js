@@ -29959,8 +29959,6 @@
 	                url = '/uploads',
 	                data = new FormData(input.parentNode);
 	
-	            //data.append('name', input.name);
-	
 	            xhr.open('POST', url, true);
 	
 	            xhr.onreadystatechange = function () {
