@@ -1,13 +1,3 @@
-import {cImgs} from './imgs/form'
-
-cImgs.init();
-
-
-
-//=================================================//
-
-
-
 import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'

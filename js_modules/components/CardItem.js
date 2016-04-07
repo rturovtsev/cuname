@@ -31,7 +31,7 @@ export default class CardItem extends Component {
     _removeFileHandler(e) {
         let xhr = new XMLHttpRequest(),
             url = '/removeimg',
-            card = e.target.parentNode.parentNode,
+            card = e.target.parentNode.parentNode.parentNode,
             imgNum = card.dataset.imgform,
             data = JSON.stringify({imgNum: imgNum});
 
@@ -43,7 +43,7 @@ export default class CardItem extends Component {
             if (xhr.status != 200) {
                 alert('Попробуйте позже')
             } else {
-                location.reload();
+                location.reload(); //TODO доработать
             }
         };
 

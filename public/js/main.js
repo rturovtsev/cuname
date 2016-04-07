@@ -53,8 +53,6 @@
 
 	'use strict';
 	
-	var _form = __webpack_require__(2);
-	
 	var _react = __webpack_require__(3);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -73,10 +71,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_form.cImgs.init();
-	
-	//=================================================//
-	
 	var store = (0, _configureStore2.default)();
 	
 	(0, _reactDom.render)(_react2.default.createElement(
@@ -90,87 +84,7 @@
 	), document.getElementById('root'));
 
 /***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var cImgs = exports.cImgs = function () {
-	
-	    var imgsPanel = document.getElementById('imgs-panel');
-	
-	    return {
-	        xhrAdd: function xhrAdd(button) {
-	            var xhr = new XMLHttpRequest(),
-	                url = '/uploads',
-	                form = button.parentNode,
-	                input = form.elements.img_file,
-	                data = new FormData(form);
-	
-	            if (input.value == '') return;
-	
-	            data.append('img_file', input.name);
-	
-	            xhr.open('POST', url, true);
-	
-	            xhr.onreadystatechange = function () {
-	                if (xhr.readyState != 4) return;
-	                if (xhr.status != 200) {
-	                    alert('Ошибка, попробуйте позже!');
-	                } else {
-	                    var _url = '/i/' + xhr.responseText;
-	                    form.parentNode.parentNode.innerHTML = '<a class="thumbnail" href="#"><img src="' + _url + '"</a>';
-	                }
-	            };
-	
-	            xhr.send(data);
-	        },
-	        xhrRemove: function xhrRemove(button) {
-	            var xhr = new XMLHttpRequest(),
-	                url = '/removeimg',
-	                imgNum = button.parentNode.parentNode.dataset.imgform,
-	                data = JSON.stringify({ imgNum: imgNum });
-	
-	            xhr.open('POST', url, true);
-	
-	            xhr.setRequestHeader('Content-Type', 'application/json');
-	            xhr.onreadystatechange = function () {
-	                if (xhr.readyState != 4) return;
-	                if (xhr.status != 200) {
-	                    alert('Попробуйте позже');
-	                } else {
-	                    location.reload();
-	                }
-	            };
-	
-	            xhr.send(data);
-	        },
-	        events: function events() {
-	            var _this = this;
-	
-	            imgsPanel.onclick = function (e) {
-	                var target = e.target;
-	
-	                if (target.type == 'submit') {
-	                    e.preventDefault();
-	                    _this.xhrAdd(target);
-	                } else if (target.className == 'remove_img') {
-	                    _this.xhrRemove(target);
-	                } else {
-	                    return;
-	                }
-	            };
-	        },
-	        init: function init() {
-	            imgsPanel && this.events();
-	        }
-	    };
-	}();
-
-/***/ },
+/* 2 */,
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -30066,7 +29980,7 @@
 	        value: function _removeFileHandler(e) {
 	            var xhr = new XMLHttpRequest(),
 	                url = '/removeimg',
-	                card = e.target.parentNode.parentNode,
+	                card = e.target.parentNode.parentNode.parentNode,
 	                imgNum = card.dataset.imgform,
 	                data = JSON.stringify({ imgNum: imgNum });
 	
@@ -30078,7 +29992,7 @@
 	                if (xhr.status != 200) {
 	                    alert('Попробуйте позже');
 	                } else {
-	                    location.reload();
+	                    location.reload(); //TODO доработать
 	                }
 	            };
 	
