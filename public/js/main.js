@@ -29970,19 +29970,19 @@
 	
 	                template = imgsArr.map(function (item, i) {
 	                    //наполняем картинками пользователя
-	                    return _react2.default.createElement(_CardItem2.default, { key: i, item: item });
+	                    return _react2.default.createElement(_CardItem2.default, { key: i, innerKey: i, item: item });
 	                });
 	
 	                if (imgsArr.length < numImgs) {
 	                    //дополняем картинки заглушками до нужного числа
 	                    for (var i = 0; i < numImgs - imgsArr.length; i++) {
-	                        template.push(_react2.default.createElement(_CardItem2.default, { key: imgsArr.length + i }));
+	                        template.push(_react2.default.createElement(_CardItem2.default, { key: imgsArr.length + i, innerKey: imgsArr.length + i, getImgs: this.props.getImgs }));
 	                    }
 	                }
 	            } else {
 	                //если пользователь не залогинен, либо у него нет картинок
 	                for (var _i = 0; _i < numImgs; _i++) {
-	                    template.push(_react2.default.createElement(_CardItem2.default, { key: _i }));
+	                    template.push(_react2.default.createElement(_CardItem2.default, { key: _i, innerKey: _i }));
 	                }
 	            }
 	
@@ -30035,9 +30035,59 @@
 	    }
 	
 	    _createClass(CardItem, [{
+	        key: '_sendFileHandler',
+	        value: function _sendFileHandler(e) {
+	            var input = e.target;
+	
+	            if (input.value == '') return;
+	
+	            var xhr = new XMLHttpRequest(),
+	                url = '/uploads',
+	                data = new FormData(input.parentNode);
+	
+	            //data.append('name', input.name);
+	
+	            xhr.open('POST', url, true);
+	
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState != 4) return;
+	                if (xhr.status != 200) {
+	                    alert('Ошибка, попробуйте позже!');
+	                } else {
+	                    var _url = '/i/' + xhr.responseText;
+	                    input.parentNode.parentNode.parentNode.parentNode.style.background = 'url(' + _url + ') center / cover';
+	                }
+	            };
+	
+	            xhr.send(data);
+	        }
+	    }, {
+	        key: '_removeFileHandler',
+	        value: function _removeFileHandler(e) {
+	            var xhr = new XMLHttpRequest(),
+	                url = '/removeimg',
+	                card = e.target.parentNode.parentNode,
+	                imgNum = card.dataset.imgform,
+	                data = JSON.stringify({ imgNum: imgNum });
+	
+	            xhr.open('POST', url, true);
+	
+	            xhr.setRequestHeader('Content-Type', 'application/json');
+	            xhr.onreadystatechange = function () {
+	                if (xhr.readyState != 4) return;
+	                if (xhr.status != 200) {
+	                    alert('Попробуйте позже');
+	                } else {
+	                    location.reload();
+	                }
+	            };
+	
+	            xhr.send(data);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var key = this.props.key;
+	            var key = this.props.innerKey;
 	            var item = this.props.item;
 	
 	            var url = item ? '/i/' + item : 'http://www.getmdl.io/assets/demos/image_card.jpg';
@@ -30047,8 +30097,30 @@
 	                { key: key, col: 3 },
 	                _react2.default.createElement(
 	                    _reactMdl.Card,
-	                    { className: 'img-card', shadow: 0, style: { background: 'url(' + url + ') center / cover' } },
+	                    { className: 'img-card', 'data-imgform': key, shadow: 0, style: { background: 'url(' + url + ') center / cover' } },
 	                    _react2.default.createElement(_reactMdl.CardTitle, { expand: true }),
+	                    item ? _react2.default.createElement(
+	                        _reactMdl.CardText,
+	                        { style: { textAlign: "right" } },
+	                        _react2.default.createElement(
+	                            _reactMdl.FABButton,
+	                            { onClick: this._removeFileHandler.bind(this), mini: true, colored: true, ripple: true },
+	                            _react2.default.createElement(_reactMdl.Icon, { name: 'remove' })
+	                        )
+	                    ) : _react2.default.createElement(
+	                        _reactMdl.CardText,
+	                        { style: { textAlign: "right" } },
+	                        _react2.default.createElement(
+	                            _reactMdl.FABButton,
+	                            { mini: true, colored: true, ripple: true, component: 'label' },
+	                            _react2.default.createElement(
+	                                'form',
+	                                null,
+	                                _react2.default.createElement('input', { onChange: this._sendFileHandler.bind(this), type: 'file', className: 'hide', name: 'img_file', accept: 'image/*,image/jpeg,image/png,image/gif,image/ico' })
+	                            ),
+	                            _react2.default.createElement(_reactMdl.Icon, { name: 'add' })
+	                        )
+	                    ),
 	                    _react2.default.createElement(
 	                        _reactMdl.CardActions,
 	                        null,
@@ -30075,7 +30147,7 @@
 	};
 	
 	CardItem.defaultProps = {
-	    key: 0,
+	    innerKey: 0,
 	    item: false
 	};
 

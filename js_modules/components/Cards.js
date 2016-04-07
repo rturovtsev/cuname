@@ -15,14 +15,14 @@ export default class Cards extends Component {
 
             template = imgsArr.map((item, i) => { //наполняем картинками пользователя
                 return (
-                    <CardItem key={i} item={item} />
+                    <CardItem key={i} innerKey={i} item={item} />
                 );
             });
 
             if (imgsArr.length < numImgs) { //дополняем картинки заглушками до нужного числа
                 for (let i = 0; i < numImgs - imgsArr.length; i++) {
                     template.push(
-                        <CardItem key={imgsArr.length + i} />
+                        <CardItem key={imgsArr.length + i} innerKey={imgsArr.length + i} getImgs={this.props.getImgs} />
                     );
                 }
             }
@@ -30,7 +30,7 @@ export default class Cards extends Component {
         } else { //если пользователь не залогинен, либо у него нет картинок
             for (let i = 0; i < numImgs; i++) {
                 template.push(
-                    <CardItem key={i} />
+                    <CardItem key={i} innerKey={i} />
                 );
             }
         }
