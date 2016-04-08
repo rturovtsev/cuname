@@ -23,12 +23,12 @@ class App extends Component {
         const { modalIsOpen } = this.props.modal; //статус модального окна
         const { setModalState } = this.props.modalActions; //меняем статус модального окна
         const { images } = this.props.page; //картинки
-        const { getImgs } = this.props.pageActions; //получаем картинки
+        const { getImgs, clearImgs } = this.props.pageActions; //получаем картинки
 
         return (
             <Layout fixedHeader>
                 <Header title={<NavbarBrand />} >
-                    <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} />
+                    <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} clearImgs={clearImgs} />
                 </Header>
                 <Drawer>
                     <NavbarBrand />

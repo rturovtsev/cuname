@@ -1,4 +1,4 @@
-import { SET_IMGS_REQUEST, SET_IMGS_SUCCESS, SET_IMGS_FAILED } from '../constants/Page'
+import { SET_IMGS_REQUEST, SET_IMGS_SUCCESS, SET_IMGS_FAILED, SET_IMGS_CLEAR } from '../constants/Page'
 
 
 const initialState = {
@@ -15,6 +15,9 @@ export default function page(state = initialState, action) {
 
         case SET_IMGS_SUCCESS:
             return Object.assign({}, state, {images: action.payload});
+
+        case SET_IMGS_CLEAR:
+            return Object.assign({}, state, {images: []});
 
 
         default:

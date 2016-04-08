@@ -5,7 +5,8 @@ import { Grid } from 'react-mdl'
 
 export default class Cards extends Component {
     render() {
-        const numImgs = 8;
+        const numImgs = 8,
+            getImgs = this.props.getImgs;
 
         let imgsArr = this.props.images,
             logined = this.props.logined,
@@ -15,7 +16,7 @@ export default class Cards extends Component {
 
             template = imgsArr.map((item, i) => { //наполняем картинками пользователя
                 return (
-                    <CardItem key={i} innerKey={i} item={item} />
+                    <CardItem key={i} innerKey={i} item={item} getImgs={getImgs} />
                 );
             });
 

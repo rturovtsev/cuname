@@ -41,7 +41,8 @@ export default class CardItem extends Component {
             if (xhr.status != 200) {
                 alert('Попробуйте позже')
             } else {
-                location.reload(); //TODO доработать
+                card.style.background = 'url(http://www.getmdl.io/assets/demos/image_card.jpg) center / cover';
+                console.log("Удалено!");
             }
         };
 

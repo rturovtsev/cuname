@@ -5,6 +5,7 @@ export default class UserPanel extends Component {
     onClickLogoutBtn(e) {
         e.preventDefault();
         this.props.setLogined(false);
+        this.props.clearImgs();
     }
     openModal(e) {
         e.preventDefault();
@@ -35,5 +36,6 @@ UserPanel.PropTypes = {
     logined: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     setLogined: PropTypes.func.isRequired,
-    setModalState: PropTypes.func.isRequired
+    setModalState: PropTypes.func.isRequired,
+    clearImgs: PropTypes.func.isRequired
 };

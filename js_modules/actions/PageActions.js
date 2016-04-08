@@ -1,4 +1,4 @@
-import { SET_IMGS_REQUEST, SET_IMGS_SUCCESS, SET_IMGS_FAILED } from '../constants/Page'
+import { SET_IMGS_REQUEST, SET_IMGS_SUCCESS, SET_IMGS_FAILED, SET_IMGS_CLEAR } from '../constants/Page'
 
 export function getImgs(imgsState) {
     return (dispatch) => {
@@ -33,5 +33,14 @@ export function getImgs(imgsState) {
             };
             xhr.send();
         }
+    }
+}
+
+
+export function clearImgs() {
+    return (dispatch) => {
+        dispatch({
+            type: SET_IMGS_CLEAR
+        });
     }
 }
