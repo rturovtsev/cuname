@@ -38,12 +38,15 @@ class App extends Component {
                         <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} clearImgs={clearImgs} />
                     </div>
                 </header>
+
                 <main className="mdl-layout__content">
                     <Content>
                         <Cards logined={logined} images={images} getImgs={getImgs} />
                     </Content>
                 </main>
+                
                 <Footer />
+
                 <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} setLogined={setLogined} setName={setName} getImgs={getImgs} />
             </div>
         );
