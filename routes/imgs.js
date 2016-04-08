@@ -55,7 +55,7 @@ const limits =  {
 const upload = multer({ storage: storage, fileFilter: fileFilter, limits: limits}).single('img_file');
 
 exports.addImgPost = (req, res, next) => {
-    upload(req, res, (err) => {
+    upload(req, res, (err) => { //TODO сначала сохраняет, потом проверяет залогинен или нет
         if (err) return next(err);
 
         //если не пропустило или отсутствует файл

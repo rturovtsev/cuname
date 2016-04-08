@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react'
-import { Cell, Card, CardActions, CardText, CardTitle, FABButton, Icon } from 'react-mdl'
+import { FloatingActionButton, ContentAdd } from 'material-ui'
 
 
 export default class CardItem extends Component {
-    _sendFileHandler(e) {
-        let input = e.target;
+    _sendFileHandler() {
+        let input = this.refs.input;
+        let card = this.refs.card;
 
         if (input.value == '') return;
 
@@ -20,16 +21,18 @@ export default class CardItem extends Component {
                 alert('Ошибка, попробуйте позже!');
             } else {
                 let url = '/i/' + xhr.responseText;
-                input.parentNode.parentNode.parentNode.parentNode.style.background = 'url(' + url + ') center / cover';
+                card.style.background = 'url(' + url + ') center / cover';
+                console.log("Добавлено!", this.props);
+                this.props.getImgs('get');
             }
         };
 
         xhr.send(data);
     }
-    _removeFileHandler(e) {
+    _removeFileHandler() {
         let xhr = new XMLHttpRequest(),
             url = '/removeimg',
-            card = e.target.parentNode.parentNode.parentNode,
+            card = this.refs.card,
             imgNum = card.dataset.imgform,
             data = JSON.stringify({imgNum: imgNum});
 
@@ -39,14 +42,18 @@ export default class CardItem extends Component {
         xhr.onreadystatechange = () => {
             if (xhr.readyState != 4) return;
             if (xhr.status != 200) {
-                alert('Попробуйте позже')
+                alert('Попробуйте позже');
             } else {
                 card.style.background = 'url(http://www.getmdl.io/assets/demos/image_card.jpg) center / cover';
+                this.props.getImgs('get');
                 console.log("Удалено!");
             }
         };
 
         xhr.send(data);
+    }
+    _openFile() {
+       this.refs.input.click();
     }
     render() {
         let key = this.props.innerKey;
@@ -55,35 +62,37 @@ export default class CardItem extends Component {
         let url = item ? '/i/' + item : 'http://www.getmdl.io/assets/demos/image_card.jpg';
 
         return (
-            <Cell key={key} col={3}>
-                <Card className="img-card" data-imgform={key} shadow={0} style={{background: 'url(' + url + ') center / cover'}}>
-                    <CardTitle expand />
+            <div key={key} className={"mdl-cell mdl-cell--" + 3 + "-col"}>
+                <div ref="card" className="mdl-card img-card" data-imgform={key} style={{background: 'url(' + url + ') center / cover'}}>
+                    <div className="mdl-card__title mdl-card--expand">
+                        &nbsp;
+                    </div>
 
                     {item ?
-                        <CardText style={{textAlign: "right"}}>
-                            <FABButton onClick={this._removeFileHandler.bind(this)} mini colored ripple>
-                                <Icon name="remove"/>
-                            </FABButton>
-                        </CardText>
+                        <div className="mdl-card__supporting-text" style={{textAlign: "right"}}>
+                            <FloatingActionButton onTouchTap={this._removeFileHandler.bind(this)} mini secondary={true} >
+                                <i className="material-icons remove-file__icon">remove</i>
+                            </FloatingActionButton>
+                        </div>
                         :
-                        <CardText style={{textAlign: "right"}}>
-                            <FABButton mini colored ripple component="label">
+                        <div className="mdl-card__supporting-text" style={{textAlign: "right"}}>
+                            <FloatingActionButton onTouchTap={this._openFile.bind(this)} mini secondary={true} >
+                                <i className="material-icons add-file__icon">add</i>
                                 <form>
-                                    <input onChange={this._sendFileHandler.bind(this)} type="file" className="hide" name="img_file" accept="image/*,image/jpeg,image/png,image/gif,image/ico" />
+                                    <input ref="input" onChange={this._sendFileHandler.bind(this)} type="file" className="hide" name="img_file" accept="image/*,image/jpeg,image/png,image/gif,image/ico" />
                                 </form>
-                                <Icon name="add"/>
-                            </FABButton>
-                        </CardText>
+                            </FloatingActionButton>
+                        </div>
                     }
 
 
-                    <CardActions>
+                    <div className="mdl-card__actions">
                         <span>
-                            {item ? item : 'Заглушка'}
+                            {item ? item : 'Выберите картинку'}
                         </span>
-                    </CardActions>
-                </Card>
-            </Cell>
+                    </div>
+                </div>
+            </div>
         );
     }
 }

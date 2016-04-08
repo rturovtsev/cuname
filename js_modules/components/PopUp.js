@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Textfield, Button } from 'react-mdl'
-import Modal from 'react-modal'
+import { Dialog, FlatButton, TextField } from 'material-ui'
 
 
 export default class PopUp extends Component {
@@ -11,14 +10,14 @@ export default class PopUp extends Component {
     login(e) {
         e.preventDefault();
 
-        let email = ReactDOM.findDOMNode(this.refs.email).getElementsByTagName('input')[0].value;
-        let pass = ReactDOM.findDOMNode(this.refs.pass).getElementsByTagName('input')[0].value;
+        let email = document.getElementById('email').value;
+        let pass = document.getElementById('password').value;
         let auth = {
             email: email,
             pass: pass
         };
 
-        const elErrorTxt = this.refs.authError;
+        const elErrorTxt = document.getElementById('authError');
         const xhr = new XMLHttpRequest();
         const url = '/login';
 
@@ -41,52 +40,58 @@ export default class PopUp extends Component {
         xhr.send(JSON.stringify(auth));
     }
     render() {
+        const errE = "Не верный формат Email!"; //TODO сделать валидацию
+        const errP = "Не верный формат для поля пароль!";
         const modalIsOpen = this.props.modalIsOpen;
+        const actions = [
+            <FlatButton
+                label="Отмена"
+                primary={true}
+                onTouchTap={this.closeModal.bind(this)}
+            />,
+            <FlatButton
+                label="Войти"
+                primary={true}
+                keyboardFocused={true}
+                onTouchTap={this.login.bind(this)}
+            />
+        ];
 
         return (
-            <Modal
-                isOpen={modalIsOpen}
+            <Dialog
+                title="Авторизация"
+                actions={actions}
+                modal={false}
+                open={modalIsOpen}
                 onRequestClose={this.closeModal.bind(this)}
-                closeTimeoutMS={100}
             >
-                <h3 className="mdl-dialog__title">Авторизация</h3>
-                <div className="mdl-dialog__content">
-                    <p>
-                        Войдите либо введите свои данные и учетная запись будет создана автоматически.
-                    </p>
-                    <div ref="authError" className="error" />
-                    <Textfield
-                        ref="email"
-                        onChange={() => {}}
-                        id="email"
-                        type="email"
-                        name="email"
-                        label="Email адресс"
-                        required
-                        floatingLabel
-                        pattern=".+@.+\..+"
-                        error="Не верный формат Email!"
-                        style={{width: '100%'}}
-                    />
-                    <Textfield
-                        ref="pass"
-                        onChange={() => {}}
-                        id="password"
-                        type="password"
-                        name="password"
-                        label="Пароль, минимум 6 символов"
-                        required
-                        floatingLabel
-                        pattern="^[a-zA-Z0-9_-]{6,18}$"
-                        error="Не верный формат для поля пароль!"
-                        style={{width: '100%'}}
-                    />
-                </div>
-                <div className="mdl-dialog__actions">
-                    <Button raised ripple colored type="button" onClick={this.closeModal.bind(this)}>Отмена</Button>
-                    <Button raised ripple colored type="submit" onClick={this.login.bind(this)}>Войти</Button>
-                </div>
-            </Modal>
+                <p>
+                    Войдите либо введите свои данные и учетная запись будет создана автоматически.
+                </p>
+                <div id="authError" className="error" />
+                <TextField
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                    pattern=".+@.+\..+"
+                    fullWidth={true}
+                    hintText="Ваш email"
+                    errorText={null}
+                    floatingLabelText="Email адресс"
+                />
+                <TextField
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    pattern="^[a-zA-Z0-9_-]{6,18}$"
+                    fullWidth={true}
+                    floatingLabelText="Пароль, минимум 6 символов"
+                    hintText="Ваш пароль"
+                    errorText={null}
+                />
+            </Dialog>
         );
     }
 }

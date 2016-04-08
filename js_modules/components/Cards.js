@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 import CardItem from './CardItem'
-import { Grid } from 'react-mdl'
-
 
 export default class Cards extends Component {
     render() {
@@ -23,7 +21,7 @@ export default class Cards extends Component {
             if (imgsArr.length < numImgs) { //дополняем картинки заглушками до нужного числа
                 for (let i = 0; i < numImgs - imgsArr.length; i++) {
                     template.push(
-                        <CardItem key={imgsArr.length + i} innerKey={imgsArr.length + i} getImgs={this.props.getImgs} />
+                        <CardItem key={imgsArr.length + i} innerKey={imgsArr.length + i} getImgs={getImgs} />
                     );
                 }
             }
@@ -31,16 +29,16 @@ export default class Cards extends Component {
         } else { //если пользователь не залогинен, либо у него нет картинок
             for (let i = 0; i < numImgs; i++) {
                 template.push(
-                    <CardItem key={i} innerKey={i} />
+                    <CardItem key={i} innerKey={i} getImgs={getImgs} />
                 );
             }
         }
 
 
         return (
-            <Grid>
+            <div className="mdl-grid">
                 {template}
-            </Grid>
+            </div>
         );
     }
 }

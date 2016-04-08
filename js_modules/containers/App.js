@@ -8,13 +8,16 @@ import * as pageActions from '../actions/PageActions'
 
 //Components
 import NavbarBrand from '../components/NavbarBrand'
+import HeaderLogo from '../components/HeaderLogo'
 import UserPanel from '../components/UserPanel'
 import Footer from '../components/Footer'
 import PopUp from '../components/PopUp'
 import Content from '../components/Content'
 import Cards from '../components/Cards'
-import { Layout, Header, Drawer } from 'react-mdl'
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
+
+injectTapEventPlugin();
 
 class App extends Component {
     render() {
@@ -26,13 +29,15 @@ class App extends Component {
         const { getImgs, clearImgs } = this.props.pageActions; //получаем картинки
 
         return (
-            <Layout fixedHeader>
-                <Header title={<NavbarBrand />} >
-                    <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} clearImgs={clearImgs} />
-                </Header>
-                <Drawer>
-                    <NavbarBrand />
-                </Drawer>
+            <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+                <header className="mdl-layout__header">
+                    <div className="mdl-layout__header-row">
+                        <HeaderLogo />
+                        <NavbarBrand />
+                        <div className="mdl-layout-spacer"></div>
+                        <UserPanel name={name} logined={logined} setLogined={setLogined} setModalState={setModalState} clearImgs={clearImgs} />
+                    </div>
+                </header>
                 <main className="mdl-layout__content">
                     <Content>
                         <Cards logined={logined} images={images} getImgs={getImgs} />
@@ -40,7 +45,7 @@ class App extends Component {
                 </main>
                 <Footer />
                 <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} setLogined={setLogined} setName={setName} getImgs={getImgs} />
-            </Layout>
+            </div>
         );
     }
 }

@@ -28,7 +28,7 @@ gulp.task('webpack', function(){
         watchOptions: {
             aggregateTimeout: 100
         },
-        devtool: isDevelopment ? "source-map" : null,
+        devtool: isDevelopment ? "cheap-module-eval-source-map" : null,
         module: {
             loaders: [{
                 test: /\.js$/,
