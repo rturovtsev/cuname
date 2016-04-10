@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { FloatingActionButton, ContentAdd } from 'material-ui'
+import IconButton from 'material-ui/lib/icon-button';
 
 
 export default class CardItem extends Component {
@@ -70,13 +71,13 @@ export default class CardItem extends Component {
 
                     {item ?
                         <div className="mdl-card__supporting-text" style={{textAlign: "right"}}>
-                            <FloatingActionButton onTouchTap={this._removeFileHandler.bind(this)} mini secondary={true} >
+                            <FloatingActionButton onTouchTap={this._removeFileHandler.bind(this)} tooltip="Удалить" mini secondary={true} >
                                 <i className="material-icons remove-file__icon">remove</i>
                             </FloatingActionButton>
                         </div>
                         :
                         <div className="mdl-card__supporting-text" style={{textAlign: "right"}}>
-                            <FloatingActionButton onTouchTap={this._openFile.bind(this)} mini secondary={true} >
+                            <FloatingActionButton onTouchTap={this._openFile.bind(this)} tooltip="Добавить" mini secondary={true} >
                                 <i className="material-icons add-file__icon">add</i>
                                 <form>
                                     <input ref="input" onChange={this._sendFileHandler.bind(this)} type="file" className="hide" name="img_file" accept="image/*,image/jpeg,image/png,image/gif,image/ico" />
