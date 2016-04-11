@@ -56,6 +56,9 @@ export default class CardItem extends Component {
     _openFile() {
        this.refs.input.click();
     }
+    _copyLink() {
+        prompt("Ссылка на картинку:", this.refs.srclnk.dataset.src); //TODO Сделать копирование в буфер
+    }
     render() {
         let key = this.props.innerKey;
         let item = this.props.item;
@@ -65,9 +68,17 @@ export default class CardItem extends Component {
         return (
             <div key={key} className={"mdl-cell mdl-cell--" + 3 + "-col"}>
                 <div ref="card" className="mdl-card img-card" data-imgform={key} style={{background: 'url(' + url + ') center / cover'}}>
-                    <div className="mdl-card__title mdl-card--expand">
-                        &nbsp;
-                    </div>
+                    {item ?
+                        <div className="action-imgbtns">
+                            <a href={url} target="_blank" className="material-icons">image</a>
+                            <i onClick={this._copyLink.bind(this)} data-src={location.href + 'i/' + item} ref="srclnk" className="material-icons imglink">link</i>
+                        </div>
+                    :
+                        <div className="action-imgbtns">
+                            &nbsp;
+                        </div>
+                    }
+
 
                     {item ?
                         <div className="mdl-card__supporting-text" style={{textAlign: "right"}}>

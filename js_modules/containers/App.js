@@ -44,7 +44,7 @@ class App extends Component {
                         <Cards logined={logined} images={images} getImgs={getImgs} />
                     </Content>
                 </main>
-                
+
                 <Footer />
 
                 <PopUp setModalState={setModalState} modalIsOpen={modalIsOpen} setLogined={setLogined} setName={setName} getImgs={getImgs} />

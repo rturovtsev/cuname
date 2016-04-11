@@ -70,6 +70,7 @@ export default class PopUp extends Component {
                 </p>
                 <div id="authError" className="error" />
                 <TextField
+                    ref="email"
                     id="email"
                     type="email"
                     name="email"
